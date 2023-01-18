@@ -1,0 +1,7 @@
+{
+  "directory": [
+    "./src/models"
+  ],
+  "delete": true,
+  "mode": "top"
+}

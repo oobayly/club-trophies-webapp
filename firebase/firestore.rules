@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	function isAdmin() {
+    	return request.auth != null
+      	&& request.auth.token.roles
+        && "admin" in request.auth.token.roles;
+    }
+    
+    function isClubPublic(clubId) {
+    	return exists(/databases/$(database)/documents/clubs/$(clubId))
+      	&& get(/databases/$(database)/documents/clubs/$(clubId)).data.public;
+    }
+    
+    function isClubAdmin(clubId) {
+    	return request.auth != null
+      	&& exists(/databases/$(database)/documents/clubs/$(clubId))
+      	&& request.auth.uid in get(/databases/$(database)/documents/clubs/$(clubId)).data.admins;
+    }
+ 
+ 		// Admins skip all rules
+    allow read, write: if isAdmin();
+    
+  	match /clubs/{clubId} {
+    	// Anyone can view public clubs
+    	allow read: if resource != null
+      	&& resource.data.public == true;
+      
+      match /boats/{boatId} {
+        // The boats are readable, provided the club is public
+        allow read: if resource != null
+          && isClubPublic(clubId);
+        // Boats can't be deleted, only archived
+      	allow delete: if false;
+      }
+      
+      // Anyone authenticated user can create a club, but they must be the admin
+      allow create: if request.auth != null
+        && request.resource.data.admins != null
+      	&& request.auth.uid in request.resource.data.admins;
+        
+      // Club admins can edit their club
+      allow read, write: if request.auth
+      	&& request.auth.uid in resource.data.admins;
+      match /{document=**} {
+      	allow read, write: if resource != null
+        	&& isClubAdmin(clubId);
+      }
+      
+      match /requests/{requestId} {
+      	// Any authenticated user can read and delete their own requests
+      	allow read, delete: if request.auth != null
+        	&& resource.data.uid == request.auth.uid;
+      	// Any authenticated user can create a request, provided the club is public
+      	allow create: if request.auth != null
+        	&& request.resource.data.uid == request.auth.uid
+        	&& isClubPublic(clubId);
+      }
+    
+      match /trophies/{trophyId}/{document=**} {
+        // Anyone can view public trophies, provided the club is also public
+	    	allow read: if resource != null
+  	    	&& resource.data.public
+          && isClubPublic(clubId);
+      }
+    }
+  
+  	match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

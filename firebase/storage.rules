@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+  	// Anyone can request the burgee
+  	match /clubs/{clubId}/burgee.png {
+    	allow get: if true;
+    }
+ 
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
