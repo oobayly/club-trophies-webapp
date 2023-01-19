@@ -13,13 +13,15 @@ export interface Club extends HasPublic, HasTimestamp {
   shortName: string;
 }
 
-export type ClubBurgeeRequest = UploadInfo & HasTimestamp;
-
-export interface ClubRequest extends HasTimestamp {
+export interface ClubAdmin extends HasTimestamp {
   /** The name of the club. */
   club: string;
+  /** A flag indicating that the request is enabled. */
+  enabled: boolean;
   /** The name of the user making the request. */
   name: string;
   /** The uid of the user requesting access. */
   uid: string;
 }
+
+export type ClubBurgeeRequest = UploadInfo & HasTimestamp;

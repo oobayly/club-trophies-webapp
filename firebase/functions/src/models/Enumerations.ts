@@ -1,9 +1,9 @@
 export enum Collections {
+  Admins = "admins",
   Boats = "boats",
   Burgees = "burgees",
   Clubs = "clubs",
   Files = "files",
-  Requests = "requests",
   Trophies = "trophies",
   Winners = "winners",
 }

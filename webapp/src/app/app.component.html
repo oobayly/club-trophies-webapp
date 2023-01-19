@@ -1,1 +1,11 @@
+<select [(ngModel)]="email" (ngModelChange)="onEmailChange($event)">
+  <option [ngValue]="undefined">None</option>
+  <option value="admin@nothing.com">Admin</option>
+  <option value="ldyc@nothing.com">LDYC</option>
+  <option value="nyyc@nothing.com">NYYC</option>
+  <option value="nobody@nothing.com">Nobody</option>
+</select>
+
 <pre>{{claims$ | async | json}}</pre>
+
+<pre>{{clubs$ | async | json}}</pre>

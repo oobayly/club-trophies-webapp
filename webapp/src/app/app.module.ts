@@ -3,6 +3,7 @@ import { AngularFireModule } from "@angular/fire/compat"
 import { AngularFireAuthModule, USE_EMULATOR as USE_AUTH_EMULATOR } from "@angular/fire/compat/auth";
 import { AngularFirestoreModule, USE_EMULATOR as USE_FIRESTORE_EMULATOR } from "@angular/fire/compat/firestore";
 import { AngularFireStorageModule, USE_EMULATOR as USE_STORAGE_EMULATOR } from "@angular/fire/compat/storage";
+import { FormsModule } from "@angular/forms";
 import { BrowserModule } from '@angular/platform-browser';
 import { FirebaseUIModule } from "firebaseui-angular"
 import { environment } from "src/environments/environment";
@@ -18,6 +19,7 @@ import { AppComponent } from './app.component';
     // Angular
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     // Firebase
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireAuthModule,

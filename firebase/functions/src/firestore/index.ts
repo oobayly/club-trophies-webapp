@@ -1,8 +1,8 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as path from "path";
-import { Boat, BoatReference, ClubBurgeeRequest, Collections, TrophyFile, UploadInfo } from "../models";
-import { BoatPath, BurgeePath, TrophyFilePath } from "./paths";
+import { Boat, BoatReference, Club, ClubAdmin, ClubBurgeeRequest, Collections, TrophyFile, UploadInfo } from "../models";
+import { AdminPath, BoatPath, BurgeePath, TrophyFilePath } from "./paths";
 
 const updateBoatName = (batch: admin.firestore.WriteBatch, boatName: string, docs: admin.firestore.QuerySnapshot<admin.firestore.DocumentData>): number => {
   let changes = 0;
@@ -81,31 +81,60 @@ export const onBurgeeCreate = functions.firestore.document(BurgeePath).onCreate(
   } as Partial<ClubBurgeeRequest>);
 });
 
-export const onTrophyFileCreate = functions.firestore.document(TrophyFilePath).onCreate(async (snapshot) => {
-  // const photoId = snapshot.ref.id;
-  // const trophyId = snapshot.ref.parent.parent!.id;
-  // const clubId = snapshot.ref.parent.parent!.parent.parent!.id;
+export const onClubAdminWrite = functions.firestore.document(AdminPath).onWrite(async (change) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const clubRef = change.after.ref.parent.parent!;
+  const isWriting = change.after.exists;
+  const { uid, enabled } = (change.after.data() || change.before.data()) as ClubAdmin;
 
-  const { name } = snapshot.data() as TrophyFile;
-  const extension = path.extname(name);
-  const file = admin.storage().bucket().file(`${snapshot.ref.path}${extension}`);
-  const uploadUrl = await file.getSignedUrl({
-    action: "write",
-    expires: new Date().getTime() + 3600000,
+  await clubRef.firestore.runTransaction(async (trans) => {
+    const clubDoc = await trans.get(clubRef);
+    const { admins } = clubDoc.data() as Club;
+    const containsUid = admins.includes(uid);
+    let update: Partial<Club>;
+
+    if (isWriting && enabled && !containsUid) {
+      update = {
+        admins: [...admins, uid],
+      };
+    } else if (containsUid) {
+      update = {
+        admins: admins.filter((x) => x !== uid),
+      };
+    } else {
+      // Nothing to change
+      return;
+    }
+
+    trans.update(clubRef, update);
   });
-  const uploadInfo: UploadInfo = {
-    url: uploadUrl[0],
-    headers: {},
-  };
-
-  await snapshot.ref.update({ uploadInfo });
 });
 
-export const onTrophyFileDelete = functions.firestore.document(TrophyFilePath).onDelete(async (snapshot) => {
-  const resp = await admin.storage().bucket().getFiles({
-    prefix: snapshot.ref.path,
-  });
+export const onTrophyFileWrite = functions.firestore.document(TrophyFilePath).onWrite(async (change) => {
+  if (!change.before.exists) {
+    // Creating
+    const snapshot = change.after;
+    const { name } = snapshot.data() as TrophyFile;
+    const extension = path.extname(name);
+    const file = admin.storage().bucket().file(`${snapshot.ref.path}${extension}`);
+    const uploadUrl = await file.getSignedUrl({
+      action: "write",
+      expires: new Date().getTime() + 3600000,
+    });
+    const uploadInfo: UploadInfo = {
+      url: uploadUrl[0],
+      headers: {},
+    };
 
-  // There should only be two storage object per file, so it's safe to delete all the items in parallel
-  await Promise.all(resp[0].map((item) => item.delete()));
+    await snapshot.ref.update({ uploadInfo });
+  } else if (!change.after.exists) {
+    // Deleting
+    const snapshot = change.before;
+    const resp = await admin.storage().bucket().getFiles({
+      prefix: snapshot.ref.path,
+    });
+
+    // There should only be two storage object per file, so it's safe to delete all the items in parallel
+    await Promise.all(resp[0].map((item) => item.delete()));
+  }
 });
