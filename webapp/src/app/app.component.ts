@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore, DocumentChangeAction } from "@angular/fire/compat/firestore";
+import { FirestoreErrorCode } from "firebase/firestore";
 import { catchError, combineLatest, distinct, distinctUntilChanged, distinctUntilKeyChanged, filter, first, map, min, Observable, of, retry, shareReplay, Subject, switchMap, takeUntil, tap } from "rxjs";
 import { Club, Collections } from "@models";
 import { DbRecord, toRecord } from "./core/interfaces/DbRecord";
@@ -74,6 +75,16 @@ export class AppComponent implements OnDestroy, OnInit {
 
     // auth.signOut();
     // auth.signInWithEmailAndPassword("ldyc@nothing.com", "Password");
+
+    this.db.collection<Club>(Collections.Clubs).doc("abc").get().pipe(
+      catchError((e) => {
+        console.log(e);
+
+        return of(undefined);
+      })
+    ).subscribe((x) => {
+      console.log(x);
+    })
   }
 
   ngOnDestroy(): void {

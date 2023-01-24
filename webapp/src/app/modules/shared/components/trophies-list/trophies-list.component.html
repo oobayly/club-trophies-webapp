@@ -1,0 +1,7 @@
+<ng-container *ngIf="trophies$ | async as trophies">
+  <div *ngFor="let item of trophies">
+    <a [routerLink]="['/clubs', clubId, 'trophies', item.id]">{{item.data.name}}</a>
+  </div>
+</ng-container>
+
+<pre>{{trophies$ | async | json}}</pre>

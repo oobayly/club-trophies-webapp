@@ -1,0 +1,16 @@
+<div>
+  <label>
+    <input type="radio" [(ngModel)]="mode" value="public">
+    Public
+  </label>
+  <label>
+    <input type="radio" [(ngModel)]="mode" value="all">
+    All
+  </label>
+  <label>
+    <input type="radio" [(ngModel)]="mode" value="mine">
+    Mine
+  </label>
+</div>
+
+<app-clubs-list [mode]="mode"></app-clubs-list>

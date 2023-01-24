@@ -1,0 +1,13 @@
+<ng-container *ngIf="clubs$ | async as clubs; else loaderOrError">
+  <div *ngFor="let item of clubs">
+    <a [routerLink]="['/clubs', item.id]">
+      {{item.data.name}}
+    </a>
+  </div>
+</ng-container>
+
+<pre>{{clubs$ | async | json}}</pre>
+
+<ng-template #loaderOrError>
+  Loading
+</ng-template>
