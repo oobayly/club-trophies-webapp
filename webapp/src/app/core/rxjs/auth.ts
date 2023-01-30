@@ -1,5 +1,5 @@
 import { distinctUntilChanged, map, OperatorFunction } from "rxjs";
-import { getRoles, hasRole, isAdmin } from "../helpers/auth";
+import { getRoles, isInRole, isAdmin } from "../helpers/auth";
 
 type OptionalIdTokenResult = firebase.default.auth.IdTokenResult | null | undefined;
 type OptionalUser = firebase.default.User | null | undefined;
@@ -37,7 +37,7 @@ const isInRoleFn = (...roles: string[]): OperatorFunction<OptionalIdTokenResult,
   return (source) => {
     return source.pipe(
       distinctUntilChanged(distinctToken),
-      map((token) => hasRole(token, ...roles))
+      map((token) => isInRole(token, ...roles))
     );
   };
 }
