@@ -1,4 +1,4 @@
-<div>
+<!-- <div>
   <label>
     <input type="radio" [(ngModel)]="mode" value="public">
     Public
@@ -11,6 +11,11 @@
     <input type="radio" [(ngModel)]="mode" value="mine">
     Mine
   </label>
+</div> -->
+
+<div>
+  <a routerLink="../public">Public</a>
+  <a routerLink="../mine">Mine</a>
 </div>
 
-<app-clubs-list [mode]="mode"></app-clubs-list>
+<app-clubs-list [mode]="mode$ |async"></app-clubs-list>

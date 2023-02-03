@@ -1,17 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { firstValueFrom, map } from 'rxjs';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
+import { firstValueFrom } from "rxjs";
 import { isInRole } from "../helpers/auth";
 
-export const authGuardForRole = (...roles: string[]) => {
+export interface AuthGuardData {
+  requiredRoles: string[];
+}
+
+export const authGuardForRole = (...roles: string[]): AuthGuardData => {
   return {
-    requiredRoles: roles
+    requiredRoles: roles,
   }
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthGuard implements CanActivate {
   constructor(
@@ -29,12 +33,12 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       return this.router.createUrlTree(["/auth", "sign-in"], {
         queryParams: {
-          redirectTo: url
-        }
+          redirectTo: url,
+        },
       });
     }
 
-    const isValid = isInRole(token, ...requiredRoles);
+    const isValid = !requiredRoles.length || isInRole(token, ...requiredRoles);
 
     if (!isValid) {
       console.log(`${token.claims["sub"]} does not have permission to load route ${url}`);

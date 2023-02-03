@@ -1,17 +1,17 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { AngularFirestore, QueryFn } from "@angular/fire/compat/firestore";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
+import { AngularFirestore, Query, QueryFn } from "@angular/fire/compat/firestore";
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { Club, Collections, Trophy } from "@models";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { distinctUid } from "src/app/core/rxjs/auth";
 
 @Component({
-  selector: 'app-club-info',
-  templateUrl: './club-info.component.html',
-  styleUrls: ['./club-info.component.scss']
+  selector: "app-club-info",
+  templateUrl: "./club-info.component.html",
+  styleUrls: ["./club-info.component.scss"],
 })
-export class ClubInfoComponent implements OnChanges, OnDestroy, OnInit {
+export class ClubInfoComponent implements OnChanges, OnDestroy {
   // ========================
   // Properties
   // ========================
@@ -56,9 +56,6 @@ export class ClubInfoComponent implements OnChanges, OnDestroy, OnInit {
     this.destroyed$.next();
   }
 
-  ngOnInit(): void {
-  }
-
   private getCanEditObservable(): Observable<boolean> {
     return combineLatest([
       this.auth.user.pipe(distinctUid()),
@@ -83,7 +80,7 @@ export class ClubInfoComponent implements OnChanges, OnDestroy, OnInit {
             console.log(err.code);
 
             return of(undefined);
-          })
+          }),
         );
       }),
       map((doc) => doc?.payload.data()),
@@ -105,9 +102,9 @@ export class ClubInfoComponent implements OnChanges, OnDestroy, OnInit {
         let filter: QueryFn;
 
         if (canEdit) {
-          filter = (ref) => ref;
+          filter = (ref): Query => ref;
         } else {
-          filter = (ref) => ref.where("public", "==", true);
+          filter = (ref): Query => ref.where("public", "==", true);
         }
 
         return this.db
@@ -119,11 +116,11 @@ export class ClubInfoComponent implements OnChanges, OnDestroy, OnInit {
               console.log(err);
 
               return of(undefined);
-            })
+            }),
           );
       }),
       takeUntil(this.destroyed$),
-      shareReplay()
+      shareReplay(),
     );
   }
 }

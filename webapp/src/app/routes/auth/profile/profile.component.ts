@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from "@angular/core";
+import { AngularFireAuth } from "@angular/fire/compat/auth";
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  selector: "app-profile",
+  templateUrl: "./profile.component.html",
+  styleUrls: ["./profile.component.scss"],
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent {
+  public readonly token$ = this.auth.idTokenResult;
 
-  constructor() { }
+  public readonly user$ = this.auth.user;
 
-  ngOnInit(): void {
-  }
-
+  constructor(
+    private auth: AngularFireAuth,
+  ) { }
 }

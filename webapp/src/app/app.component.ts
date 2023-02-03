@@ -1,16 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, DocumentChangeAction } from "@angular/fire/compat/firestore";
-import { FirestoreErrorCode } from "firebase/firestore";
-import { catchError, combineLatest, distinct, distinctUntilChanged, distinctUntilKeyChanged, filter, first, map, min, Observable, of, retry, shareReplay, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
+import { catchError, combineLatest, distinctUntilChanged, first, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { Club, Collections } from "@models";
 import { DbRecord, toRecord } from "./core/interfaces/DbRecord";
 import { isAdmin } from "./core/helpers/auth";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnDestroy, OnInit {
   public email?: string = undefined;
@@ -38,11 +37,11 @@ export class AppComponent implements OnDestroy, OnInit {
           const uid = idToken.claims["sub"];
           const other$ = this.db.collection<Club>(
             Collections.Clubs,
-            (ref) => ref.where("public", "==", true)
+            (ref) => ref.where("public", "==", true),
           ).snapshotChanges();
           const mine$ = this.db.collection<Club>(
             Collections.Clubs,
-            (ref) => ref.where("public", "!=", true).where("admins", "array-contains", uid)
+            (ref) => ref.where("public", "!=", true).where("admins", "array-contains", uid),
           ).snapshotChanges();
 
           return combineLatest([other$, mine$]).pipe(
@@ -59,12 +58,12 @@ export class AppComponent implements OnDestroy, OnInit {
               })
 
               return list;
-            })
+            }),
           );
         } else {
           return this.db.collection<Club>(
             Collections.Clubs,
-            (ref) => ref.where("public", "==", true)
+            (ref) => ref.where("public", "==", true),
           ).snapshotChanges();
         }
       }),
@@ -81,7 +80,7 @@ export class AppComponent implements OnDestroy, OnInit {
         console.log(e);
 
         return of(undefined);
-      })
+      }),
     ).subscribe((x) => {
       console.log(x);
     })
@@ -98,16 +97,16 @@ export class AppComponent implements OnDestroy, OnInit {
     ).subscribe((email) => this.email = email || undefined);
   }
 
-  public async onEmailChange(email: string | undefined) {
+  public async onEmailChange(email: string | undefined): Promise<void> {
     if (email) {
       const current = await this.auth.currentUser;
 
       if (email !== current?.email) {
-        this.auth.signInWithEmailAndPassword(email, "Password");
+        await this.auth.signInWithEmailAndPassword(email, "Password");
       }
 
     } else {
-      this.auth.signOut();
+      await this.auth.signOut();
     }
 
     // console.log(e);

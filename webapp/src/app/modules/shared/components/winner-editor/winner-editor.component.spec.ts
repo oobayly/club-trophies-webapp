@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { WinnerEditorComponent } from './winner-editor.component';
+import { WinnerEditorComponent } from "./winner-editor.component";
 
-describe('WinnerEditorComponent', () => {
+describe("WinnerEditorComponent", () => {
   let component: WinnerEditorComponent;
   let fixture: ComponentFixture<WinnerEditorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WinnerEditorComponent ]
+      declarations: [ WinnerEditorComponent ],
     })
     .compileComponents();
 
@@ -17,7 +17,7 @@ describe('WinnerEditorComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

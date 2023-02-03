@@ -1,15 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-view-trophy',
-  templateUrl: './view-trophy.component.html',
-  styleUrls: ['./view-trophy.component.scss']
+  selector: "app-view-trophy",
+  templateUrl: "./view-trophy.component.html",
+  styleUrls: ["./view-trophy.component.scss"],
 })
-export class ViewTrophyComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class ViewTrophyComponent {
 }

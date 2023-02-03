@@ -1,15 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-  selector: 'app-winner-editor',
-  templateUrl: './winner-editor.component.html',
-  styleUrls: ['./winner-editor.component.scss']
+  selector: "app-winner-editor",
+  templateUrl: "./winner-editor.component.html",
+  styleUrls: ["./winner-editor.component.scss"],
 })
-export class WinnerEditorComponent implements OnInit {
+export class WinnerEditorComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

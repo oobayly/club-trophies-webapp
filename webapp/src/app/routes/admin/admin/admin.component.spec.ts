@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AdminComponent } from './admin.component';
+import { AdminComponent } from "./admin.component";
 
-describe('AdminComponent', () => {
+describe("AdminComponent", () => {
   let component: AdminComponent;
   let fixture: ComponentFixture<AdminComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AdminComponent ]
+      declarations: [ AdminComponent ],
     })
     .compileComponents();
 
@@ -17,7 +17,7 @@ describe('AdminComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

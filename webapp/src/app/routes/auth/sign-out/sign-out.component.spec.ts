@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { SignOutComponent } from './sign-out.component';
+import { SignOutComponent } from "./sign-out.component";
 
-describe('SignOutComponent', () => {
+describe("SignOutComponent", () => {
   let component: SignOutComponent;
   let fixture: ComponentFixture<SignOutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SignOutComponent ]
+      declarations: [ SignOutComponent ],
     })
     .compileComponents();
 
@@ -17,7 +17,7 @@ describe('SignOutComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

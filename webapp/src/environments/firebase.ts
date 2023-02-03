@@ -7,7 +7,7 @@ export const firebaseConfig: FirebaseOptions = {
   projectId: "club-trophies",
   storageBucket: "club-trophies.appspot.com",
   messagingSenderId: "773505282864",
-  appId: "1:773505282864:web:967c5e2a491f7ca5bc4ef5"
+  appId: "1:773505282864:web:967c5e2a491f7ca5bc4ef5",
 };
 
 export const firebaseUiAuthConfig: firebaseui.auth.Config = {
@@ -17,7 +17,7 @@ export const firebaseUiAuthConfig: firebaseui.auth.Config = {
     {
       provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
       defaultCountry: "IE",
-      whitelistedCountries: ["GB", "IE"]
-    }
-  ]
+      whitelistedCountries: ["GB", "IE"],
+    },
+  ],
 }

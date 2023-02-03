@@ -4,7 +4,7 @@ import { getRoles, isInRole, isAdmin } from "../helpers/auth";
 type OptionalIdTokenResult = firebase.default.auth.IdTokenResult | null | undefined;
 type OptionalUser = firebase.default.User | null | undefined;
 
-const distinctToken = (p: OptionalIdTokenResult, c: OptionalIdTokenResult) => p?.issuedAtTime === c?.issuedAtTime;
+const distinctToken = (p: OptionalIdTokenResult, c: OptionalIdTokenResult): boolean => p?.issuedAtTime === c?.issuedAtTime;
 
 const distinctUidFn = (): OperatorFunction<OptionalUser, string | undefined> => {
   return (source) => {
@@ -19,7 +19,7 @@ const getRolesFn = (): OperatorFunction<OptionalIdTokenResult, string[]> => {
   return (source) => {
     return source.pipe(
       distinctUntilChanged(distinctToken),
-      map(getRoles)
+      map(getRoles),
     );
   };
 }
@@ -28,7 +28,7 @@ const isAdminFn = (): OperatorFunction<OptionalIdTokenResult, boolean> => {
   return (source) => {
     return source.pipe(
       distinctUntilChanged(distinctToken),
-      map(isAdmin)
+      map(isAdmin),
     );
   };
 }
@@ -37,7 +37,7 @@ const isInRoleFn = (...roles: string[]): OperatorFunction<OptionalIdTokenResult,
   return (source) => {
     return source.pipe(
       distinctUntilChanged(distinctToken),
-      map((token) => isInRole(token, ...roles))
+      map((token) => isInRole(token, ...roles)),
     );
   };
 }

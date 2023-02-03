@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditTrophyComponent } from './edit-trophy.component';
+import { EditTrophyComponent } from "./edit-trophy.component";
 
-describe('EditTrophyComponent', () => {
+describe("EditTrophyComponent", () => {
   let component: EditTrophyComponent;
   let fixture: ComponentFixture<EditTrophyComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EditTrophyComponent ]
+      declarations: [ EditTrophyComponent ],
     })
     .compileComponents();
 
@@ -17,7 +17,7 @@ describe('EditTrophyComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

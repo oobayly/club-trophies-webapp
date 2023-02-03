@@ -1,20 +1,19 @@
-import { Component, importProvidersFrom, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, DocumentChangeAction, DocumentData, QueryFn } from "@angular/fire/compat/firestore";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, distinctUntilKeyChanged, EMPTY, finalize, map, mergeMap, NEVER, Observable, of, shareReplay, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { AngularFirestore, Query, QueryFn } from "@angular/fire/compat/firestore";
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, finalize, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
-import { Club, ClubBurgeeRequest, Collections } from "@models";
+import { Club, Collections } from "@models";
 import { distinctUid } from "src/app/core/rxjs/auth";
-import { CollectionReference, Query } from "firebase/firestore";
 
 export type ViewMode = "all" | "mine" | "public";
 
 @Component({
-  selector: 'app-clubs-list',
-  templateUrl: './clubs-list.component.html',
-  styleUrls: ['./clubs-list.component.scss']
+  selector: "app-clubs-list",
+  templateUrl: "./clubs-list.component.html",
+  styleUrls: ["./clubs-list.component.scss"],
 })
-export class ClubsListComponent implements OnChanges, OnDestroy, OnInit {
+export class ClubsListComponent implements OnChanges, OnDestroy {
   // ========================
   // Properties
   // ========================
@@ -32,26 +31,23 @@ export class ClubsListComponent implements OnChanges, OnDestroy, OnInit {
   // ========================
 
   @Input()
-  public mode?: ViewMode;
+  public mode: ViewMode | null | undefined;
 
   constructor(
     private auth: AngularFireAuth,
-    private db: AngularFirestore
+    private db: AngularFirestore,
   ) {
     this.clubs$ = this.getClubsObservable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ("mode" in changes) {
-      this.mode$.next(this.mode);
+      this.mode$.next(this.mode || undefined);
     }
   }
 
   ngOnDestroy(): void {
     this.destroyed$.next();
-  }
-
-  ngOnInit(): void {
   }
 
   private getClubsObservable(): Observable<DbRecord<Club>[]> {
@@ -63,11 +59,11 @@ export class ClubsListComponent implements OnChanges, OnDestroy, OnInit {
         let filter: QueryFn;
 
         if (mode === "all" && uid) {
-          filter = (ref) => ref;
+          filter = (ref): Query => ref;
         } else if (mode === "mine" && uid) {
-          filter = (ref) => ref.where("admins", "array-contains", uid);
+          filter = (ref): Query => ref.where("admins", "array-contains", uid);
         } else if (mode === "public") {
-          filter = (ref) => ref.where("public", "==", true);
+          filter = (ref): Query => ref.where("public", "==", true);
         } else {
           return of(undefined);
         }
@@ -77,7 +73,7 @@ export class ClubsListComponent implements OnChanges, OnDestroy, OnInit {
             console.log("Got an error: " + err.code);
 
             return of(undefined);
-          })
+          }),
         );
       }),
       takeUntil(this.destroyed$),

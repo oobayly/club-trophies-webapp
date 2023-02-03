@@ -1,17 +1,16 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, QueryFn } from "@angular/fire/compat/firestore";
-import { Club, Collections, Trophy } from "@models";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, filter, map, mergeMap, Observable, of, Subject, switchMap } from "rxjs";
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
+import { AngularFirestore, Query, QueryFn } from "@angular/fire/compat/firestore";
+import { Collections, Trophy } from "@models";
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, Subject, switchMap } from "rxjs";
 import { truthy } from "src/app/core/helpers";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 
 @Component({
-  selector: 'app-trophies-list',
-  templateUrl: './trophies-list.component.html',
-  styleUrls: ['./trophies-list.component.scss']
+  selector: "app-trophies-list",
+  templateUrl: "./trophies-list.component.html",
+  styleUrls: ["./trophies-list.component.scss"],
 })
-export class TrophiesListComponent implements OnChanges, OnDestroy, OnInit {
+export class TrophiesListComponent implements OnChanges, OnDestroy {
   // ========================
   // Properties
   // ========================
@@ -42,7 +41,6 @@ export class TrophiesListComponent implements OnChanges, OnDestroy, OnInit {
   // ========================
 
   constructor(
-    private auth: AngularFireAuth,
     private db: AngularFirestore,
   ) {
     this.trophies$ = combineLatest([
@@ -54,7 +52,10 @@ export class TrophiesListComponent implements OnChanges, OnDestroy, OnInit {
           return of(undefined);
         }
 
-        const filter: QueryFn | undefined = onlyPublic ? (ref) => ref.where("public", "==", true) : undefined;
+        const filter: QueryFn | undefined = onlyPublic
+          ? (ref): Query => ref.where("public", "==", true)
+          : undefined
+          ;
 
         return this.db
           .collection(Collections.Clubs).doc(clubId)
@@ -65,7 +66,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy, OnInit {
               console.log(err.code);
 
               return of(undefined);
-            })
+            }),
           );
       }),
     )
@@ -83,8 +84,4 @@ export class TrophiesListComponent implements OnChanges, OnDestroy, OnInit {
   ngOnDestroy(): void {
     this.destroyed$.next();
   }
-
-  ngOnInit(): void {
-  }
-
 }

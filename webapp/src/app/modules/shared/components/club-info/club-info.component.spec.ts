@@ -1,14 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ClubInfoComponent } from './club-info.component';
+import { ClubInfoComponent } from "./club-info.component";
 
-describe('ClubInfoComponent', () => {
+describe("ClubInfoComponent", () => {
   let component: ClubInfoComponent;
   let fixture: ComponentFixture<ClubInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClubInfoComponent ]
+      declarations: [ ClubInfoComponent ],
     })
     .compileComponents();
 
@@ -17,7 +17,7 @@ describe('ClubInfoComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
