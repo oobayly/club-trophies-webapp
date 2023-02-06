@@ -5,6 +5,7 @@ import { AngularFirestoreModule, USE_EMULATOR as USE_FIRESTORE_EMULATOR } from "
 import { AngularFireStorageModule, USE_EMULATOR as USE_STORAGE_EMULATOR } from "@angular/fire/compat/storage";
 import { FormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { FirebaseUIModule } from "firebaseui-angular"
 import { environment } from "src/environments/environment";
 import { firebaseConfig, firebaseUiAuthConfig } from "src/environments/firebase";
@@ -26,6 +27,8 @@ import { AppComponent } from "./app.component";
     AngularFirestoreModule,
     AngularFireStorageModule,
     FirebaseUIModule.forRoot(firebaseUiAuthConfig),
+    // Bootstrap
+    NgbModule,
   ],
   providers: [
     {

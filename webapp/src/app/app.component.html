@@ -1,18 +1,79 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-2">
+  <a class="navbar-brand" routerLink="/">Club Trophies</a>
+
+  <button class="navbar-toggler" type="button" [attr.aria-expanded]="!isNavBarCollapsed" aria-label="Toggle navigation"
+    (click)="isNavBarCollapsed = !isNavBarCollapsed">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" [ngbCollapse]="isNavBarCollapsed">
+    <!-- Links -->
+    <ul class="navbar-nav me-auto">
+      <!-- Clubs -->
+      <li class="nav-item dropdown" ngbDropdown>
+        <a class="nav-link dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+          Clubs
+        </a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <a routerLink="/clubs/public" class="dropdown-item" routerLinkActive="active">
+            Public Clubs
+          </a>
+          <a routerLink="/clubs/mine" class="dropdown-item" routerLinkActive="active">
+            My Clubs
+          </a>
+          <ng-container *ngIf="user$ | async">
+            <div class="dropdown-divider"></div>
+            <a routerLink="/clubs/new" class="dropdown-item" routerLinkActive="active">
+              Create New Club
+            </a>
+          </ng-container>
+          <ng-container *ngIf="myClubs$ | async as mine">
+            <div class="dropdown-divider" *ngIf="mine.length"></div>
+            <a [routerLink]="['/clubs', item.id]" class="dropdown-item" routerLinkActive="active"
+              *ngFor="let item of mine">
+              {{item.name}}
+            </a>
+          </ng-container>
+        </div>
+      </li>
+
+      <!-- Development user dropdown -->
+      <li class="nav-item dropdown" ngbDropdown *ngIf="emails">
+        <a class="nav-link dropdown-toggle" role="button" aria-haspopup="true" ngbDropdownToggle>
+          Users
+        </a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <a class="dropdown-item" role="button" *ngFor="let item of emails" (click)="onEmailClick(item[0])"
+            [ngClass]="{'active': email === item[0]}">
+            {{item[1]}}
+          </a>
+        </div>
+      </li>
+
+      <!-- Admin -->
+      <li class="nav-item" *ngIf="isAdmin$ | async">
+        <a routerLink="/admin/users" class="nav-link">Users</a>
+      </li>
+    </ul>
+
+    <!-- Profile section -->
+    <ul class="navbar-nav ms-auto">
+      <ng-container *ngIf="user$ | async; else signIn">
+        <li class="nav-item">
+          <a routerLink="/auth/profile" class="nav-link">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/auth/sign-out" class="nav-link">Sign Out</a>
+        </li>
+      </ng-container>
+
+      <ng-template #signIn>
+        <li class="nav-item">
+          <a routerLink="/auth/sign-in" class="nav-link">Sign In</a>
+        </li>
+      </ng-template>
+    </ul>
+  </div>
 </nav>
-
-<select [(ngModel)]="email" (ngModelChange)="onEmailChange($event)">
-  <option [ngValue]="undefined">None</option>
-  <option value="admin@nothing.com">Admin</option>
-  <option value="ldyc@nothing.com">LDYC</option>
-  <option value="nyyc@nothing.com">NYYC</option>
-  <option value="nobody@nothing.com">Nobody</option>
-</select>
-
-<!-- <pre>{{claims$ | async | json}}</pre>
-
-<pre>{{clubs$ | async | json}}</pre>
- -->
 
 <router-outlet></router-outlet>
