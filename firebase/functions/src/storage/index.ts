@@ -71,9 +71,9 @@ const createThumb = async (object: functions.storage.ObjectMetadata): Promise<st
   }
 }
 
-/** Tests if the specified object is a club burgee. */
-const isClubBurgee = (object: functions.storage.ObjectMetadata): string | undefined => {
-  const match = object.name?.match(/clubs\/([A-Za-z0-9]+)\/burgee\.png/);
+/** Tests if the specified object is a club logo. */
+const isClubLogo = (object: functions.storage.ObjectMetadata): string | undefined => {
+  const match = object.name?.match(/clubs\/([A-Za-z0-9]+)\/logo\.png/);
 
   return match?.[1];
 }
@@ -97,33 +97,33 @@ const isTrophyFile = (object: functions.storage.ObjectMetadata): TrophyFileIds |
   return undefined;
 }
 
-const updateClubBurgee = async (clubId: string, object: functions.storage.ObjectMetadata | undefined): Promise<void> => {
+const updateClubLogo = async (clubId: string, object: functions.storage.ObjectMetadata | undefined): Promise<void> => {
   const clubRef = admin.firestore()
     .collection(Collections.Clubs)
     .doc(clubId)
     ;
-  let burgee: string | admin.firestore.FieldValue;
+  let logo: string | admin.firestore.FieldValue;
 
   if (object) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const file = admin.storage().bucket(object.bucket).file(object.name!);
     const id = file.metadata.id as string;
 
-    burgee = file.publicUrl();
+    logo = file.publicUrl();
 
-    // Remove the burgee request document as referenced by the x-goog-meta-id header
+    // Remove the logo request document as referenced by the x-goog-meta-id header
     if (id) {
-      await clubRef.collection(Collections.Burgees).doc(id).delete({
+      await clubRef.collection(Collections.Logos).doc(id).delete({
         exists: false,
       });
     }
   } else {
-    burgee = admin.firestore.FieldValue.delete();
+    logo = admin.firestore.FieldValue.delete();
   }
 
   await clubRef.update({
     modified: new Date().getTime(),
-    burgee,
+    logo,
   } as Partial<Club>);
 }
 
@@ -160,8 +160,8 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
 export const onStorageItemDelete = functions.storage.bucket().object().onDelete(async (object) => {
   let clubId: string | undefined;
 
-  if ((clubId = isClubBurgee(object)) !== undefined) {
-    await updateClubBurgee(clubId, undefined);
+  if ((clubId = isClubLogo(object)) !== undefined) {
+    await updateClubLogo(clubId, undefined);
   }
 });
 
@@ -169,8 +169,8 @@ export const onStorageItemFinalize = functions.storage.bucket().object().onFinal
   let clubId: string | undefined;
   let fileIds: TrophyFileIds | undefined;
 
-  if ((clubId = isClubBurgee(object)) !== undefined) {
-    await updateClubBurgee(clubId, object);
+  if ((clubId = isClubLogo(object)) !== undefined) {
+    await updateClubLogo(clubId, object);
   } else if ((fileIds = isTrophyFile(object)) !== undefined) {
     if (!fileIds.thumb) {
       await updateTrophyFile(fileIds, object);

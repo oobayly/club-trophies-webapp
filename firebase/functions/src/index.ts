@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { onBoatNameChange, onBurgeeCreate, onClubAdminWrite, onTrophyFileWrite } from "./firestore";
+import { onBoatNameChange, onLogoCreate, onClubAdminWrite, onTrophyFileWrite } from "./firestore";
 // import { api } from "./https";
 import { onStorageItemDelete, onStorageItemFinalize } from "./storage";
 
@@ -9,7 +9,7 @@ admin.initializeApp();
 
 exports.onBoatNameChange = onBoatNameChange;
 exports.onClubAdminWrite = onClubAdminWrite;
-exports.onBurgeeCreate = onBurgeeCreate;
+exports.onLogoCreate = onLogoCreate;
 exports.onTrophyFileWrite = onTrophyFileWrite;
 
 exports.onStorageItemDelete = onStorageItemDelete;

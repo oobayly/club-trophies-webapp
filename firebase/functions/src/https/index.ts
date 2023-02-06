@@ -18,11 +18,11 @@ app.use(cors({
   methods: "*",
 }));
 
-app.get("/v1/clubs/:clubId/burgee", async (req, res) => {
+app.get("/v1/clubs/:clubId/logo", async (req, res) => {
   const { clubId } = req.params;
 
   try {
-    const file = await admin.storage().bucket().file(`clubs/${clubId}/burgee.png`).get();
+    const file = await admin.storage().bucket().file(`clubs/${clubId}/logo.png`).get();
 
     return res.redirect(file[0].publicUrl());
   } catch {
@@ -30,7 +30,7 @@ app.get("/v1/clubs/:clubId/burgee", async (req, res) => {
   }
 });
 
-app.post("/v1/clubs/:clubId/burgee", checkIfAuthenticated, async (req: AuthRequest, res) => {
+app.post("/v1/clubs/:clubId/logo", checkIfAuthenticated, async (req: AuthRequest, res) => {
   const club = await getClub(req.params.clubId);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const uid = req.idToken!.uid;

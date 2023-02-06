@@ -1,8 +1,8 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as path from "path";
-import { Boat, BoatReference, Club, ClubAdmin, ClubBurgeeRequest, Collections, TrophyFile, UploadInfo } from "../models";
-import { AdminPath, BoatPath, BurgeePath, TrophyFilePath } from "./paths";
+import { Boat, BoatReference, Club, ClubAdmin, ClubLogoRequest, Collections, TrophyFile, UploadInfo } from "../models";
+import { AdminPath, BoatPath, LogoPath, TrophyFilePath } from "./paths";
 
 const updateBoatName = (batch: admin.firestore.WriteBatch, boatName: string, docs: admin.firestore.QuerySnapshot<admin.firestore.DocumentData>): number => {
   let changes = 0;
@@ -59,13 +59,13 @@ export const onBoatNameChange = functions.firestore.document(BoatPath).onUpdate(
   }
 });
 
-export const onBurgeeCreate = functions.firestore.document(BurgeePath).onCreate(async (snapshot) => {
-  const burgeeId = snapshot.ref.id;
+export const onLogoCreate = functions.firestore.document(LogoPath).onCreate(async (snapshot) => {
+  const logoId = snapshot.ref.id;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const clubId = snapshot.ref.parent.parent!.id;
-  const file = admin.storage().bucket().file(`${Collections.Clubs}/${clubId}/burgee.png`);
+  const file = admin.storage().bucket().file(`${Collections.Clubs}/${clubId}/logo.png`);
   const headers = {
-    "x-goog-meta-id": burgeeId,
+    "x-goog-meta-id": logoId,
   };
   const uploadUrl = await file.getSignedUrl({
     action: "write",
@@ -78,7 +78,7 @@ export const onBurgeeCreate = functions.firestore.document(BurgeePath).onCreate(
     url: uploadUrl[0],
     headers,
     modified: new Date().getTime(),
-  } as Partial<ClubBurgeeRequest>);
+  } as Partial<ClubLogoRequest>);
 });
 
 export const onClubAdminWrite = functions.firestore.document(AdminPath).onWrite(async (change) => {

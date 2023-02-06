@@ -1,8 +1,8 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-  	// Anyone can request the burgee
-  	match /clubs/{clubId}/burgee.png {
+  	// Anyone can request the logo
+  	match /clubs/{clubId}/logo.png {
     	allow get: if true;
     }
  

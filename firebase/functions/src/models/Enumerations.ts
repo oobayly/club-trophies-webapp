@@ -1,7 +1,7 @@
 export enum Collections {
   Admins = "admins",
   Boats = "boats",
-  Burgees = "burgees",
+  Logos = "logos",
   Clubs = "clubs",
   Files = "files",
   Trophies = "trophies",
