@@ -1,6 +1,9 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
+import { Injectable, NgModule } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { RouterModule, RouterStateSnapshot, Routes, TitleStrategy } from "@angular/router";
 import { AuthGuard, authGuardForRole } from "./core/guards/auth.guard";
+
+export const AppTitle = "Club Trophies";
 
 const routes: Routes = [
   {
@@ -21,8 +24,30 @@ const routes: Routes = [
   },
 ];
 
+@Injectable()
+export class TemplatePageTitleStrategy extends TitleStrategy {
+  constructor(private readonly title: Title) {
+    super();
+  }
+
+  override updateTitle(snapshot: RouterStateSnapshot): void {
+    let title = this.buildTitle(snapshot);
+
+    if (title) {
+      title = `${AppTitle} | ${title}`;
+    } else {
+      title = AppTitle;
+    }
+
+    this.title.setTitle(title);
+  }
+}
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
+  providers: [
+    { provide: TitleStrategy, useClass: TemplatePageTitleStrategy },
+  ],
 })
 export class AppRoutingModule { }

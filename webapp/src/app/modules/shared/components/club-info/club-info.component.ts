@@ -1,6 +1,6 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { AngularFirestore, Query, QueryFn } from "@angular/fire/compat/firestore";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil, tap } from "rxjs";
 import { Club, Collections, Trophy } from "@models";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
@@ -32,6 +32,13 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
 
   @Input()
   public clubId: string | null | undefined;
+
+  // ========================
+  // Outputs
+  // ========================
+
+  @Output()
+  public readonly clubChange = new EventEmitter<Club | undefined>();
 
   // ========================
   // Lifecycle
@@ -84,6 +91,9 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
         );
       }),
       map((doc) => doc?.payload.data()),
+      tap((club) => {
+        this.clubChange.next(club);
+      }),
       takeUntil(this.destroyed$),
       shareReplay(),
     );

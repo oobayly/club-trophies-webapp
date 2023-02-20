@@ -16,9 +16,9 @@ export class IndexComponent {
   ) { }
 
   private getModeObservable(): Observable<ViewMode> {
-    return this.route.paramMap.pipe(
-      map((params) => {
-        switch (params.get("mode")) {
+    return this.route.data.pipe(
+      map((data) => {
+        switch (data["mode"]) {
           case "mine":
             return "mine";
           default:

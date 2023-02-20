@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
+import { map, Observable, of, shareReplay, Subject, Subscription, switchMap, takeUntil } from "rxjs";
 import { isAdmin } from "./core/rxjs/auth";
 import { environment } from "src/environments/environment";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
@@ -31,6 +31,8 @@ export class AppComponent implements OnDestroy, OnInit {
 
   public isNavBarCollapsed = true;
 
+  private readonly subscriptions: Subscription[] = [];
+
   // ========================
   // Observables
   // ========================
@@ -56,6 +58,7 @@ export class AppComponent implements OnDestroy, OnInit {
 
   ngOnDestroy(): void {
     this.destroyed$.next();
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 
   ngOnInit(): void {

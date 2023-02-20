@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore, Query, QueryFn } from "@angular/fire/compat/firestore";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, finalize, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Club, Collections } from "@models";
 import { distinctUid } from "src/app/core/rxjs/auth";
@@ -32,6 +32,10 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
 
   @Input()
   public mode: ViewMode | null | undefined;
+
+  // ========================
+  // Lifecycle
+  // ========================
 
   constructor(
     private auth: AngularFireAuth,
@@ -78,7 +82,6 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
       }),
       takeUntil(this.destroyed$),
       map((x) => x ? toRecord(x) : []),
-      finalize(() => console.log("Finalized")),
       shareReplay(),
     )
   }

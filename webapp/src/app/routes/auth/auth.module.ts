@@ -7,6 +7,7 @@ import { SignOutComponent } from "./sign-out/sign-out.component";
 import { ProfileComponent } from "./profile/profile.component";
 import { AuthComponent } from "./auth.component";
 import { FirebaseUIModule } from "firebaseui-angular";
+import { RouterModule } from "@angular/router";
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { FirebaseUIModule } from "firebaseui-angular";
   ],
   imports: [
     CommonModule,
+    RouterModule,
     AuthRoutingModule,
     FirebaseUIModule,
   ],

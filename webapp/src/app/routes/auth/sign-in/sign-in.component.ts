@@ -1,13 +1,32 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { ActivatedRoute, Router } from "@angular/router";
+import { first, mergeMap } from "rxjs";
+import { filterNotNull } from "src/app/core/rxjs";
 
 @Component({
   selector: "app-sign-in",
   templateUrl: "./sign-in.component.html",
   styleUrls: ["./sign-in.component.scss"],
 })
-export class SignInComponent implements OnDestroy {
+export class SignInComponent implements OnInit, OnDestroy {
+  private readonly redirectTo = this.route.snapshot.queryParamMap.get("redirectTo") || "/clubs";
 
-  constructor() { }
+  constructor(
+    private readonly auth: AngularFireAuth,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+  ) { }
+
+  ngOnInit(): void {
+    this.auth.user.pipe(
+      filterNotNull(),
+      first(),
+      mergeMap(() => {
+        return this.router.navigateByUrl(this.redirectTo);
+      }),
+    ).subscribe();
+  }
 
   ngOnDestroy(): void {
     // HACK: Recaptcha adds some elements to to the body element. FirebaseUi doesn't tidy them up 

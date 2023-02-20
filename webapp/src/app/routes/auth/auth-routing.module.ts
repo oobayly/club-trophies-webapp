@@ -16,11 +16,13 @@ const routes: Routes = [
         path: "profile",
         component: ProfileComponent,
         canActivate: [AuthGuard],
+        title: "My Profile",
       },
       {
         path: "sign-in",
         component: SignInComponent,
         canActivate: [AngularFireAuthGuard],
+        title: "Sign In",
         data: {
           authGuardPipe: () => redirectLoggedInTo("/auth/profile"),
         },
@@ -28,6 +30,7 @@ const routes: Routes = [
       {
         path: "sign-out",
         component: SignOutComponent,
+        title: "Sign Out",
       },
     ],
   },
