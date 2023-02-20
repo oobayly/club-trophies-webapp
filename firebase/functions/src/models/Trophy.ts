@@ -9,13 +9,13 @@ export interface Trophy extends HasPublic, HasTimestamp {
   /** The details of the trophy. */
   details: string;
   /** The year that the trophy was donated. */
-  donated?: number;
+  donated: string;
   /** The name of the donor. */
   donor: string;
   /** The name of the trophy. */
   name: string;
   /** The page number in the historic book. */
-  page?: number;
+  page: string;
   /** The type of trophy. */
   type: TrophyType;
 }
