@@ -1,12 +1,14 @@
 <ng-container *ngIf="clubs$ | async as clubs; else loaderOrError">
-  <div *ngFor="let item of clubs">
-    <a [routerLink]="['/clubs', item.id]">
-      {{item.data.name}}
+  <!-- List of clubs -->
+  <ul class="list-group">
+    <a [routerLink]="['/clubs', item.id]" class="list-group-item list-group-item-action" *ngFor="let item of clubs">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{item.data.name}}</h5>
+        <small>{{item.data.shortName}}</small>
+      </div>
     </a>
-  </div>
+  </ul>
 </ng-container>
-
-<pre>{{clubs$ | async | json}}</pre>
 
 <ng-template #loaderOrError>
   Loading

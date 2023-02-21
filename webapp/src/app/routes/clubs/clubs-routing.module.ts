@@ -87,6 +87,12 @@ const routes: Routes = [
           },
         ],
       },
+      {
+        path: "boats",
+        children: [
+          { path: "new", component: EditTrophyComponent, title: "Add new boat" },
+        ],
+      },
     ],
   },
 ];

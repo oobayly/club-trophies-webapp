@@ -1,21 +1,3 @@
-<!-- <div>
-  <label>
-    <input type="radio" [(ngModel)]="mode" value="public">
-    Public
-  </label>
-  <label>
-    <input type="radio" [(ngModel)]="mode" value="all">
-    All
-  </label>
-  <label>
-    <input type="radio" [(ngModel)]="mode" value="mine">
-    Mine
-  </label>
-</div> -->
-
-<div>
-  <a routerLink="../public">Public</a>
-  <a routerLink="../mine">Mine</a>
+<div class="container-sm" style="height: 2000px">
+  <app-clubs-list [mode]="mode$ |async"></app-clubs-list>
 </div>
-
-<app-clubs-list [mode]="mode$ |async"></app-clubs-list>
