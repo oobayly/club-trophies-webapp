@@ -21,7 +21,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
 
   private readonly onlyPublic$ = new BehaviorSubject(true);
 
-  public readonly trophies$: Observable<DbRecord<Trophy>[] | undefined>;
+  public readonly trophies$ = this.getTrophiesObservable();
 
   // ========================
   // Inputs
@@ -43,7 +43,27 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   constructor(
     private db: AngularFirestore,
   ) {
-    this.trophies$ = combineLatest([
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ("clubId" in changes) {
+      this.clubId$.next(this.clubId || undefined);
+    }
+    if ("onlyPublic" in changes) {
+      this.onlyPublic$.next(truthy(this.onlyPublic));
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+  }
+
+  // ========================
+  // Methods
+  // ========================
+
+  private getTrophiesObservable(): Observable<DbRecord<Trophy>[] | undefined> {
+    return combineLatest([
       this.clubId$.pipe(distinctUntilChanged()),
       this.onlyPublic$.pipe(distinctUntilChanged()),
     ]).pipe(
@@ -69,19 +89,6 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
             }),
           );
       }),
-    )
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if ("clubId" in changes) {
-      this.clubId$.next(this.clubId || undefined);
-    }
-    if ("onlyPublic" in changes) {
-      this.onlyPublic$.next(truthy(this.onlyPublic));
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next();
+    );
   }
 }

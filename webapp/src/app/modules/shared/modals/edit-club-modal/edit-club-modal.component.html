@@ -1,0 +1,10 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    <span *ngIf="clubId; else newClubLabel">Edit club</span>
+    <ng-template #newClubLabel>Add new club</ng-template>
+  </h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
+</div>
+<div class="modal-body">
+  <app-club-editor [club]="club" [clubId]="clubId" (cancelled)="dismiss()" (saved)="close($event)"></app-club-editor>
+</div>

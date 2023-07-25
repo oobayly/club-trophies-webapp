@@ -23,9 +23,9 @@
           </a>
           <ng-container *ngIf="user$ | async">
             <div class="dropdown-divider"></div>
-            <a routerLink="/clubs/new" class="dropdown-item" routerLinkActive="active">
-              Create New Club
-            </a>
+            <span class="dropdown-item" role="button" (click)="onAddClubClick()">
+              Add New Club
+            </span>
           </ng-container>
           <ng-container *ngIf="myClubs$ | async as mine">
             <div class="dropdown-divider" *ngIf="mine.length"></div>

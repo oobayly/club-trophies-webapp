@@ -5,6 +5,7 @@ import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, 
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Club, Collections } from "@models";
 import { distinctUid } from "src/app/core/rxjs/auth";
+import { ModalService } from "src/app/core/services/modal.service";
 
 export type ViewMode = "all" | "mine" | "public";
 
@@ -40,6 +41,7 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
   constructor(
     private auth: AngularFireAuth,
     private db: AngularFirestore,
+    private modal: ModalService,
   ) {
     this.clubs$ = this.getClubsObservable();
   }
@@ -52,6 +54,18 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyed$.next();
+  }
+
+  // ========================
+  // Methods
+  // ========================
+
+  // ========================
+  // Event handlers
+  // ========================
+
+  public async onEditClubClick(clubId: string, club: Club): Promise<void> {
+    await this.modal.showEditClub(clubId, club);
   }
 
   private getClubsObservable(): Observable<DbRecord<Club>[]> {

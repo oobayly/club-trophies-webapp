@@ -1,4 +1,4 @@
-import { filter, OperatorFunction } from "rxjs";
+import { OperatorFunction, filter } from "rxjs";
 
 export * from "./auth";
 // export * from "./firestore";

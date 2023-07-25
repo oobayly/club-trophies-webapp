@@ -9,6 +9,8 @@ import { TrophyInfoComponent } from "./components/trophy-info/trophy-info.compon
 import { TrophyEditorComponent } from "./components/trophy-editor/trophy-editor.component";
 import { WinnerEditorComponent } from "./components/winner-editor/winner-editor.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { EditClubModalComponent } from "./modals/edit-club-modal/edit-club-modal.component";
+import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
   declarations: [
@@ -19,12 +21,14 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     TrophyInfoComponent,
     TrophiesListComponent,
     WinnerEditorComponent,
+    EditClubModalComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbModalModule,
   ],
   exports: [
     ClubEditorComponent,

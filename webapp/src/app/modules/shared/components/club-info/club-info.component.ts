@@ -5,6 +5,7 @@ import { Club, Collections, Trophy } from "@models";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { distinctUid } from "src/app/core/rxjs/auth";
+import { ModalService } from "src/app/core/services/modal.service";
 
 @Component({
   selector: "app-club-info",
@@ -45,8 +46,9 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
   // ========================
 
   constructor(
-    private auth: AngularFireAuth,
-    private db: AngularFirestore,
+    private readonly auth: AngularFireAuth,
+    private readonly db: AngularFirestore,
+    private readonly modal2: ModalService,
   ) {
     this.club$ = this.getClubObservable();
     this.canEdit$ = this.getCanEditObservable();
@@ -132,5 +134,10 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
       takeUntil(this.destroyed$),
       shareReplay(),
     );
+  }
+
+  public async editClub(clubId: string, club: Club): Promise<void> {
+    const resp = await this.modal2.showEditClub(clubId, club);
+    console.log(resp);
   }
 }

@@ -5,6 +5,8 @@ import { isAdmin } from "./core/rxjs/auth";
 import { environment } from "src/environments/environment";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Club, Collections } from "@models";
+import { ModalService } from "./core/services/modal.service";
+import { Router } from "@angular/router";
 
 /** Collection of emulated users. */
 const Emails = [
@@ -50,8 +52,10 @@ export class AppComponent implements OnDestroy, OnInit {
   // ========================
 
   constructor(
-    private auth: AngularFireAuth,
-    private db: AngularFirestore,
+    private readonly auth: AngularFireAuth,
+    private readonly db: AngularFirestore,
+    private readonly modal: ModalService,
+    private readonly router: Router,
   ) {
     this.myClubs$ = this.getMyClubsObservable();
   }
@@ -82,16 +86,21 @@ export class AppComponent implements OnDestroy, OnInit {
 
         return this.db.collection<Club>(
           Collections.Clubs,
-          (ref) => ref.where("admins", "array-contains", user.uid).orderBy("modified", "desc"),
+          (ref) => ref.where("admins", "array-contains", user.uid),
         ).snapshotChanges();
       }),
       map((items) => {
-        return items.map((item) => {
-          return {
-            id: item.payload.doc.id,
-            name: item.payload.doc.data().name,
-          };
-        });
+        console.log(items);
+
+        return items
+          .map((item) => {
+            return {
+              id: item.payload.doc.id,
+              name: item.payload.doc.data().name,
+            };
+          })
+          .sort((a, b) => a.name.localeCompare(b.name))
+          ;
       }),
       takeUntil(this.destroyed$),
       shareReplay(),
@@ -101,6 +110,14 @@ export class AppComponent implements OnDestroy, OnInit {
   // ========================
   // Event handlers
   // ========================
+
+  public async onAddClubClick(): Promise<void> {
+    const clubId = await this.modal.showAddClub();
+
+    if (clubId) {
+      await this.router.navigate(["/clubs", clubId]);
+    }
+  }
 
   public async onEmailClick(email: string | undefined): Promise<void> {
     if (email) {

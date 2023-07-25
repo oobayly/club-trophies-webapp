@@ -1,5 +1,8 @@
 <ng-container *ngIf="club$ | async as club">
+  <button (click)="editClub(clubId!, club)">Edit</button>
   <pre>{{club | json}}</pre>
+
+  <!-- <app-club-editor [clubId]="clubId" [club]="club" (cancelled)="" (saved)=""></app-club-editor> -->
 
   <app-trophies-list [clubId]="clubId" [onlyPublic]="(canEdit$ | async) === false"></app-trophies-list>
   <!-- <pre>{{trophies$ | async | json}}</pre> -->

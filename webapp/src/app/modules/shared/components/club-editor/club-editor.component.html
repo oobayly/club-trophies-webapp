@@ -1,1 +1,38 @@
-<p>club-editor works!</p>
+<form class="" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
+  <!-- Club name -->
+  <div class="mb-3">
+    <label class="form-label" for="{{formId}}-name">Club Name</label>
+    <input type="text" class="form-control" id="{{formId}}-name" placeholder="eg: Lough Derg Yacht Club"
+      formControlName="name" required maxlength="64">
+    <div class="invalid-feedback">Please provide a valid club name.</div>
+  </div>
+
+  <div class="row">
+    <!-- Short name -->
+    <div class="col mb-3">
+      <label class="form-label" for="{{formId}}-shortName">Short Name</label>
+      <input type="text" class="form-control" id="{{formId}}-shortName" placeholder="eg: LDYC"
+        formControlName="shortName" maxlength="16">
+    </div>
+
+    <!-- Country -->
+    <div class="col">
+      <label class="form-label" for="{{formId}}-country">Country</label>
+      <select class="form-select" id="{{formId}}-country" formControlName="country" required>
+        <option ngValue="">Select a country</option>
+        <option ngValue="IRL">Ireland</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Public -->
+  <div class="col mb-3 form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="{{formId}}-public" formControlName="public">
+    <label class="form-check-label" for="{{formId}}-public">Make this club viewable for everyone.</label>
+  </div>
+
+  <div class=" text-center">
+    <button type="button" class="btn btn-outline-danger mx-2" (click)="onCancelClick()">Cancel</button>
+    <button type="submit" class="btn btn-primary mx-2">Save</button>
+  </div>
+</form>
