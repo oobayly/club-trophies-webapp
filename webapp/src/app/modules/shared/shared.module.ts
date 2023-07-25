@@ -11,6 +11,8 @@ import { WinnerEditorComponent } from "./components/winner-editor/winner-editor.
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { EditClubModalComponent } from "./modals/edit-club-modal/edit-club-modal.component";
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
+import { DonatedPipe } from "./pipes/donated.pipe";
+import { BoatNamePipe } from "./pipes/boat-name.pipe";
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
     TrophiesListComponent,
     WinnerEditorComponent,
     EditClubModalComponent,
+    DonatedPipe,
+    BoatNamePipe,
   ],
   imports: [
     CommonModule,

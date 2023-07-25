@@ -1,0 +1,31 @@
+.club-card {
+  max-width: 600px;
+
+  .edit-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 1.5em;
+    opacity: 0.5;
+  }
+
+  .logo-container {
+    position: relative;
+
+    .generic-logo {
+      filter: grayscale(1) opacity(0.25);
+    }
+
+    .upload-button {
+      @extend .edit-button;
+    }
+  }
+
+  .body-container {
+    position: relative;
+
+    .edit-button {
+      @extend .edit-button;
+    }
+  }
+}

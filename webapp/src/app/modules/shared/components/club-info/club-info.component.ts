@@ -65,6 +65,10 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
     this.destroyed$.next();
   }
 
+  // ========================
+  // Methods
+  // ========================
+
   private getCanEditObservable(): Observable<boolean> {
     return combineLatest([
       this.auth.user.pipe(distinctUid()),
@@ -136,8 +140,18 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
     );
   }
 
-  public async editClub(clubId: string, club: Club): Promise<void> {
-    const resp = await this.modal2.showEditClub(clubId, club);
-    console.log(resp);
+  // ========================
+  // Event handlers
+  // ========================
+
+  public onUploadClick(): void {
+  }
+
+  public async onEditClick(club: Club): Promise<void> {
+    if (!this.clubId) {
+      return;
+    }
+
+    await this.modal2.showEditClub(this.clubId, club);
   }
 }

@@ -39,9 +39,9 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
   // ========================
 
   constructor(
-    private auth: AngularFireAuth,
-    private db: AngularFirestore,
-    private modal: ModalService,
+    private readonly auth: AngularFireAuth,
+    private readonly db: AngularFirestore,
+    private readonly modal: ModalService,
   ) {
     this.clubs$ = this.getClubsObservable();
   }
@@ -64,8 +64,11 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
   // Event handlers
   // ========================
 
-  public async onEditClubClick(clubId: string, club: Club): Promise<void> {
-    await this.modal.showEditClub(clubId, club);
+  public async onEditClubClick(e: Event, record: DbRecord<Club>): Promise<void> {
+    e.preventDefault();
+    e.stopPropagation();
+
+    await this.modal.showEditClub(record.id, record.data);
   }
 
   private getClubsObservable(): Observable<DbRecord<Club>[]> {

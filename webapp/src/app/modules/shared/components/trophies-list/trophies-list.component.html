@@ -1,7 +1,22 @@
 <ng-container *ngIf="trophies$ | async as trophies">
-  <div *ngFor="let item of trophies">
-    <a [routerLink]="['/clubs', clubId, 'trophies', item.id]">{{item.data.name}}</a>
-  </div>
-</ng-container>
+  <ul class="list-group">
+    <a [routerLink]="['/clubs', clubId, 'trophies', item.id]"
+      class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+      *ngFor="let item of trophies">
 
-<pre>{{trophies$ | async | json}}</pre>
+      <!-- Name -->
+      <div class="me-auto pe-2 flex-fill">
+        <div class="fw-bold">{{item.data.name}}</div>
+        <div>{{item.data.conditions}}</div>
+        <div class="text-muted" *ngIf="item.data | donated as donated">
+          <small>Donated {{donated}}</small>
+        </div>
+        <div class="text-muted" *ngIf="item.data | boatName as boatName">
+          <small>Current Boat: {{boatName}}</small>
+        </div>
+      </div>
+
+    </a>
+  </ul>
+
+</ng-container>

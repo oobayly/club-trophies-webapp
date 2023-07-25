@@ -90,8 +90,6 @@ export class AppComponent implements OnDestroy, OnInit {
         ).snapshotChanges();
       }),
       map((items) => {
-        console.log(items);
-
         return items
           .map((item) => {
             return {

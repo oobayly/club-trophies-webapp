@@ -1,9 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { AuthGuard, authGuardForRole } from "src/app/core/guards/auth.guard";
-import { EditClubComponent } from "./edit-club/edit-club.component";
 import { IndexComponent } from "./index/index.component";
-import { EditTrophyComponent } from "./trophies/edit-trophy/edit-trophy.component";
 import { ViewTrophyComponent } from "./trophies/view-trophy/view-trophy.component";
 import { ViewClubComponent } from "./view-club/view-club.component";
 
@@ -68,21 +66,17 @@ const routes: Routes = [
   //     }
   //   },
   // },
-  { path: "new", component: EditClubComponent, title: "Add new club" },
   {
     path: ":clubId",
     children: [
       { path: "", component: ViewClubComponent },
-      { path: "edit", component: EditClubComponent },
       {
         path: "trophies",
         children: [
-          { path: "new", component: EditTrophyComponent, title: "Add new club" },
           {
             path: ":trophyId",
             children: [
               { path: "", pathMatch: "full", component: ViewTrophyComponent },
-              { path: "edit", component: EditTrophyComponent },
             ],
           },
         ],
@@ -90,7 +84,7 @@ const routes: Routes = [
       {
         path: "boats",
         children: [
-          { path: "new", component: EditTrophyComponent, title: "Add new boat" },
+          // { path: "new", component: EditTrophyComponent, title: "Add new boat" },
         ],
       },
     ],

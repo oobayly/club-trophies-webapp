@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
 import { AngularFirestore, Query, QueryFn } from "@angular/fire/compat/firestore";
-import { Collections, Trophy } from "@models";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, Subject, switchMap } from "rxjs";
+import { BoatReference, Collections, Trophy } from "@models";
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { truthy } from "src/app/core/helpers";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 
@@ -14,6 +14,8 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   // ========================
   // Properties
   // ========================
+
+  public readonly boats$ = new Observable<BoatReference[]>;
 
   public readonly clubId$ = new BehaviorSubject<string | undefined>(undefined);
 
@@ -33,9 +35,6 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   @Input()
   public onlyPublic: boolean | string | null | undefined;
 
-  // @Input()
-  // public trophyId: string | null | undefined;
-
   // ========================
   // Lifecycle
   // ========================
@@ -43,6 +42,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   constructor(
     private db: AngularFirestore,
   ) {
+    this.boats$ = this.getBoatsObservable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -61,6 +61,29 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   // ========================
   // Methods
   // ========================
+
+  private getBoatsObservable(): Observable<BoatReference[]> {
+    return this.trophies$.pipe(
+      map((trophies) => {
+        const list: BoatReference[] = [
+          { boatId: "all", boatName: "All boats" },
+          { boatId: "none", boatName: "No boat" },
+        ];
+
+        return (trophies || [])?.reduce((accum, item) => {
+          if ("boatId" in item.data) {
+            const { boatId, boatName } = item.data as BoatReference;
+
+            if (!accum.some((x) => x.boatId === boatId)) {
+              accum.push({ boatId, boatName });
+            }
+          }
+
+          return accum;
+        }, list);
+      }),
+    );
+  }
 
   private getTrophiesObservable(): Observable<DbRecord<Trophy>[] | undefined> {
     return combineLatest([
@@ -81,7 +104,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
           .collection(Collections.Clubs).doc(clubId)
           .collection<Trophy>(Collections.Trophies, filter)
           .snapshotChanges().pipe(
-            map((x) => toRecord(x)),
+            map((x) => toRecord(x).sort((a, b) => a.data.name.localeCompare(b.data.name))),
             catchError((err) => {
               console.log(err.code);
 
@@ -89,6 +112,8 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
             }),
           );
       }),
+      shareReplay(1),
+      takeUntil(this.destroyed$),
     );
   }
 }
