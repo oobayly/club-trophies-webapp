@@ -3,6 +3,8 @@ import { HasPublic, HasTimestamp, UploadInfo } from "./interfaces";
 
 export type TrophyType = "sailing" | "pavilion";
 
+export type AnyTrophy = Trophy | SailingTrophy | PavilionTrophy;
+
 export interface Trophy<T = TrophyType> extends HasPublic, HasTimestamp {
   /** The conditions for the trophy being awarded. */
   conditions: string;

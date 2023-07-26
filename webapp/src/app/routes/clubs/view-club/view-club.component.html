@@ -1,1 +1,6 @@
-<app-club-info [clubId]="clubId$ | async" (clubChange)="onClubChange($event)"></app-club-info>
+<ng-container *ngIf="clubId$ | async as clubId">
+  <app-club-info [clubId]="clubId" (clubChange)="onClubChange($event)" (canEditChange)="canEdit = $event">
+  </app-club-info>
+
+  <app-trophies-list [clubId]="clubId" [canEdit]="canEdit"></app-trophies-list>
+</ng-container>

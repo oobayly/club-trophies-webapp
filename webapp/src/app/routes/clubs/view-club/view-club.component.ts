@@ -11,6 +11,8 @@ import { AppTitle } from "src/app/app-routing.module";
   styleUrls: ["./view-club.component.scss"],
 })
 export class ViewClubComponent {
+  public canEdit = false;
+
   public readonly clubId$ = this.route.paramMap.pipe(map((x) => x.get("clubId")));
 
   constructor(

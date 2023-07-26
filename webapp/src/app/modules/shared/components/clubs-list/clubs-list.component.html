@@ -1,23 +1,23 @@
 <ng-container *ngIf="clubs$ | async as clubs; else loaderOrError">
   <!-- List of clubs -->
   <ul class="list-group">
-    <a [routerLink]="['/clubs', item.id]"
-      class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-      *ngFor="let item of clubs">
+    <a [routerLink]="['/clubs', item.id]" class="list-group-item list-group-item-action" *ngFor="let item of clubs">
 
-      <!-- Name -->
-      <div class="me-auto pe-2 flex-fill">
-        <div class="fw-bold">{{item.data.name}}</div>
-        <div class="text-muted">
-          {{item.data.shortName}}, {{item.data.country}}
+      <div class="d-flex justify-content-between align-items-center" (click)="onItemClick($event, item)">
+        <!-- Name -->
+        <div class="me-auto pe-2 flex-fill">
+          <div class="fw-bold">{{item.data.name}}</div>
+          <div class="text-muted">
+            {{item.data.shortName}}, {{item.data.country}}
+          </div>
         </div>
-      </div>
 
-      <!-- Buttons -->
-      <div class="btn-group btn-group-sm" *ngIf="mode === 'mine'">
-        <button type="button" class="btn btn-outline-primary" (click)="onEditClubClick($event, item)">
-          Edit <i class=" bi-share-fill"></i>
-        </button>
+        <!-- Buttons -->
+        <div class="btn-group btn-group-sm" *ngIf="mode === 'mine'">
+          <button type="button" class="btn btn-outline-primary" (click)="onEditClubClick($event, item)">
+            <i class=" bi-pencil-fill"></i>
+          </button>
+        </div>
       </div>
     </a>
   </ul>

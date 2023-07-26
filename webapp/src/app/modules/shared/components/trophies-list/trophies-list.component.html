@@ -1,21 +1,41 @@
+<form class="input-group mb-3" [formGroup]="filter" *ngIf="showFilter">
+  <span class="input-group-text">Filter</span>
+  <input type="text" class="form-control" formControlName="name" placeholder="Filter trophy by name">
+
+  <select class="form-select" formControlName="boatId">
+    <option value="all">All boats</option>
+    <option value="none">Pavilion</option>
+    <option [ngValue]="item.boatId" *ngFor="let item of boats$ | async">{{item.boatName}}</option>
+  </select>
+
+  <button type="button" class="btn btn-dark" (click)="onResetFilterClick()">Reset</button>
+</form>
+
 <ng-container *ngIf="trophies$ | async as trophies">
   <ul class="list-group">
-    <a [routerLink]="['/clubs', clubId, 'trophies', item.id]"
-      class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+    <a [routerLink]="['/clubs', clubId, 'trophies', item.id]" class="list-group-item list-group-item-action"
       *ngFor="let item of trophies">
 
-      <!-- Name -->
-      <div class="me-auto pe-2 flex-fill">
-        <div class="fw-bold">{{item.data.name}}</div>
-        <div>{{item.data.conditions}}</div>
-        <div class="text-muted" *ngIf="item.data | donated as donated">
-          <small>Donated {{donated}}</small>
+      <div class=" d-flex justify-content-between align-items-center" (click)="onItemClick($event, item)">
+        <!-- Name -->
+        <div class="me-auto pe-2 flex-fill">
+          <div class="fw-bold">{{item.data.name}}</div>
+          <div>{{item.data.conditions}}</div>
+          <div class="text-muted" *ngIf="item.data | donated as donated">
+            <small>Donated {{donated}}</small>
+          </div>
+          <div class="text-muted" *ngIf="item.data | boatName as boatName">
+            <small>Current Boat: {{boatName}}</small>
+          </div>
         </div>
-        <div class="text-muted" *ngIf="item.data | boatName as boatName">
-          <small>Current Boat: {{boatName}}</small>
+
+        <!-- Buttons -->
+        <div class="btn-group btn-group-sm" *ngIf="canEdit">
+          <button type="button" class="btn btn-outline-primary" (click)="onEditTrophyClick($event, item)">
+            <i class=" bi-pencil-fill"></i>
+          </button>
         </div>
       </div>
-
     </a>
   </ul>
 

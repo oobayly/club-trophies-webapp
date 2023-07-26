@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
-import { AngularFirestore, Query, QueryFn } from "@angular/fire/compat/firestore";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil, tap } from "rxjs";
 import { Club, Collections, Trophy } from "@models";
-import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
+import { DbRecord } from "src/app/core/interfaces/DbRecord";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { distinctUid } from "src/app/core/rxjs/auth";
 import { ModalService } from "src/app/core/services/modal.service";
@@ -25,8 +25,6 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
 
   private readonly destroyed$ = new Subject<void>();
 
-  public readonly trophies$: Observable<DbRecord<Trophy>[] | undefined>;
-
   // ========================
   // Inputs
   // ========================
@@ -37,6 +35,9 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
   // ========================
   // Outputs
   // ========================
+
+  @Output()
+  public readonly canEditChange = new EventEmitter<boolean>();
 
   @Output()
   public readonly clubChange = new EventEmitter<Club | undefined>();
@@ -52,7 +53,6 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
   ) {
     this.club$ = this.getClubObservable();
     this.canEdit$ = this.getCanEditObservable();
-    this.trophies$ = this.getTrophiesObservable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -77,6 +77,9 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
       map(([uid, club]) => {
         return !!uid && !!club && club.admins.includes(uid);
       }),
+      tap((x) => this.canEditChange.next(x)),
+      takeUntil(this.destroyed$),
+      shareReplay(),
     );
   }
 
@@ -105,41 +108,6 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
     );
   }
 
-  private getTrophiesObservable(): Observable<DbRecord<Trophy>[] | undefined> {
-    return combineLatest([
-      this.canEdit$,
-      this.clubId$.pipe(distinctUntilChanged()),
-    ]).pipe(
-      switchMap(([canEdit, clubId]) => {
-        if (!clubId) {
-          return of(undefined);
-        }
-
-        let filter: QueryFn;
-
-        if (canEdit) {
-          filter = (ref): Query => ref;
-        } else {
-          filter = (ref): Query => ref.where("public", "==", true);
-        }
-
-        return this.db
-          .collection(Collections.Clubs).doc(clubId)
-          .collection<Trophy>(Collections.Trophies, filter)
-          .snapshotChanges().pipe(
-            map((x) => toRecord(x)),
-            catchError((err) => {
-              console.log(err);
-
-              return of(undefined);
-            }),
-          );
-      }),
-      takeUntil(this.destroyed$),
-      shareReplay(),
-    );
-  }
-
   // ========================
   // Event handlers
   // ========================
@@ -153,5 +121,9 @@ export class ClubInfoComponent implements OnChanges, OnDestroy {
     }
 
     await this.modal2.showEditClub(this.clubId, club);
+  }
+
+  public onTrophyClick(item: DbRecord<Trophy>): void {
+    console.log(item);
   }
 }
