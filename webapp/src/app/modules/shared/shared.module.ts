@@ -13,6 +13,7 @@ import { EditClubModalComponent } from "./modals/edit-club-modal/edit-club-modal
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { DonatedPipe } from "./pipes/donated.pipe";
 import { BoatNamePipe } from "./pipes/boat-name.pipe";
+import { loadCountries } from "src/app/core/helpers/i18n";
 
 @NgModule({
   declarations: [
@@ -44,4 +45,8 @@ import { BoatNamePipe } from "./pipes/boat-name.pipe";
     WinnerEditorComponent,
   ],
 })
-export class SharedModule { }
+export class SharedModule {
+  constructor() {
+    loadCountries();
+  }
+}

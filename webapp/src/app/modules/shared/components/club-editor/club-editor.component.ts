@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { Club, Collections } from "@models";
+import { getCountries } from "src/app/core/helpers/i18n";
 
 interface ClubFormData {
   country: FormControl<string>;
@@ -22,6 +23,8 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
   // ========================
   // Properties
   // ========================
+
+  public readonly countries = getCountries("en");
 
   public readonly form = this.buildForm();
 

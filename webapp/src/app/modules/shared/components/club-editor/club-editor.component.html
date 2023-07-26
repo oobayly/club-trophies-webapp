@@ -19,8 +19,8 @@
     <div class="col">
       <label class="form-label" for="{{formId}}-country">Country</label>
       <select class="form-select" id="{{formId}}-country" formControlName="country" required>
-        <option ngValue="">Select a country</option>
-        <option ngValue="IRL">Ireland</option>
+        <option value="">Select a country</option>
+        <option *ngFor="let item of countries" [ngValue]="item.iso3">{{item.name}}</option>
       </select>
     </div>
   </div>
