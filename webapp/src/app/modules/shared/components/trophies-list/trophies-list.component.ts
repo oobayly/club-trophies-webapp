@@ -3,8 +3,8 @@ import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { BoatReference, Collections, Trophy } from "@models";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil } from "rxjs";
-import { truthy } from "src/app/core/helpers";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
+import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
 
 interface TrophyFilter {
@@ -26,7 +26,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
 
   public readonly boats$ = new Observable<BoatReference[]>;
 
-  private readonly canEdit$ = new BehaviorSubject(false);
+  private readonly canEdit$ = new BehaviorSubject<boolean | undefined>(undefined);
 
   public readonly clubId$ = new BehaviorSubject<string | undefined>(undefined);
 
@@ -44,7 +44,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   public showFilter: boolean | string | null | undefined = true;
 
   @Input()
-  public canEdit: boolean | string | null | undefined = false;
+  public canEdit?: boolean;
 
   @Input()
   public clubId: string | null | undefined;
@@ -75,7 +75,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
       this.clubId$.next(this.clubId || undefined);
     }
     if ("canEdit" in changes) {
-      this.canEdit$.next(truthy(this.canEdit));
+      this.canEdit$.next(this.canEdit);
     }
   }
 
@@ -117,7 +117,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   private getTrophiesObservable(): Observable<DbRecord<Trophy>[] | undefined> {
     return combineLatest([
       this.clubId$.pipe(distinctUntilChanged()),
-      this.canEdit$.pipe(distinctUntilChanged()),
+      this.canEdit$.pipe(distinctUntilChanged(), filterNotNull()), // Wait until we have an actual bool value for canEdit so we don't fetch multiple times when initialising
     ]).pipe(
       switchMap(([clubId, canEdit]) => {
         if (!clubId) {

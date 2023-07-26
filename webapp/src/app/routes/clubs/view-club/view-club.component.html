@@ -2,5 +2,18 @@
   <app-club-info [clubId]="clubId" (clubChange)="onClubChange($event)" (canEditChange)="canEdit = $event">
   </app-club-info>
 
-  <app-trophies-list [clubId]="clubId" [canEdit]="canEdit"></app-trophies-list>
+  <!-- Hide this so we don't have to refetch the list -->
+  <div [ngClass]="{'d-none': trophyId$ | async}">
+    <app-trophies-list [clubId]="clubId" [canEdit]="canEdit" (trophyClick)="onTrophyClick($event)">
+    </app-trophies-list>
+  </div>
+
+  <ng-container *ngIf="trophyId$ | async as trophyId">
+    <div class="mb-3">
+      <button class="btn btn-outline-primary" (click)="onBackClick()">Back to All Trophies</button>
+    </div>
+
+    <app-trophy-info [clubId]="clubId" [trophyId]="trophyId">
+    </app-trophy-info>
+  </ng-container>
 </ng-container>
