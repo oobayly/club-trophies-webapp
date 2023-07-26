@@ -1,10 +1,11 @@
 import { Injectable, Type } from "@angular/core";
 import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
 import { BaseModalComponent } from "src/app/modules/shared/modals/base-modal.component";
-import { Club } from "@models";
+import { Club, Trophy } from "@models";
 import { EditClubModalComponent } from "src/app/modules/shared/modals/edit-club-modal/edit-club-modal.component";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs";
+import { EditTrophyModalComponent } from "src/app/modules/shared/modals/edit-trophy-modal/edit-trophy-modal.component";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
@@ -58,11 +59,29 @@ export class ModalService {
     return this.showModal(EditClubModalComponent);
   }
 
+  public showAddTrophy(clubId: string): Promise<string | undefined> {
+    return this.showModal(EditTrophyModalComponent, {
+      configure: (component) => {
+        component.clubId = clubId;
+      },
+    });
+  }
+
   public showEditClub(clubId: string, club: Club): Promise<string | undefined> {
     return this.showModal(EditClubModalComponent, {
       configure: (component) => {
         component.club = club;
         component.clubId = clubId;
+      },
+    });
+  }
+
+  public showEditTrophy(clubId: string, trophyId: string, trophy: Trophy): Promise<string | undefined> {
+    return this.showModal(EditTrophyModalComponent, {
+      configure: (component) => {
+        component.clubId = clubId;
+        component.trophy = trophy;
+        component.trophyId = trophyId;
       },
     });
   }

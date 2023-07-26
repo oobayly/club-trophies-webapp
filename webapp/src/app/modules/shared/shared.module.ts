@@ -12,8 +12,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { EditClubModalComponent } from "./modals/edit-club-modal/edit-club-modal.component";
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { DonatedPipe } from "./pipes/donated.pipe";
-import { BoatNamePipe } from "./pipes/boat-name.pipe";
 import { loadCountries } from "src/app/core/helpers/i18n";
+import { EditTrophyModalComponent } from './modals/edit-trophy-modal/edit-trophy-modal.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +26,7 @@ import { loadCountries } from "src/app/core/helpers/i18n";
     WinnerEditorComponent,
     EditClubModalComponent,
     DonatedPipe,
-    BoatNamePipe,
+    EditTrophyModalComponent,
   ],
   imports: [
     CommonModule,

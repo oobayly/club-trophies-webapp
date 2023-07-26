@@ -1,23 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditClubModalComponent } from './edit-club-modal.component';
+import { EditClubModalComponent } from "./edit-club-modal.component";
 
-describe('EditClubModalComponent', () => {
+describe("EditClubModalComponent", () => {
   let component: EditClubModalComponent;
   let fixture: ComponentFixture<EditClubModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EditClubModalComponent ]
+      declarations: [EditClubModalComponent],
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(EditClubModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

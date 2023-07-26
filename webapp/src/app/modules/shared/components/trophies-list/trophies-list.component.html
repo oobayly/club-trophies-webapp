@@ -20,11 +20,11 @@
         <!-- Name -->
         <div class="me-auto pe-2 flex-fill">
           <div class="fw-bold">{{item.data.name}}</div>
-          <div>{{item.data.conditions}}</div>
+          <div class="text-pre-wrap">{{item.data.conditions}}</div>
           <div class="text-muted" *ngIf="item.data | donated as donated">
             <small>Donated {{donated}}</small>
           </div>
-          <div class="text-muted" *ngIf="item.data | boatName as boatName">
+          <div class="text-muted" *ngIf="item.data.boatName as boatName">
             <small>Current Boat: {{boatName}}</small>
           </div>
         </div>

@@ -64,9 +64,6 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ("clubId" in changes) {
-    }
-
     if ("club" in changes) {
       this.form.patchValue(this.club || {}, {
         emitEvent: false,

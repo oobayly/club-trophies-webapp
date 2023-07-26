@@ -9,7 +9,7 @@ import { Club } from "@models";
   styleUrls: ["./edit-club-modal.component.scss"],
 })
 export class EditClubModalComponent extends BaseModalComponent<string> {
-  public clubId: string | undefined;
+  public clubId?: string;
 
   public club?: Club
 

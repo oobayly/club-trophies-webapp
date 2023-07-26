@@ -1,0 +1,12 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    <span *ngIf="trophyId; else newClubLabel">Edit trophy</span>
+    <ng-template #newClubLabel>Add new trophy</ng-template>
+  </h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
+</div>
+<div class="modal-body">
+  <app-trophy-editor [clubId]="clubId" [trophyId]="trophyId" [trophy]="trophy" (cancelled)="dismiss()"
+    (saved)="close($event)">
+  </app-trophy-editor>
+</div>

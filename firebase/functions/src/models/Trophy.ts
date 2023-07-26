@@ -1,11 +1,7 @@
 import { BoatReference } from "./Boat";
 import { HasPublic, HasTimestamp, UploadInfo } from "./interfaces";
 
-export type TrophyType = "sailing" | "pavilion";
-
-export type AnyTrophy = Trophy | SailingTrophy | PavilionTrophy;
-
-export interface Trophy<T = TrophyType> extends HasPublic, HasTimestamp {
+export interface Trophy extends HasPublic, HasTimestamp, BoatReference {
   /** The conditions for the trophy being awarded. */
   conditions: string;
   /** The details of the trophy. */
@@ -18,16 +14,6 @@ export interface Trophy<T = TrophyType> extends HasPublic, HasTimestamp {
   name: string;
   /** The page number in the historic book. */
   page: string;
-  /** The type of trophy. */
-  type: T;
-}
-
-export interface SailingTrophy extends BoatReference, Trophy<"sailing"> {
-  type: "sailing";
-}
-
-export interface PavilionTrophy extends Trophy<"pavilion"> {
-  type: "pavilion";
 }
 
 export interface TrophyFile extends HasTimestamp {

@@ -13,3 +13,7 @@
 .ng-submitted {
   @extend .was-validated;
 }
+
+.text-pre-wrap {
+  white-space: pre-wrap;
+}

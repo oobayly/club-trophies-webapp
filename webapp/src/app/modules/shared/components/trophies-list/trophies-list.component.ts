@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { AnyTrophy, BoatReference, Collections, Trophy } from "@models";
+import { BoatReference, Collections, Trophy } from "@models";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil } from "rxjs";
 import { truthy } from "src/app/core/helpers";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
+import { ModalService } from "src/app/core/services/modal.service";
 
 interface TrophyFilter {
   name: FormControl<string>;
@@ -21,7 +22,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   // Properties
   // ========================
 
-  private readonly allTrophies$: Observable<DbRecord<AnyTrophy>[] | undefined>;
+  private readonly allTrophies$: Observable<DbRecord<Trophy>[] | undefined>;
 
   public readonly boats$ = new Observable<BoatReference[]>;
 
@@ -33,7 +34,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
 
   public readonly filter = this.buildFilterForm();
 
-  public readonly trophies$: Observable<DbRecord<AnyTrophy>[]>;
+  public readonly trophies$: Observable<DbRecord<Trophy>[]>;
 
   // ========================
   // Inputs
@@ -62,6 +63,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   constructor(
     private readonly db: AngularFirestore,
     private readonly formBuilder: FormBuilder,
+    private readonly modal: ModalService,
   ) {
     this.allTrophies$ = this.getTrophiesObservable();
     this.trophies$ = this.getFilteredTrophiesObservable();
@@ -112,7 +114,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
     );
   }
 
-  private getTrophiesObservable(): Observable<DbRecord<AnyTrophy>[] | undefined> {
+  private getTrophiesObservable(): Observable<DbRecord<Trophy>[] | undefined> {
     return combineLatest([
       this.clubId$.pipe(distinctUntilChanged()),
       this.canEdit$.pipe(distinctUntilChanged()),
@@ -146,7 +148,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
     );
   }
 
-  private getFilteredTrophiesObservable(): Observable<DbRecord<AnyTrophy>[]> {
+  private getFilteredTrophiesObservable(): Observable<DbRecord<Trophy>[]> {
     return combineLatest([
       this.filter.valueChanges.pipe(startWith(undefined)),
       this.allTrophies$,
@@ -163,10 +165,10 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
           // Do nothing
         } else if (boatId === "none") {
           // Without boat
-          trophies = trophies.filter((x) => !("boatId" in x.data));
+          trophies = trophies.filter((x) => !x.data.boatId);
         } else {
           // Match boat
-          trophies = trophies.filter((x) => "boatId" in x.data && x.data.boatId === boatId);
+          trophies = trophies.filter((x) => x.data.boatId === boatId);
         }
 
         if (name) {
@@ -185,10 +187,15 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   // Event handlers
   // ========================
 
-  public onEditTrophyClick(e: Event, item: DbRecord<Trophy>): void {
+  public async onEditTrophyClick(e: Event, item: DbRecord<Trophy>): Promise<void> {
     e.stopImmediatePropagation();
     e.preventDefault();
 
+    if (!this.clubId) {
+      return;
+    }
+
+    await this.modal.showEditTrophy(this.clubId, item.id, item.data);
   }
 
   public onItemClick(e: Event, item: DbRecord<Trophy>): void {
