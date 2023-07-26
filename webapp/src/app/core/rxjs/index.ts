@@ -3,6 +3,6 @@ import { OperatorFunction, filter } from "rxjs";
 export * from "./auth";
 // export * from "./firestore";
 
-export const filterNotNull = <T>(): OperatorFunction<T, NonNullable<T>> => {
-  return filter((value: T): value is NonNullable<T> => !!value);
+export const filterNotNull = <T>(): OperatorFunction<T, Exclude<T, null | undefined>> => {
+  return filter((value: T): value is Exclude<T, null | undefined> => value != null);
 }
