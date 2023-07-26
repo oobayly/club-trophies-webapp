@@ -1,10 +1,17 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { v4 as uuid } from "uuid";
 import { Club, Collections } from "@models";
+
+interface ClubFormData {
+  country: FormControl<string>;
+  public: FormControl<boolean>;
+  name: FormControl<string>;
+  shortName: FormControl<string>;
+}
 
 @Component({
   selector: "app-club-editor",
@@ -75,12 +82,12 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
   // Methods
   // ========================
 
-  private buildForm(): FormGroup {
-    return this.formBuilder.group({
-      country: ["", []],
-      public: [false, []],
-      name: ["", []],
-      shortName: ["", []],
+  private buildForm(): FormGroup<ClubFormData> {
+    return this.formBuilder.group<ClubFormData>({
+      country: this.formBuilder.control<string>("", { nonNullable: true }),
+      public: this.formBuilder.control<boolean>(false, { nonNullable: true }),
+      name: this.formBuilder.control<string>("", { nonNullable: true }),
+      shortName: this.formBuilder.control<string>("", { nonNullable: true }),
     }, {
       updateOn: "change",
     });
@@ -89,7 +96,7 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
   private async saveClub(): Promise<string> {
     const isNew = !this.clubId;
     const doc = this.db.collection(Collections.Clubs).doc<Club>(this.clubId || undefined);
-    const club = this.form.value as Club;
+    const club = this.form.getRawValue();
 
     if (isNew) {
       const uid = (await this.auth.currentUser)!.uid;
