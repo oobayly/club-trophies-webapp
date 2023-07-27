@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "emulator:run:windows": "$Env:GOOGLE_APPLICATION_CREDENTIALS='../serviceAccountKey.json' && firebase emulators:start --import db",
-    "emulator:run:linux": "export GOOGLE_APPLICATION_CREDENTIALS=../serviceAccountKey.json && firebase emulators:start --import db",
+    "emulator:run": "firebase emulators:start --import db",
     "emulator:export": "firebase emulators:export --force db"
   }
 }
