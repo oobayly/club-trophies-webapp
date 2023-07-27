@@ -1,5 +1,5 @@
 <form class="input-group mb-3" [formGroup]="filter" *ngIf="showFilter">
-  <span class="input-group-text">Filter</span>
+  <span class="input-group-text d-none d-lg-inline">Filter</span>
   <input type="text" class="form-control" formControlName="name" placeholder="Filter trophy by name">
 
   <select class="form-select" formControlName="boatId">
@@ -8,7 +8,10 @@
     <option [ngValue]="item.boatId" *ngFor="let item of boats$ | async">{{item.boatName}}</option>
   </select>
 
-  <button type="button" class="btn btn-dark" (click)="onResetFilterClick()">Reset</button>
+  <button type="button" class="btn btn-dark" (click)="onResetFilterClick()">
+    <span class="d-none d-lg-inline">Reset</span>
+    <i class="bi-x-circle d-lg-none"></i>
+  </button>
 </form>
 
 <ng-container *ngIf="trophies$ | async as trophies">
@@ -20,7 +23,7 @@
         <!-- Name -->
         <div class="me-auto pe-2 flex-fill">
           <div class="fw-bold">{{item.data.name}}</div>
-          <div class="text-pre-wrap">{{item.data.conditions}}</div>
+          <div class="text-pre-wrap trophy-conditions">{{item.data.conditions}}</div>
           <div class="text-muted" *ngIf="item.data | donated as donated">
             <small>Donated {{donated}}</small>
           </div>

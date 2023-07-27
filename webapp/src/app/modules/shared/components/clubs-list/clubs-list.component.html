@@ -13,7 +13,7 @@
         </div>
 
         <!-- Buttons -->
-        <div class="btn-group btn-group-sm" *ngIf="mode === 'mine'">
+        <div class="btn-group btn-group-sm" *ngIf="item.canEdit">
           <button type="button" class="btn btn-outline-primary" (click)="onEditClubClick($event, item)">
             <i class=" bi-pencil-fill"></i>
           </button>

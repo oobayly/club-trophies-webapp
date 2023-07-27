@@ -6,6 +6,21 @@ export interface DbRecord<T = unknown> {
   data: T;
 }
 
+export interface CanEditDbRecord<T = unknown> extends DbRecord<T> {
+  canEdit: boolean;
+}
+
+function toCanEditRecord<TRecord extends { admins: string[] }>(
+  values: DbRecord<TRecord>[], uid: string | null | undefined,
+): CanEditDbRecord<TRecord>[] {
+  return values.map((item) => {
+    return {
+      ...item,
+      canEdit: !!uid && item.data.admins.includes(uid),
+    };
+  });
+}
+
 function toRecord<T = unknown>(value: firebase.default.firestore.DocumentSnapshot<T> | Action<DocumentSnapshot<T>>): DbRecord<T | undefined>;
 function toRecord<T = unknown>(value: DocumentChangeAction<T>[] | QueryDocumentSnapshot<T>[] | firebase.default.firestore.QuerySnapshot<T>): DbRecord<T>[];
 function toRecord<T = unknown>(
@@ -47,5 +62,6 @@ function toRecord<T = unknown>(
 }
 
 export {
+  toCanEditRecord,
   toRecord,
 }
