@@ -1,11 +1,14 @@
 import * as admin from "firebase-admin";
 import { onBoatNameChange, onLogoCreate, onClubAdminWrite, onTrophyFileWrite } from "./firestore";
-// import { api } from "./https";
+import { api } from "./https";
 import { onStorageItemDelete, onStorageItemFinalize } from "./storage";
+import { IsEmulated } from "./helpers";
 
 admin.initializeApp();
 
-// exports.api = api;
+if (IsEmulated) {
+  exports.api = api;
+}
 
 exports.onBoatNameChange = onBoatNameChange;
 exports.onClubAdminWrite = onClubAdminWrite;

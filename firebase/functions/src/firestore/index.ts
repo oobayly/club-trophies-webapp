@@ -3,6 +3,7 @@ import * as admin from "firebase-admin";
 import * as path from "path";
 import { Boat, BoatReference, Club, ClubAdmin, ClubLogoRequest, Collections, TrophyFile, UploadInfo } from "../models";
 import { AdminPath, BoatPath, LogoPath, TrophyFilePath } from "./paths";
+import { IsEmulated } from "../helpers";
 
 const updateBoatName = (batch: admin.firestore.WriteBatch, boatName: string, docs: admin.firestore.QuerySnapshot<admin.firestore.DocumentData>): number => {
   let changes = 0;
@@ -67,15 +68,24 @@ export const onLogoCreate = functions.firestore.document(LogoPath).onCreate(asyn
   const headers = {
     "x-goog-meta-id": logoId,
   };
-  const uploadUrl = await file.getSignedUrl({
-    action: "write",
-    expires: new Date().getTime() + 3600000,
-    extensionHeaders: headers,
-    contentType: "image/png",
-  });
+  let uploadUrl: string;
+
+  if (IsEmulated) {
+    // Until the emulator supports url signing...
+    uploadUrl = `http://127.0.0.1:5001/club-trophies/europe-west2/api/v1/emulated/${file.name}`;
+  } else {
+    const signed = await file.getSignedUrl({
+      action: "write",
+      expires: new Date().getTime() + 3600000,
+      extensionHeaders: headers,
+      contentType: "image/png",
+    });
+
+    uploadUrl = signed[0];
+  }
 
   await snapshot.ref.update({
-    url: uploadUrl[0],
+    url: uploadUrl,
     headers,
     modified: new Date().getTime(),
   } as Partial<ClubLogoRequest>);
@@ -117,13 +127,23 @@ export const onTrophyFileWrite = functions.firestore.document(TrophyFilePath).on
     const { contentType, name } = snapshot.data() as TrophyFile;
     const extension = path.extname(name);
     const file = admin.storage().bucket().file(`${snapshot.ref.path}${extension}`);
-    const uploadUrl = await file.getSignedUrl({
-      action: "write",
-      expires: new Date().getTime() + 3600000,
-      contentType,
-    });
+    let uploadUrl: string;
+
+    if (IsEmulated) {
+      // Until the emulator supports url signing...
+      uploadUrl = `http://127.0.0.1:5001/club-trophies/europe-west2/api/v1/emulated/${file.name}`;
+    } else {
+      const signed = await file.getSignedUrl({
+        action: "write",
+        expires: new Date().getTime() + 3600000,
+        contentType,
+      });
+
+      uploadUrl = signed[0];
+    }
+
     const uploadInfo: UploadInfo = {
-      url: uploadUrl[0],
+      url: uploadUrl,
       headers: {
         "Content-Type": contentType,
       },
