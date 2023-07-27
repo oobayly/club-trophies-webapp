@@ -114,16 +114,19 @@ export const onTrophyFileWrite = functions.firestore.document(TrophyFilePath).on
   if (!change.before.exists) {
     // Creating
     const snapshot = change.after;
-    const { name } = snapshot.data() as TrophyFile;
+    const { contentType, name } = snapshot.data() as TrophyFile;
     const extension = path.extname(name);
     const file = admin.storage().bucket().file(`${snapshot.ref.path}${extension}`);
     const uploadUrl = await file.getSignedUrl({
       action: "write",
       expires: new Date().getTime() + 3600000,
+      contentType,
     });
     const uploadInfo: UploadInfo = {
       url: uploadUrl[0],
-      headers: {},
+      headers: {
+        "Content-Type": contentType,
+      },
     };
 
     await snapshot.ref.update({ uploadInfo });

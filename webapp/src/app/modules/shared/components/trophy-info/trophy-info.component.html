@@ -1,7 +1,10 @@
 <ng-container *ngIf="trophy$ | async as trophy">
   <app-tab-container [(tabIndex)]="tabIndex">
     <!-- Winners -->
-    <app-tab-page name="Winners">
+    <app-tab-page name="Winners ({{winners}})">
+      <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [canEdit]="canEdit$ | async"
+        (countChange)="winners = $event">
+      </app-winners-list>
     </app-tab-page>
 
     <!-- Info-->
@@ -10,7 +13,10 @@
     </app-tab-page>
 
     <!-- Photos -->
-    <app-tab-page name="Photos">
+    <app-tab-page name="Photos ({{files}})">
+      <app-files-list [clubId]="clubId" [trophyId]="trophyId" [canEdit]="canEdit$ | async"
+        (countChange)="files = $event">
+      </app-files-list>
     </app-tab-page>
   </app-tab-container>
 </ng-container>

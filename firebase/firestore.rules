@@ -44,9 +44,11 @@ service cloud.firestore {
       // Club admins can edit their club
       allow read, write: if request.auth != null
       	&& request.auth.uid in resource.data.admins;
+
+      // Any sub documents can be read, created, updated but not deleted
       match /{document=**} {
-      	allow read, write: if resource != null
-        	&& isClubAdmin(clubId);
+        allow delete: if flase;
+      	allow read, write: if isClubAdmin(clubId);
       }
       
       match /admins/{id} {

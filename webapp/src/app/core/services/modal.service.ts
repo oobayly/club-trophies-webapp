@@ -1,11 +1,13 @@
 import { Injectable, Type } from "@angular/core";
 import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
 import { BaseModalComponent } from "src/app/modules/shared/modals/base-modal.component";
-import { Club, Trophy } from "@models";
+import { Club, Trophy, TrophyFile } from "@models";
 import { EditClubModalComponent } from "src/app/modules/shared/modals/edit-club-modal/edit-club-modal.component";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs";
 import { EditTrophyModalComponent } from "src/app/modules/shared/modals/edit-trophy-modal/edit-trophy-modal.component";
+import { LightboxModalComponent } from "src/app/modules/shared/modals/lightbox-modal/lightbox-modal.component";
+import { DbRecord } from "../interfaces/DbRecord";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
@@ -82,6 +84,26 @@ export class ModalService {
         component.clubId = clubId;
         component.trophy = trophy;
         component.trophyId = trophyId;
+      },
+    });
+  }
+
+  public async showLightbox(photos: DbRecord<TrophyFile>[], selectedId: string | undefined = ""): Promise<void> {
+    const found = photos.find((x) => x.id === selectedId);
+
+    selectedId = found?.id || photos[0].id;
+
+    if (!selectedId) {
+      return;
+    }
+
+    return await this.showModal(LightboxModalComponent, {
+      options: {
+        fullscreen: true,
+      },
+      configure: (component) => {
+        component.photos = photos;
+        component.selectedId = selectedId;
       },
     });
   }

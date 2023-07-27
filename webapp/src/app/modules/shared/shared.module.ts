@@ -10,12 +10,15 @@ import { TrophyEditorComponent } from "./components/trophy-editor/trophy-editor.
 import { WinnerEditorComponent } from "./components/winner-editor/winner-editor.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { EditClubModalComponent } from "./modals/edit-club-modal/edit-club-modal.component";
-import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbCarouselModule, NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { DonatedPipe } from "./pipes/donated.pipe";
 import { loadCountries } from "src/app/core/helpers/i18n";
 import { EditTrophyModalComponent } from "./modals/edit-trophy-modal/edit-trophy-modal.component";
 import { TabContainerComponent } from "./components/tab-container/tab-container.component";
 import { TabPageComponent } from "./components/tab-container/tab-page/tab-page.component";
+import { WinnersListComponent } from "./components/winners-list/winners-list.component";
+import { FilesListComponent } from "./components/files-list/files-list.component";
+import { LightboxModalComponent } from "./modals/lightbox-modal/lightbox-modal.component";
 
 @NgModule({
   declarations: [
@@ -31,12 +34,16 @@ import { TabPageComponent } from "./components/tab-container/tab-page/tab-page.c
     EditTrophyModalComponent,
     TabContainerComponent,
     TabPageComponent,
+    WinnersListComponent,
+    FilesListComponent,
+    LightboxModalComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbCarouselModule,
     NgbModalModule,
   ],
   exports: [

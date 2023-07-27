@@ -1,5 +1,5 @@
 <ng-container *ngIf="trophy?.name as trophyName">
-  <nav class="mb-3" aria-label="breadcrumb" *ngIf="clubName$ | async as clubName">
+  <nav class="mb-3" aria-label="breadcrumb" *ngIf="club?.name as clubName">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <a routerLink="../../">{{clubName}}</a>
@@ -13,5 +13,5 @@
 </ng-container>
 
 <app-trophy-info [clubId]="clubId$ | async" [trophyId]="trophyId$| async" [tab]="tab$ | async"
-  (trophyChange)="onTrophyChange($event)">
+  (clubChange)="onClubChange($event)" (trophyChange)="onTrophyChange($event)">
 </app-trophy-info>

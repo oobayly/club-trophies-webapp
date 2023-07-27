@@ -1,11 +1,13 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { BoatReference, Collections, Trophy } from "@models";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, startWith, Subject, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, startWith, switchMap, takeUntil } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
+import { ClubBaseComponent } from "../club-base-component";
+import { AngularFireAuth } from "@angular/fire/compat/auth";
 
 interface TrophyFilter {
   name: FormControl<string>;
@@ -17,7 +19,7 @@ interface TrophyFilter {
   templateUrl: "./trophies-list.component.html",
   styleUrls: ["./trophies-list.component.scss"],
 })
-export class TrophiesListComponent implements OnChanges, OnDestroy {
+export class TrophiesListComponent extends ClubBaseComponent implements OnChanges {
   // ========================
   // Properties
   // ========================
@@ -26,11 +28,7 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
 
   public readonly boats$ = new Observable<BoatReference[]>;
 
-  private readonly canEdit$ = new BehaviorSubject<boolean | undefined>(undefined);
-
-  public readonly clubId$ = new BehaviorSubject<string | undefined>(undefined);
-
-  private readonly destroyed$ = new Subject<void>();
+  public readonly canEdit$ = new BehaviorSubject<boolean | undefined>(undefined);
 
   public readonly filter = this.buildFilterForm();
 
@@ -46,9 +44,6 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   @Input()
   public canEdit?: boolean;
 
-  @Input()
-  public clubId: string | null | undefined;
-
   // ========================
   // Outputs
   // ========================
@@ -61,26 +56,22 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
   // ========================
 
   constructor(
-    private readonly db: AngularFirestore,
+    auth: AngularFireAuth,
+    db: AngularFirestore,
     private readonly formBuilder: FormBuilder,
     private readonly modal: ModalService,
   ) {
+    super(auth, db);
+
     this.allTrophies$ = this.getTrophiesObservable();
     this.trophies$ = this.getFilteredTrophiesObservable();
     this.boats$ = this.getBoatsObservable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ("clubId" in changes) {
-      this.clubId$.next(this.clubId || undefined);
-    }
     if ("canEdit" in changes) {
       this.canEdit$.next(this.canEdit);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next();
   }
 
   // ========================
@@ -143,8 +134,8 @@ export class TrophiesListComponent implements OnChanges, OnDestroy {
           }),
         );
       }),
-      shareReplay(1),
       takeUntil(this.destroyed$),
+      shareReplay(),
     );
   }
 

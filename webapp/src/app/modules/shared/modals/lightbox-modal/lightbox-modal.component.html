@@ -1,0 +1,18 @@
+<div class="modal-body p-0">
+  <button class="btn btn-close p-3" (click)="dismiss()"></button>
+
+  <ngb-carousel ngbAutofocus #carousel [interval]="0" [activeId]="selectedId" *ngIf="photos" class="">
+
+    <ng-template ngbSlide [id]="item.id" *ngFor="let item of photos">
+      <div class="img-wrapper">
+        <img class="img-background" [src]="item.data.url" />
+        <img [src]="item.data.url" alt="" />
+      </div>
+      <div class="carousel-caption">
+        <h3>{{item.data.description}}</h3>
+        <!-- <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p> -->
+      </div>
+    </ng-template>
+
+  </ngb-carousel>
+</div>
