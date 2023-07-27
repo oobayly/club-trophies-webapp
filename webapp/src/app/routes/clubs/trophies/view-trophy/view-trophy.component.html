@@ -1,1 +1,17 @@
-<app-trophy-info [clubId]="clubId" [trophyId]="trophyId"></app-trophy-info>
+<ng-container *ngIf="trophy?.name as trophyName">
+  <nav class="mb-3" aria-label="breadcrumb" *ngIf="clubName$ | async as clubName">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a routerLink="../../">{{clubName}}</a>
+      </li>
+      <li class="breadcrumb-item">Trophies</li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {{trophyName}}
+      </li>
+    </ol>
+  </nav>
+</ng-container>
+
+<app-trophy-info [clubId]="clubId$ | async" [trophyId]="trophyId$| async" [tab]="tab$ | async"
+  (trophyChange)="onTrophyChange($event)">
+</app-trophy-info>

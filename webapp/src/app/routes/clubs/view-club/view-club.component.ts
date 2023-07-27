@@ -28,7 +28,7 @@ export class ViewClubComponent {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private router: Router,
+    private readonly router: Router,
     private readonly title: Title,
   ) { }
 

@@ -1,3 +1,16 @@
-<pre>
-  {{trophy$ | async | json}}
-</pre>
+<ng-container *ngIf="trophy$ | async as trophy">
+  <app-tab-container [(tabIndex)]="tabIndex">
+    <!-- Winners -->
+    <app-tab-page name="Winners">
+    </app-tab-page>
+
+    <!-- Info-->
+    <app-tab-page name="Info">
+      <pre>{{trophy | json}}</pre>
+    </app-tab-page>
+
+    <!-- Photos -->
+    <app-tab-page name="Photos">
+    </app-tab-page>
+  </app-tab-container>
+</ng-container>
