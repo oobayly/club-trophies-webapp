@@ -1,6 +1,8 @@
 <ng-container *ngIf="clubId$ | async as clubId">
-  <app-club-info [clubId]="clubId" (clubChange)="onClubChange($event)" (canEditChange)="canEdit = $event">
-  </app-club-info>
+  <div class="d-flex justify-content-center">
+    <app-club-info [clubId]="clubId" (clubChange)="onClubChange($event)" (canEditChange)="canEdit = $event">
+    </app-club-info>
+  </div>
 
   <!-- Hide this so we don't have to refetch the list -->
   <div [ngClass]="{'d-none': trophyId$ | async}">

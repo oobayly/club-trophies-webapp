@@ -1,20 +1,38 @@
-.file-upload {
-  position: relative;
-  display: inline-block;
+.file-container {
+  border: 3px solid transparent;
 
-  input {
-    position: absolute;
-    display: none;
+  &.dragging {
+    border-radius: 10px;
+    border: 3px solid blue;
+    border-style: dashed;
   }
-}
 
-.card {
-  width: 302px;
+  .file-upload {
+    position: relative;
+    display: inline-block;
 
-  .card-img-top {
-    background-color: var(--bs-gray-400);
-    width: 300px;
-    height: 300px;
-    object-fit: contain;
+    input {
+      position: absolute;
+      display: none;
+    }
+  }
+
+  .card {
+    width: 302px;
+
+    .card-img-top {
+      background-color: var(--bs-gray-400);
+      width: 300px;
+      height: 300px;
+      object-fit: contain;
+    }
+  }
+
+  .no-files {
+    color: var(--bs-blue);
+
+    i {
+      font-size: 6ex;
+    }
   }
 }

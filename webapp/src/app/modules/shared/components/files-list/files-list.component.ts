@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { TrophyBaseComponent } from "../trophy-base-component";
 import { BehaviorSubject, Observable, first, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
@@ -39,6 +39,12 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
 
   @Output()
   public readonly countChange = new EventEmitter<number>();
+
+  @ViewChild("fileDrop")
+  private readonly fileDrop?: ElementRef<HTMLElement>;
+
+  @ViewChild("fileUpload")
+  private readonly fileUpload?: ElementRef<HTMLElement>;
 
   // ========================
   // Lifecycle
@@ -84,40 +90,6 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
     );
   }
 
-  // ========================
-  // Event handlers
-  // ========================
-
-  public async onDeleteFileClick(item: DbRecord<TrophyFile>): Promise<void> {
-    const ref = (await firstValueFrom(this.getTrophyRefObservalble()))?.collection<TrophyFile>(Collections.Files).doc(item.id);
-
-    if (!confirm("Are you sure you want to delete this file?")) {
-      return;
-    }
-
-    await ref?.delete();
-  }
-
-  public async onEditFileClick(_item: DbRecord<TrophyFile>): Promise<void> {
-    // TODO: Add edit file modal
-  }
-
-  public async onFileChange(e: Event): Promise<void> {
-    const files = (e.target as HTMLInputElement)?.files;
-
-    if (!files) {
-      return;
-    }
-
-    await this.uploadFiles(files);
-  }
-
-  public async onFileClick(item: DbRecord<TrophyFile>): Promise<void> {
-    const photos = (await firstValueFrom(this.photos$));
-
-    await this.modal.showLightbox(photos, item.id);
-  }
-
   private async uploadFiles(files: File[] | FileList): Promise<void> {
     if (!Array.isArray(files)) {
       files = Array.from(files);
@@ -129,13 +101,13 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
 
     const colRef = (await firstValueFrom(this.getTrophyRefObservalble()))?.collection<TrophyFile>(Collections.Files);
 
-    console.log(colRef);
-
     if (!colRef) {
       return;
     }
 
-    await this.uploadFile(colRef, files[0]);
+    for (let i = 0; i < files.length; i++) {
+      await this.uploadFile(colRef, files[i]);
+    }
   }
 
   private async uploadFile(colRef: AngularFirestoreCollection<TrophyFile>, file: File): Promise<string> {
@@ -171,5 +143,88 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
     }
 
     return docRef.ref.id;
+  }
+
+  // ========================
+  // Event handlers
+  // ========================
+
+  public async onDeleteFileClick(item: DbRecord<TrophyFile>): Promise<void> {
+    const ref = (await firstValueFrom(this.getTrophyRefObservalble()))?.collection<TrophyFile>(Collections.Files).doc(item.id);
+
+    if (!confirm("Are you sure you want to delete this file?")) {
+      return;
+    }
+
+    await ref?.delete();
+  }
+
+  public onDragEnter(e: DragEvent): void {
+    if (!this.canEdit) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.fileDrop?.nativeElement.classList.add("dragging");
+  }
+
+  public onDragLeave(e: DragEvent): void {
+    if (!this.canEdit) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.fileDrop?.nativeElement.classList.remove("dragging");
+  }
+
+  public async onDrop(e: DragEvent): Promise<void> {
+    if (!this.canEdit) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.fileDrop?.nativeElement.classList.remove("dragging");
+
+    const allowedTypes = /^image\/(jpeg|png|gif)/;
+    const files = Array
+      .from(e.dataTransfer?.files || [])
+      .filter((f) => allowedTypes.test(f.type))
+      ;
+
+    if (!files.length) {
+      return;
+    }
+
+    await this.uploadFiles(files);
+  }
+
+  public async onEditFileClick(_item: DbRecord<TrophyFile>): Promise<void> {
+    // TODO: Add edit file modal
+  }
+
+  public async onFileChange(e: Event): Promise<void> {
+    const files = (e.target as HTMLInputElement)?.files;
+
+    if (!files) {
+      return;
+    }
+
+    await this.uploadFiles(files);
+  }
+
+  public async onFileClick(item: DbRecord<TrophyFile>): Promise<void> {
+    const photos = (await firstValueFrom(this.photos$));
+
+    await this.modal.showLightbox(photos, item.id);
+  }
+
+  public triggerUpload(_e: Event): void {
+    this.fileUpload?.nativeElement.click();
   }
 }

@@ -1,43 +1,57 @@
-<div class="mb-3" *ngIf="canEdit">
-  <div>
-    <label class="form-label">You can upload photos by using the button, or dragging them onto the page below</label>
-  </div>
+<div #fileDrop class="p-3 file-container" *ngIf="photos$ | async as photos" (dragenter)="onDragEnter($event)"
+  (dragover)="onDragEnter($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
 
-  <div class="file-upload">
-    <label for="formFile" class="btn btn-primary">
-      <i class="bi-camera-fill pe-2"></i>Upload Photos
-    </label>
+  <div class="mb-3" *ngIf="canEdit">
+    <div>
+      <label class="form-label">You can upload photos by using the button, or dragging them onto the page below</label>
+    </div>
 
-    <input class="form-control" type="file" id="formFile" accept="image/png, image/jpeg, image/gif"
-      (change)="onFileChange($event)">
-  </div>
-</div>
+    <div class="file-upload">
+      <label for="file-list-upload" class="btn btn-primary">
+        <i class="bi-camera pe-2"></i>Upload Photos
+      </label>
 
-<div class="row g-4 justify-content-center">
-
-  <div class="col-auto" *ngFor="let item of photos$ | async">
-    <div class="card h-100">
-      <img [src]="item.data.thumb || item.data.url" class="card-img-top" role="button" (click)="onFileClick(item)">
-
-      <div class="card-body d-flex flex-column justify-content-between">
-        <h5 class="card-title">
-          {{item.data.description}}
-        </h5>
-      </div>
-
-      <div class="card-footer d-flex flex-row justify-content-between align-items-center" *ngIf="canEdit">
-        <small class="text-muted">Created: {{item.data.modified || item.data.created | date}}</small>
-
-        <div class="">
-          <button class="btn btn-outline-primary btn-sm me-3" (click)="onEditFileClick(item)">
-            <i class="bi-pencil-fill"></i>
-          </button>
-          <button class="btn btn-outline-danger btn-sm" (click)="onDeleteFileClick(item)">
-            <i class="bi-trash3-fill"></i>
-          </button>
-        </div>
-      </div>
+      <input #fileUpload class="form-control" type="file" id="file-list-upload"
+        accept="image/png, image/jpeg, image/gif" (change)="onFileChange($event)">
     </div>
   </div>
 
+  <div class="row g-4 justify-content-center">
+
+    <!-- Photo list -->
+    <div class="col-auto" *ngFor="let item of photos">
+      <div class="card h-100">
+        <img [src]="item.data.thumb || item.data.url" class="card-img-top" role="button" (click)="onFileClick(item)">
+
+        <div class="card-body d-flex flex-column justify-content-between">
+          <h5 class="card-title">
+            {{item.data.description}}
+          </h5>
+        </div>
+
+        <div class="card-footer d-flex flex-row justify-content-between align-items-center" *ngIf="canEdit">
+          <small class="text-muted">Created: {{item.data.modified || item.data.created | date}}</small>
+
+          <div class="">
+            <button class="btn btn-outline-primary btn-sm me-3" (click)="onEditFileClick(item)">
+              <i class="bi-pencil-fill"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-sm" (click)="onDeleteFileClick(item)">
+              <i class="bi-trash3-fill"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA for uploading when there are no photos -->
+    <div class="col-auto p-3 no-files" role="button" *ngIf="!photos.length && canEdit" (click)="triggerUpload($event);">
+      <h4 class="text-center">
+        <i class="bi-camera"></i><br>
+        Drag photos on to the page,<br>
+        or use the button above to upload photos.
+      </h4>
+    </div>
+
+  </div>
 </div>
