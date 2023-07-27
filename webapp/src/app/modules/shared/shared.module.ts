@@ -13,7 +13,9 @@ import { EditClubModalComponent } from "./modals/edit-club-modal/edit-club-modal
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { DonatedPipe } from "./pipes/donated.pipe";
 import { loadCountries } from "src/app/core/helpers/i18n";
-import { EditTrophyModalComponent } from './modals/edit-trophy-modal/edit-trophy-modal.component';
+import { EditTrophyModalComponent } from "./modals/edit-trophy-modal/edit-trophy-modal.component";
+import { TabContainerComponent } from "./components/tab-container/tab-container.component";
+import { TabPageComponent } from "./components/tab-container/tab-page/tab-page.component";
 
 @NgModule({
   declarations: [
@@ -27,6 +29,8 @@ import { EditTrophyModalComponent } from './modals/edit-trophy-modal/edit-trophy
     EditClubModalComponent,
     DonatedPipe,
     EditTrophyModalComponent,
+    TabContainerComponent,
+    TabPageComponent,
   ],
   imports: [
     CommonModule,
