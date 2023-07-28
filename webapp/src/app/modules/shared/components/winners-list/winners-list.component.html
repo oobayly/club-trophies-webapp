@@ -1,4 +1,10 @@
 <div class="p-3" *ngIf="sort$ | async as sort">
+  <div class="edit-container mb-3" *ngIf="canEdit">
+    <button class="btn btn-outline-primary" (click)="onAddWinnerClick()">
+      <i class="bi-trophy-fill me-2"></i>Add new winner
+    </button>
+  </div>
+
   <table class="table table-striped">
     <thead>
       <tr>
@@ -6,7 +12,7 @@
           {{col.title}}
           <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
         </th>
-        <th *ngIf="canEdit"></th>
+        <th class="buttons" *ngIf="canEdit"></th>
       </tr>
     </thead>
 
@@ -15,9 +21,12 @@
         <td *ngFor="let value of item.values">
           {{value}}
         </td>
-        <td *ngIf="canEdit">
+        <td class="buttons" *ngIf="canEdit">
           <button class="btn btn-outline-primary btn-sm" (click)="onWinnerEditClick(item)">
             <i class="bi-pencil-fill"></i>
+          </button>
+          <button class="btn btn-outline-danger btn-sm ms-2" (click)="onWinnerDeleteClick(item)">
+            <i class="bi-trash3-fill"></i>
           </button>
         </td>
       </tr>

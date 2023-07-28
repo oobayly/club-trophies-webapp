@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder } from "@angular/forms";
 import { Collections, Winner } from "@models";
-import { BehaviorSubject, Observable, combineLatest, map, of, shareReplay, switchMap, takeUntil, tap } from "rxjs";
+import { BehaviorSubject, Observable, combineLatest, firstValueFrom, map, of, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
 import { TrophyBaseComponent } from "../trophy-base-component";
@@ -185,6 +185,14 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // Event handlers
   // ========================
 
+  public async onAddWinnerClick(): Promise<void> {
+    if (!this.clubId || !this.trophyId) {
+      return;
+    }
+
+    await this.modal.showAddWinner(this.clubId, this.trophyId);
+  }
+
   public onSortHeaderClick(field: keyof Winner): void {
     let sort = { ... this.sort$.value };
 
@@ -198,6 +206,18 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
     }
 
     this.sort$.next(sort);
+  }
+
+  public async onWinnerDeleteClick(item: DbRecord<Winner>): Promise<void> {
+    const resp = await this.modal.showDelete("Delete Winner", "Are you sure you want to delete this winner?");
+
+    if (!resp) {
+      return;
+    }
+
+    const ref = await firstValueFrom(this.getTrophyRefObservalble());
+
+    await ref?.collection<Winner>(Collections.Winners).doc(item.id).delete();
   }
 
   public async onWinnerEditClick(item: DbRecord<Winner>): Promise<void> {
