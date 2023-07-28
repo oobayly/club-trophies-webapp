@@ -8,11 +8,21 @@ import { filter } from "rxjs";
 import { EditTrophyModalComponent } from "src/app/modules/shared/modals/edit-trophy-modal/edit-trophy-modal.component";
 import { LightboxModalComponent } from "src/app/modules/shared/modals/lightbox-modal/lightbox-modal.component";
 import { DbRecord } from "../interfaces/DbRecord";
+import { AlertButton, AlertModalComponent } from "src/app/modules/shared/modals/alert-modal/alert-modal.component";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
   centered: true,
 };
+
+export type AlertButtons = "ok" | "ok-cancel" | "yes-no" | "yes-no-cancel";
+
+export interface AlertOptions<T extends AlertButtons | AlertButton<TValue> | AlertButton<TValue>[], TValue extends string | number | boolean> {
+  title: string;
+  message: string;
+  icon: "question" | "exlamation" | string;
+  buttons: T;
+}
 
 export interface ShowModalOptions<TModal extends BaseModalComponent<TResult>, TResult> {
   options?: NgbModalOptions;
@@ -106,5 +116,97 @@ export class ModalService {
         component.selectedId = selectedId;
       },
     });
+  }
+
+  public async showAlert(options: AlertOptions<"ok", boolean>): Promise<void>;
+  public async showAlert(options: AlertOptions<"yes-no" | "ok-cancel", boolean>): Promise<boolean>;
+  public async showAlert(options: AlertOptions<"yes-no-cancel", boolean>): Promise<boolean | undefined>;
+  public async showAlert<TValue extends string | number | boolean>(options: AlertOptions<AlertButton<TValue>[], TValue>): Promise<TValue | undefined>;
+  public async showAlert<TValue extends string | number | boolean>(options: AlertOptions<AlertButton<TValue>, TValue>): Promise<void>;
+  public async showAlert<TValue extends string | number | boolean>(options: AlertOptions<AlertButtons | AlertButton<TValue> | AlertButton<TValue>[], TValue>): Promise<TValue | undefined> {
+    let buttons: AlertButton<TValue>[];
+    let allowUndefined = true;
+    let isVoid = false;
+
+    if (Array.isArray(options.buttons)) {
+      buttons = options.buttons;
+    } else if (typeof options.buttons === "string") {
+      switch (options.buttons) {
+        case "ok":
+          isVoid = true;
+          buttons = [{ text: "Ok", color: "success", value: true } as AlertButton<TValue>];
+          break;
+        case "ok-cancel":
+          allowUndefined = false;
+          buttons = [
+            { text: "Cancel", color: "dark", outline: true, value: false } as AlertButton<TValue>,
+            { text: "Ok", color: "success", value: true } as AlertButton<TValue>,
+          ];
+          break;
+        case "yes-no-cancel":
+          buttons = [
+            { text: "Cancel", color: "dark", outline: true, value: undefined } as AlertButton<TValue>,
+            { text: "No", color: "danger", outline: true, value: false } as AlertButton<TValue>,
+            { text: "Yes", color: "success", value: true } as AlertButton<TValue>,
+          ];
+          break;
+        case "yes-no":
+          allowUndefined = false;
+          buttons = [
+            { text: "No", color: "danger", outline: true, value: false } as AlertButton<TValue>,
+            { text: "Yes", color: "success", value: true } as AlertButton<TValue>,
+          ];
+          break;
+      }
+    } else {
+      isVoid = true;
+      buttons = [options.buttons];
+    }
+
+    let icon: string;
+
+    if (options.icon === "question") {
+      icon = "bi-question-circle";
+    } else if (options.icon === "info") {
+      icon = "bi-info-circle";
+    } else if (options.icon === "warning") {
+      icon = "bi-exclamation-triangle";
+    } else if (options.icon === "danger") {
+      icon = "bi-exclamation-octagon";
+    } else {
+      icon = options.icon;
+    }
+
+    const resp = await this.showModal(AlertModalComponent<TValue>, {
+      configure: (component) => {
+        component.title = options.title;
+        component.message = options.message;
+        component.icon = icon;
+        component.buttons = buttons;
+      },
+    });
+
+    if (isVoid) {
+      // For a single button, there's no return type
+      return;
+    } else if (allowUndefined) {
+      return resp;
+    }
+
+    return (resp || false) as TValue;
+  }
+
+  public async showDelete(title: string, message: string): Promise<boolean> {
+    const resp = await this.showAlert({
+      title,
+      message,
+      icon: "question",
+      buttons: [
+        { text: "Delete", color: "danger", outline: true, value: false },
+        { text: "Cancel", color: "dark", value: false },
+      ],
+    });
+
+    return resp || false;
   }
 }

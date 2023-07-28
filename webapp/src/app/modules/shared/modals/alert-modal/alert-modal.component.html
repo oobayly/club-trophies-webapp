@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    <i class="me-2" [ngClass]="icon" *ngIf="icon"></i>
+    <span>{{title}}</span>
+  </h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
+</div>
+<div class="modal-body">
+  <div class="text-pre-wrap">{{message}}</div>
+</div>
+
+<div class="modal-footer" *ngIf="buttons?.length">
+  <div class="button-grid w-100">
+    <button class="btn" [appNgBtn]="item" *ngFor="let item of buttons" (click)="onButtonClick(item.value)">
+      <i class="me-2" [ngClass]="icon" *ngIf="item.icon as icon"></i>
+      {{item.text}}
+    </button>
+  </div>
+</div>

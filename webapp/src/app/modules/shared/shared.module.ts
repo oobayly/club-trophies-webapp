@@ -19,6 +19,11 @@ import { TabPageComponent } from "./components/tab-container/tab-page/tab-page.c
 import { WinnersListComponent } from "./components/winners-list/winners-list.component";
 import { FilesListComponent } from "./components/files-list/files-list.component";
 import { LightboxModalComponent } from "./modals/lightbox-modal/lightbox-modal.component";
+import { EditFileModalComponent } from "./modals/edit-file-modal/edit-file-modal.component";
+import { EditWinnerModalComponent } from "./modals/edit-winner-modal/edit-winner-modal.component";
+import { AlertModalComponent } from "./modals/alert-modal/alert-modal.component";
+import { InputModalComponent } from "./modals/input-modal/input-modal.component";
+import { NgBtnDirective } from "./directives/ng-btn.directive";
 
 @NgModule({
   declarations: [
@@ -37,6 +42,11 @@ import { LightboxModalComponent } from "./modals/lightbox-modal/lightbox-modal.c
     WinnersListComponent,
     FilesListComponent,
     LightboxModalComponent,
+    EditFileModalComponent,
+    EditWinnerModalComponent,
+    AlertModalComponent,
+    InputModalComponent,
+    NgBtnDirective,
   ],
   imports: [
     CommonModule,

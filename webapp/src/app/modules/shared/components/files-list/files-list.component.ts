@@ -150,11 +150,13 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
   // ========================
 
   public async onDeleteFileClick(item: DbRecord<TrophyFile>): Promise<void> {
-    const ref = (await firstValueFrom(this.getTrophyRefObservalble()))?.collection<TrophyFile>(Collections.Files).doc(item.id);
+    const resp = await this.modal.showDelete("Delete file", "Are you sure you want to delete this file?");
 
-    if (!confirm("Are you sure you want to delete this file?")) {
+    if (!resp) {
       return;
     }
+
+    const ref = (await firstValueFrom(this.getTrophyRefObservalble()))?.collection<TrophyFile>(Collections.Files).doc(item.id);
 
     await ref?.delete();
   }
