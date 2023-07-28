@@ -36,3 +36,16 @@
     }
   }
 }
+
+@media print {
+  .file-container {
+    scale: .75;
+    padding: 0;
+  }
+
+  .edit-container,
+  .edit-buttons {
+    display: none;
+  }
+
+}

@@ -1,7 +1,7 @@
 <div #fileDrop class="p-3 file-container" *ngIf="photos$ | async as photos" (dragenter)="onDragEnter($event)"
   (dragover)="onDragEnter($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
 
-  <div class="mb-3" *ngIf="canEdit">
+  <div class="edit-container" *ngIf="canEdit">
     <div>
       <label class="form-label">You can upload photos by using the button, or dragging them onto the page below</label>
     </div>
@@ -32,7 +32,7 @@
         <div class="card-footer d-flex flex-row justify-content-between align-items-center" *ngIf="canEdit">
           <small class="text-muted">Created: {{item.data.created | toDate | date}}</small>
 
-          <div class="">
+          <div class="edit-buttons">
             <button class="btn btn-outline-primary btn-sm me-3" (click)="onEditFileClick(item)">
               <i class="bi-pencil-fill"></i>
             </button>

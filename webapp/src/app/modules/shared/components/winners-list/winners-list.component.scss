@@ -1,0 +1,26 @@
+.table {
+  th {
+    white-space: nowrap;
+  }
+}
+
+
+@media print {
+  .winners-container {
+    padding: 0;
+
+    .edit-container {
+      display: none;
+    }
+
+    .table {
+
+      th,
+      td {
+        &.buttons {
+          display: none;
+        }
+      }
+    }
+  }
+}
