@@ -6,7 +6,6 @@ export * from "./Boat";
 export * from "./Club";
 export * from "./Domain";
 export * from "./Enumerations";
-export * from "./helpers";
 export * from "./interfaces";
 export * from "./Trophy";
 export * from "./Winner";

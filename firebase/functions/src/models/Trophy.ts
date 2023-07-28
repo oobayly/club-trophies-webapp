@@ -26,8 +26,8 @@ export interface TrophyFile extends HasTimestamp {
   /** The upload information. */
   uploadInfo?: UploadInfo;
   /** The url to the file. */
-  url?: string;
+  url: string | null;
   /** The thumbnail if the file is an image. */
-  thumb?: string;
+  thumb: string | null;
 }
 

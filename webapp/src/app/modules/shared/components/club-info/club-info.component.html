@@ -23,7 +23,7 @@
           <p class="card-text text-muted">
             <small class="d-flex justify-content-between">
               <span>{{club.shortName}}, {{club.country}}</span>
-              <span>Updated on {{club.modified || club.created | date}}</span>
+              <span>Updated on {{club.modified || club.created | toDate | date}}</span>
             </small>
           </p>
 

@@ -25,6 +25,7 @@ import { AlertModalComponent } from "./modals/alert-modal/alert-modal.component"
 import { InputModalComponent } from "./modals/input-modal/input-modal.component";
 import { NgBtnDirective } from "./directives/ng-btn.directive";
 import { TrophyFileEditorComponent } from "./components/trophy-file-editor/trophy-file-editor.component";
+import { ToDatePipe } from './pipes/to-date.pipe';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { TrophyFileEditorComponent } from "./components/trophy-file-editor/troph
     InputModalComponent,
     NgBtnDirective,
     TrophyFileEditorComponent,
+    ToDatePipe,
   ],
   imports: [
     CommonModule,

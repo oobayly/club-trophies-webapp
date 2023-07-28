@@ -5,7 +5,7 @@ import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { Club, Collections } from "@models";
 import { getCountries } from "src/app/core/helpers/i18n";
-import { uuid } from "src/app/core/helpers";
+import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
 
 interface ClubFormData {
   country: FormControl<string>;
@@ -103,13 +103,14 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
 
       await doc.set({
         ...club,
+        logo: null,
         admins: [uid],
-        created: Date.now(),
+        ...createdTimestamp(),
       });
     } else {
       await doc.update({
         ...club,
-        modified: Date.now(),
+        ...modifiedTimestamp(),
       });
     }
 

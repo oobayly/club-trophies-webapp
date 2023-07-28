@@ -5,19 +5,19 @@ import { Subject, BehaviorSubject, Subscription, firstValueFrom, Observable, map
 import { Boat, Collections, Winner } from "@models";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
-import { uuid } from "src/app/core/helpers";
+import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
 
 interface WinnerFormData {
-  club: FormControl<string | undefined>;
-  crew: FormControl<string | undefined>;
-  helm: FormControl<string | undefined>;
-  name: FormControl<string | undefined>;
-  notes: FormControl<string | undefined>;
-  sail: FormControl<string | undefined>;
-  owner: FormControl<string | undefined>;
+  club: FormControl<string>;
+  crew: FormControl<string>;
+  helm: FormControl<string>;
+  name: FormControl<string>;
+  notes: FormControl<string>;
+  sail: FormControl<string>;
+  owner: FormControl<string>;
   year: FormControl<number>;
-  boatId: FormControl<string | undefined>;
-  boatName: FormControl<string | undefined>;
+  boatId: FormControl<string | null>;
+  boatName: FormControl<string | null>;
 }
 
 @Component({
@@ -107,16 +107,16 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
 
   private buildForm(): FormGroup<WinnerFormData> {
     return this.formBuilder.group<WinnerFormData>({
-      club: this.formBuilder.control<string | undefined>("", { nonNullable: true }),
-      crew: this.formBuilder.control<string | undefined>("", { nonNullable: true }),
-      helm: this.formBuilder.control<string | undefined>("", { nonNullable: true }),
-      name: this.formBuilder.control<string | undefined>("", { nonNullable: true }),
-      notes: this.formBuilder.control<string | undefined>("", { nonNullable: true }),
-      sail: this.formBuilder.control<string | undefined>("", { nonNullable: true }),
-      owner: this.formBuilder.control<string | undefined>("", { nonNullable: true }),
+      club: this.formBuilder.control<string>("", { nonNullable: true }),
+      crew: this.formBuilder.control<string>("", { nonNullable: true }),
+      helm: this.formBuilder.control<string>("", { nonNullable: true }),
+      name: this.formBuilder.control<string>("", { nonNullable: true }),
+      notes: this.formBuilder.control<string>("", { nonNullable: true }),
+      sail: this.formBuilder.control<string>("", { nonNullable: true }),
+      owner: this.formBuilder.control<string>("", { nonNullable: true }),
       year: this.formBuilder.control<number>(new Date().getFullYear(), { nonNullable: true }),
-      boatId: this.formBuilder.control<string | undefined>(undefined, { nonNullable: true }),
-      boatName: this.formBuilder.control<string | undefined>(undefined, { nonNullable: true }),
+      boatId: this.formBuilder.control<string | null>(null),
+      boatName: this.formBuilder.control<string | null>(null),
     }, {
       updateOn: "change",
     });
@@ -156,11 +156,13 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
       ;
     const winner = this.form.getRawValue();
 
+    console.log(winner);
+
     if (winner.boatId) {
       winner.boatName = await this.getBoatName(winner.boatId);
     } else {
-      winner.boatId = undefined;
-      winner.boatName = undefined;
+      winner.boatId = null;
+      winner.boatName = null;
     }
 
     // Remove any empty strings or null/undefined
@@ -188,12 +190,12 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
     if (isNew) {
       await doc.set({
         ...winner,
-        created: Date.now(),
+        ...createdTimestamp(),
       });
     } else {
       await doc.update({
         ...winner,
-        modified: Date.now(),
+        ...modifiedTimestamp(),
       });
     }
 

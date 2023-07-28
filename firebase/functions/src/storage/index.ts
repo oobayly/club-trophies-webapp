@@ -122,7 +122,7 @@ const updateClubLogo = async (clubId: string, object: functions.storage.ObjectMe
   }
 
   await clubRef.update({
-    modified: new Date().getTime(),
+    modified: admin.firestore.FieldValue.serverTimestamp(),
     logo,
   } as Partial<Club>);
 }
@@ -138,7 +138,7 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
   const fileInfo: Partial<TrophyFile> = {
     url: await getDownloadURL(file),
     contentType: object.contentType,
-    modified: new Date().getTime(),
+    modified: admin.firestore.FieldValue.serverTimestamp(),
   };
   const thumb = await createThumb(object);
 

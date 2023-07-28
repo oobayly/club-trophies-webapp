@@ -9,6 +9,7 @@ import { Collections, TrophyFile } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
 import { environment } from "src/environments/environment";
+import { createdTimestamp } from "src/app/core/helpers";
 
 @Component({
   selector: "app-files-list",
@@ -81,7 +82,7 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
       map((snapshot) => {
         return toRecord(snapshot)
           .filter((x) => x.data.url && !x.data.uploadInfo) // We don't want to see any interim uploads
-          .sort((a, b) => a.data.created - b.data.created)
+          // .sort((a, b) => a.data.created.toDate() - b.data.created)
           ;
       }),
       tap((items) => this.countChange.next(items.length)),
@@ -124,7 +125,9 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
       contentType: file.type,
       description: "",
       name: file.name,
-      created: Date.now(),
+      ...createdTimestamp(),
+      url: null,
+      thumb: null,
     });
 
     const uploadInfo = await firstValueFrom(snapshot);

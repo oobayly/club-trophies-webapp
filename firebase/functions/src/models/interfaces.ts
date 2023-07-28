@@ -3,11 +3,18 @@ export interface HasPublic {
   public: boolean;
 }
 
+interface FbTimestamp {
+  toDate: () => Date;
+  compareTo: (other: FbTimestamp) => number;
+}
+
+export type TimestampType = number | FbTimestamp | object;
+
 export interface HasTimestamp {
   /** The timestamp of when the record was created. */
-  created: number;
+  created: TimestampType;
   /** The timestamp of when the record was last modified. */
-  modified?: number;
+  modified: TimestampType | null;
 }
 
 export interface UploadInfo {

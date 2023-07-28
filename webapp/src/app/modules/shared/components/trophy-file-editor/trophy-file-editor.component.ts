@@ -3,7 +3,7 @@ import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Collections, TrophyFile } from "@models";
 import { BehaviorSubject, Subject, Subscription } from "rxjs";
-import { uuid } from "src/app/core/helpers";
+import { modifiedTimestamp, uuid } from "src/app/core/helpers";
 
 interface FileFormData {
   description: FormControl<string>;
@@ -102,7 +102,7 @@ export class TrophyFileEditorComponent implements OnChanges, OnDestroy {
 
     await doc.update({
       ...file,
-      modified: Date.now(),
+      ...modifiedTimestamp(),
     });
 
     return doc.ref.id;

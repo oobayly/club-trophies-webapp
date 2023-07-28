@@ -1,3 +1,31 @@
 <div class="p-3">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th *ngFor="let col of visibleColumns$ | async">
+          {{col.title}}
+        </th>
+        <th *ngIf="canEdit"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let item of winners$ | async">
+        <td *ngFor="let value of item.values">
+          {{value}}
+        </td>
+        <td *ngIf="canEdit">
+          <button class="btn btn-outline-primary btn-sm" (click)="onWinnerEditClick(item)">
+            <i class="bi-pencil-fill"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div class="p-3">
+  <pre>{{visibleColumns$ | async | json}}</pre>
   <pre>{{winners$ | async | json}}</pre>
 </div>

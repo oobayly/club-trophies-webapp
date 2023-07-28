@@ -5,7 +5,7 @@ import { Boat, Collections, Trophy } from "@models"
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
-import { uuid } from "src/app/core/helpers";
+import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
 
 interface TrophyFormData {
   conditions: FormControl<string>;
@@ -14,8 +14,8 @@ interface TrophyFormData {
   donor: FormControl<string>;
   name: FormControl<string>;
   page: FormControl<string>;
-  boatId: FormControl<string | undefined>;
-  boatName: FormControl<string | undefined>;
+  boatId: FormControl<string | null>;
+  boatName: FormControl<string | null>;
   public: FormControl<boolean>;
 }
 
@@ -107,8 +107,8 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
       donor: this.formBuilder.control<string>("", { nonNullable: true }),
       name: this.formBuilder.control<string>("", { nonNullable: true }),
       page: this.formBuilder.control<string>("", { nonNullable: true }),
-      boatId: this.formBuilder.control<string | undefined>(undefined, { nonNullable: true }),
-      boatName: this.formBuilder.control<string | undefined>(undefined, { nonNullable: true }),
+      boatId: this.formBuilder.control<string | null>(null),
+      boatName: this.formBuilder.control<string | null>(null),
       public: this.formBuilder.control<boolean>(true, { nonNullable: true }),
     }, {
       updateOn: "change",
@@ -150,19 +150,19 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
     if (trophy.boatId) {
       trophy.boatName = await this.getBoatName(trophy.boatId);
     } else {
-      trophy.boatId = undefined;
-      trophy.boatName = undefined;
+      trophy.boatId = null;
+      trophy.boatName = null;
     }
 
     if (isNew) {
       await doc.set({
         ...trophy,
-        created: Date.now(),
+        ...createdTimestamp(),
       });
     } else {
       await doc.update({
         ...trophy,
-        modified: Date.now(),
+        ...modifiedTimestamp(),
       });
     }
 
