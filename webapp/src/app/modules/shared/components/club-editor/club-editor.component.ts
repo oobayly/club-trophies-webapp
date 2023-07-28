@@ -3,9 +3,9 @@ import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
-import { v4 as uuid } from "uuid";
 import { Club, Collections } from "@models";
 import { getCountries } from "src/app/core/helpers/i18n";
+import { uuid } from "src/app/core/helpers";
 
 interface ClubFormData {
   country: FormControl<string>;

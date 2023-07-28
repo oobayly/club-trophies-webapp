@@ -11,7 +11,7 @@ export interface Winner extends BoatReference, HasTimestamp {
   /** The name of the boat. */
   name?: string;
   /** Any notes about the winner. */
-  notes: string;
+  notes?: string;
   /** The sail number of the boat. */
   sail?: string;
   /** The name of the boat's owner. */

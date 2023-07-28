@@ -3,7 +3,7 @@ import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Collections, TrophyFile } from "@models";
 import { BehaviorSubject, Subject, Subscription } from "rxjs";
-import { v4 as uuid } from "uuid";
+import { uuid } from "src/app/core/helpers";
 
 interface FileFormData {
   description: FormControl<string>;

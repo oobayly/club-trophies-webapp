@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { BehaviorSubject, Observable, Subject, Subscription, firstValueFrom, map, shareReplay, switchMap, takeUntil } from "rxjs";
-import { v4 as uuid } from "uuid";
 import { Boat, Collections, Trophy } from "@models"
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
+import { uuid } from "src/app/core/helpers";
 
 interface TrophyFormData {
   conditions: FormControl<string>;
