@@ -156,36 +156,12 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
       ;
     const winner = this.form.getRawValue();
 
-    console.log(winner);
-
     if (winner.boatId) {
       winner.boatName = await this.getBoatName(winner.boatId);
     } else {
       winner.boatId = null;
       winner.boatName = null;
     }
-
-    // Remove any empty strings or null/undefined
-    Object.keys(winner)
-      .map((k) => k as keyof WinnerFormData)
-      .forEach((key) => {
-        let value = winner[key];
-
-        if (typeof value === "string") {
-          value = value.trim();
-
-          if (value === "") {
-            delete winner[key];
-            // } else {
-            // winner[key] = value;
-          }
-        } else if (value == null) {
-          delete winner[key];
-        }
-      })
-      ;
-
-    console.log(winner);
 
     if (isNew) {
       await doc.set({
