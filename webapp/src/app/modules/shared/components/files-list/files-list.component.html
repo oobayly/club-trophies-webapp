@@ -1,18 +1,18 @@
 <div #fileDrop class="p-3 file-container" *ngIf="photos$ | async as photos" (dragenter)="onDragEnter($event)"
   (dragover)="onDragEnter($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
 
-  <div class="edit-container" *ngIf="canEdit">
-    <div>
-      <label class="form-label">You can upload photos by using the button, or dragging them onto the page below</label>
-    </div>
-
+  <div class="edit-container d-flex align-items-center pb-3 flex-column flex-lg-row" *ngIf="canEdit">
     <div class="file-upload">
-      <label for="file-list-upload" class="btn btn-primary">
+      <label for="file-list-upload" class="btn btn-outline-primary">
         <i class="bi-camera pe-2"></i>Upload Photos
       </label>
 
       <input #fileUpload class="form-control" type="file" id="file-list-upload" multiple
         accept="image/png, image/jpeg, image/gif" (change)="onFileChange($event)">
+    </div>
+
+    <div class="pt-2 ps-lg-3">
+      <label class="form-label">You can upload photos by using the button, or dragging them onto the page below.</label>
     </div>
   </div>
 

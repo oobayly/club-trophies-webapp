@@ -2,8 +2,11 @@
   th {
     white-space: nowrap;
   }
-}
 
+  .buttons {
+    white-space: nowrap;
+  }
+}
 
 @media print {
   .winners-container {
@@ -14,7 +17,6 @@
     }
 
     .table {
-
       th,
       td {
         &.buttons {
