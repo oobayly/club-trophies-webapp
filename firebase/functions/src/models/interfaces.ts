@@ -5,10 +5,10 @@ export interface HasPublic {
 
 interface FbTimestamp {
   toDate: () => Date;
-  compareTo: (other: FbTimestamp) => number;
+  toMillis: () => number;
 }
 
-export type TimestampType = number | FbTimestamp | object;
+export type TimestampType = FbTimestamp | object;
 
 export interface HasTimestamp {
   /** The timestamp of when the record was created. */

@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { HasTimestamp } from "@models";
+import { HasTimestamp, TimestampType } from "@models";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 
@@ -9,6 +9,20 @@ export const truthy = (value: any): boolean => {
   }
 
   return !!value;
+}
+
+export const compareTimestamps = (a: TimestampType | null, b: TimestampType | null): number => {
+  if (a === null) {
+    return -1;
+  } else if (b === null) {
+    return 1;
+  }
+
+  if ("toMillis" in a && "toMillis" in b) {
+    return a.toMillis() - b.toMillis();
+  }
+
+  return 0;
 }
 
 export const createdTimestamp = (): HasTimestamp => {
