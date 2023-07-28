@@ -60,7 +60,7 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
 
     this.files$ = this.getFilesObservable();
     this.photos$ = this.files$.pipe(
-      map((items) => items.filter((x) => x.data.contentType.startsWith("image"))),
+      map((items) => items.filter((x) => /^image\//i.test(x.data.contentType))),
     );
   }
 
