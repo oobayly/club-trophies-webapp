@@ -235,7 +235,7 @@ export class ModalService {
       message,
       icon: "question",
       buttons: [
-        { text: "Delete", color: "danger", outline: true, value: false },
+        { text: "Delete", color: "danger", outline: true, value: true },
         { text: "Cancel", color: "dark", value: false },
       ],
     });
