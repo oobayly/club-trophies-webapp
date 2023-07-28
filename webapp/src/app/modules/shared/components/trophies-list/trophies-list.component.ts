@@ -178,6 +178,17 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
   // Event handlers
   // ========================
 
+  public async onAddWinnerClick(e: Event, item: DbRecord<Trophy>): Promise<void> {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+
+    if (!this.clubId) {
+      return;
+    }
+
+    await this.modal.showAddWinner(this.clubId, item.id);
+  }
+
   public async onEditTrophyClick(e: Event, item: DbRecord<Trophy>): Promise<void> {
     e.stopImmediatePropagation();
     e.preventDefault();

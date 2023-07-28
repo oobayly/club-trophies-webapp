@@ -1,1 +1,72 @@
-<p>winner-editor works!</p>
+<form class="" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
+  <div class="row">
+    <!-- Year -->
+    <div class="col-4 mb-3">
+      <label class="form-label" for="{{formId}}-year">Year</label>
+      <input type="number" class="form-control" id="{{formId}}-year" placeholder="eg: 2023" formControlName="year"
+        min="1700">
+    </div>
+
+    <!-- Sail -->
+    <div class="col-8 mb-3">
+      <label class="form-label" for="{{formId}}-sail">Sail No.</label>
+      <input type="text" class="form-control" id="{{formId}}-sail" placeholder="eg: IRL 327" formControlName="sail"
+        maxlength="10">
+    </div>
+  </div>
+
+  <!-- Helm -->
+  <div class="mb-3">
+    <label class="form-label" for="{{formId}}-helm">Helm Name</label>
+    <input type="text" class="form-control" id="{{formId}}-helm" placeholder="" formControlName="helm" maxlength="128">
+  </div>
+
+  <!-- Crew -->
+  <div class="mb-3">
+    <label class="form-label" for="{{formId}}-crew">Crew Name</label>
+    <input type="text" class="form-control" id="{{formId}}-crew" placeholder="" formControlName="crew" maxlength="128">
+  </div>
+
+  <!-- Owner -->
+  <div class="mb-3">
+    <label class="form-label" for="{{formId}}-owner">Owner Name</label>
+    <input type="text" class="form-control" id="{{formId}}-owner" placeholder="" formControlName="owner"
+      maxlength="128">
+  </div>
+
+  <div class="row">
+    <!-- Boat name -->
+    <div class="col-6 mb-3">
+      <label class="form-label" for="{{formId}}-name">Boat Name</label>
+      <input type="text" class="form-control" id="{{formId}}-year" placeholder="" formControlName="name"
+        maxlength="128">
+    </div>
+
+    <!-- Boat -->
+    <div class="col-6 mb-3">
+      <label class="form-label" for="{{formId}}-boatId">Boat Type</label>
+      <select class="form-select" id="{{formId}}-boatId" formControlName="boatId">
+        <option [ngValue]="">None</option>
+        <option *ngFor="let item of boats$ | async" [ngValue]="item.id">{{item.data.name}}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Club -->
+  <div class="mb-3">
+    <label class="form-label" for="{{formId}}-club">Home Club</label>
+    <input type="text" class="form-control" id="{{formId}}-club" placeholder="" formControlName="club" maxlength="128">
+  </div>
+
+  <!-- Notes -->
+  <div class="mb-3">
+    <label class="form-label" for="{{formId}}-notes">Notes</label>
+    <input type="text" class="form-control" id="{{formId}}-notes" placeholder="" formControlName="notes"
+      maxlength="128">
+  </div>
+
+  <div class="button-grid">
+    <button type="button" class="btn btn-outline-danger mx-2" (click)="onCancelClick()">Cancel</button>
+    <button type="submit" class="btn btn-primary mx-2">Save</button>
+  </div>
+</form>

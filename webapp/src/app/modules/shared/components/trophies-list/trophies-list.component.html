@@ -34,8 +34,11 @@
 
         <!-- Buttons -->
         <div class="btn-group btn-group-sm" *ngIf="canEdit">
-          <button type="button" class="btn btn-outline-primary" (click)="onEditTrophyClick($event, item)">
+          <button type="button" class="btn btn-outline-primary me-2" (click)="onEditTrophyClick($event, item)">
             <i class=" bi-pencil-fill"></i>
+          </button>
+          <button type="button" class="btn btn-outline-primary" (click)="onAddWinnerClick($event, item)">
+            <i class=" bi-trophy-fill"></i>
           </button>
         </div>
       </div>

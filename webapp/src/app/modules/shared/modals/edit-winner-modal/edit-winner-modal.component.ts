@@ -11,7 +11,7 @@ import { Winner } from "@models";
 export class EditWinnerModalComponent extends BaseModalComponent<string> {
   public clubId!: string;
 
-  public fileId!: string;
+  public trophyId!: string;
 
   public winner!: Winner;
 

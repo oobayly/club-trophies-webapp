@@ -15,6 +15,7 @@ interface TrophyFormData {
   name: FormControl<string>;
   page: FormControl<string>;
   boatId: FormControl<string | undefined>;
+  boatName: FormControl<string | undefined>;
   public: FormControl<boolean>;
 }
 
@@ -107,6 +108,7 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
       name: this.formBuilder.control<string>("", { nonNullable: true }),
       page: this.formBuilder.control<string>("", { nonNullable: true }),
       boatId: this.formBuilder.control<string | undefined>(undefined, { nonNullable: true }),
+      boatName: this.formBuilder.control<string | undefined>(undefined, { nonNullable: true }),
       public: this.formBuilder.control<boolean>(true, { nonNullable: true }),
     }, {
       updateOn: "change",
@@ -144,19 +146,17 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
     const doc = this.db.collection(Collections.Clubs).doc(this.clubId)
       .collection<Trophy>(Collections.Trophies).doc(this.trophyId || undefined);
     const trophy = this.form.getRawValue();
-    let boatName: string | undefined;
 
     if (trophy.boatId) {
-      boatName = await this.getBoatName(trophy.boatId);
+      trophy.boatName = await this.getBoatName(trophy.boatId);
     } else {
       trophy.boatId = undefined;
-      boatName = undefined;
+      trophy.boatName = undefined;
     }
 
     if (isNew) {
       await doc.set({
         ...trophy,
-        boatName,
         created: Date.now(),
       });
     } else {

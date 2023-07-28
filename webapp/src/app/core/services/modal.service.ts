@@ -1,7 +1,7 @@
 import { Injectable, Type } from "@angular/core";
 import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
 import { BaseModalComponent } from "src/app/modules/shared/modals/base-modal.component";
-import { Club, Trophy, TrophyFile } from "@models";
+import { Club, Trophy, TrophyFile, Winner } from "@models";
 import { EditClubModalComponent } from "src/app/modules/shared/modals/edit-club-modal/edit-club-modal.component";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs";
@@ -10,6 +10,7 @@ import { LightboxModalComponent } from "src/app/modules/shared/modals/lightbox-m
 import { DbRecord } from "../interfaces/DbRecord";
 import { AlertButton, AlertModalComponent } from "src/app/modules/shared/modals/alert-modal/alert-modal.component";
 import { EditFileModalComponent } from "src/app/modules/shared/modals/edit-file-modal/edit-file-modal.component";
+import { EditWinnerModalComponent } from "src/app/modules/shared/modals/edit-winner-modal/edit-winner-modal.component";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
@@ -80,6 +81,15 @@ export class ModalService {
     });
   }
 
+  public showAddWinner(clubId: string, trophyId: string): Promise<string | undefined> {
+    return this.showModal(EditWinnerModalComponent, {
+      configure: (component) => {
+        component.clubId = clubId;
+        component.trophyId = trophyId;
+      },
+    });
+  }
+
   public showEditClub(clubId: string, club: Club): Promise<string | undefined> {
     return this.showModal(EditClubModalComponent, {
       configure: (component) => {
@@ -106,6 +116,17 @@ export class ModalService {
         component.trophyId = trophyId;
         component.fileId = fileId;
         component.file = file;
+      },
+    });
+  }
+
+  public showEditWinner(clubId: string, trophyId: string, winnerId: string, winner: Winner): Promise<string | undefined> {
+    return this.showModal(EditWinnerModalComponent, {
+      configure: (component) => {
+        component.clubId = clubId;
+        component.trophyId = trophyId;
+        component.winnerId = winnerId;
+        component.winner = winner;
       },
     });
   }

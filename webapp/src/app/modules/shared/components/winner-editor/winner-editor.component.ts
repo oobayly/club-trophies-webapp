@@ -17,6 +17,7 @@ interface WinnerFormData {
   owner: FormControl<string | undefined>;
   year: FormControl<number>;
   boatId: FormControl<string | undefined>;
+  boatName: FormControl<string | undefined>;
 }
 
 @Component({
@@ -115,6 +116,7 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
       owner: this.formBuilder.control<string | undefined>("", { nonNullable: true }),
       year: this.formBuilder.control<number>(new Date().getFullYear(), { nonNullable: true }),
       boatId: this.formBuilder.control<string | undefined>(undefined, { nonNullable: true }),
+      boatName: this.formBuilder.control<string | undefined>(undefined, { nonNullable: true }),
     }, {
       updateOn: "change",
     });
@@ -147,19 +149,18 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
   }
 
   public async saveWinner(): Promise<string> {
-    const isNew = !this.trophyId;
+    const isNew = !this.winnerId;
     const doc = this.db.collection(Collections.Clubs).doc(this.clubId)
       .collection(Collections.Trophies).doc(this.trophyId)
       .collection<Winner>(Collections.Winners).doc(this.winnerId || undefined)
       ;
     const winner = this.form.getRawValue();
-    let boatName: string | undefined;
 
     if (winner.boatId) {
-      boatName = await this.getBoatName(winner.boatId);
+      winner.boatName = await this.getBoatName(winner.boatId);
     } else {
       winner.boatId = undefined;
-      boatName = undefined;
+      winner.boatName = undefined;
     }
 
     // Remove any empty strings or null/undefined
@@ -182,10 +183,11 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
       })
       ;
 
+    console.log(winner);
+
     if (isNew) {
       await doc.set({
         ...winner,
-        boatName,
         created: Date.now(),
       });
     } else {
@@ -211,8 +213,8 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    const fileId = await this.saveWinner();
+    const winnerId = await this.saveWinner();
 
-    this.saved.next(fileId);
+    this.saved.next(winnerId);
   }
 }
