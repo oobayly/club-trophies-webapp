@@ -1,0 +1,18 @@
+<form class="" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
+  <!-- Photo preview -->
+  <div class="mb-3 text-center" *ngIf="isPhoto$ | async">
+    <img [src]="file.thumb || file.url" class="photo-preview">
+  </div>
+
+  <!-- Description -->
+  <div class="mb-3">
+    <label class="form-label" for="{{formId}}-description">File description</label>
+    <input type="text" class="form-control" id="{{formId}}-description" placeholder="" formControlName="description"
+      maxlength="256">
+  </div>
+
+  <div class=" text-center">
+    <button type="button" class="btn btn-outline-danger mx-2" (click)="onCancelClick()">Cancel</button>
+    <button type="submit" class="btn btn-primary mx-2">Save</button>
+  </div>
+</form>

@@ -76,7 +76,7 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ("clubId" in changes) {
-      this.clubId$.next(this.clubId || undefined);
+      this.clubId$.next(this.clubId);
     }
 
     if ("trophy" in changes) {

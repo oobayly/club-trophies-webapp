@@ -9,6 +9,7 @@ import { EditTrophyModalComponent } from "src/app/modules/shared/modals/edit-tro
 import { LightboxModalComponent } from "src/app/modules/shared/modals/lightbox-modal/lightbox-modal.component";
 import { DbRecord } from "../interfaces/DbRecord";
 import { AlertButton, AlertModalComponent } from "src/app/modules/shared/modals/alert-modal/alert-modal.component";
+import { EditFileModalComponent } from "src/app/modules/shared/modals/edit-file-modal/edit-file-modal.component";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
@@ -94,6 +95,17 @@ export class ModalService {
         component.clubId = clubId;
         component.trophy = trophy;
         component.trophyId = trophyId;
+      },
+    });
+  }
+
+  public showEditTrophyFile(clubId: string, trophyId: string, fileId: string, file: TrophyFile): Promise<string | undefined> {
+    return this.showModal(EditFileModalComponent, {
+      configure: (component) => {
+        component.clubId = clubId;
+        component.trophyId = trophyId;
+        component.fileId = fileId;
+        component.file = file;
       },
     });
   }

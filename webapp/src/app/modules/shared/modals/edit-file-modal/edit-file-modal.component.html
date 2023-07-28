@@ -1,1 +1,11 @@
-<p>edit-file-modal works!</p>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">
+    <span>Edit file</span>
+  </h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
+</div>
+<div class="modal-body">
+  <app-trophy-file-editor [clubId]="clubId" [trophyId]="trophyId" [fileId]="fileId" [file]="file"
+    (cancelled)="dismiss()" (saved)="close($event)">
+  </app-trophy-file-editor>
+</div>
