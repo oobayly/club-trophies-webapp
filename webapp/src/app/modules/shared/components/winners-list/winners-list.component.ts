@@ -10,8 +10,13 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { ModalService } from "src/app/core/services/modal.service";
 
 interface Column {
-  field: keyof Winner,
+  field: keyof Winner;
   title: string;
+}
+
+interface ColumnSort {
+  field: keyof Winner;
+  direction: -1 | 1
 }
 
 const Colunms: Column[] = [
@@ -43,6 +48,10 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   private readonly allWinners$: Observable<DbRecord<Winner>[]>;
 
   public readonly canEdit$ = new BehaviorSubject<boolean | undefined>(undefined);
+
+  public readonly sort$ = new BehaviorSubject<ColumnSort>({ field: "year", direction: -1 });
+
+  public readonly sortIcon$ = this.sort$.pipe(map((value) => value.direction === 1 ? "bi-sort-up-alt" : "bi-sort-down"));
 
   public readonly visibleColumns$: Observable<Column[]>;
 
@@ -114,11 +123,15 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
     return combineLatest([
       this.visibleColumns$,
       this.allWinners$,
+      this.sort$,
       of({}),
     ]).pipe(
-      map(([columns, winners, _filter]) => {
+      map(([columns, winners, sort, _filter]) => {
         // First do any filtering
         winners = winners.filter((_x) => true);
+
+        // Sort
+        winners = WinnersListComponent.sortWinners(winners, sort);
 
         return winners.map((winner) => {
           const values = columns.map((column) => {
@@ -146,9 +159,46 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
     );
   }
 
+  private static sortWinners(winners: DbRecord<Winner>[], sort: ColumnSort): DbRecord<Winner>[] {
+    const { field, direction } = sort;
+
+    return winners.sort((a, b) => {
+      const aVal = a.data[field];
+      const bVal = b.data[field];
+      let compare: number;
+
+      if (aVal === null) {
+        compare = -1;
+      } else if (bVal === null) {
+        compare = 1;
+      } else if (typeof aVal === "number" && typeof bVal === "number") {
+        compare = aVal - bVal;
+      } else {
+        compare = `${aVal}`.localeCompare(`${bVal}`);
+      }
+
+      return compare * direction;
+    });
+  }
+
   // ========================
   // Event handlers
   // ========================
+
+  public onSortHeaderClick(field: keyof Winner): void {
+    let sort = { ... this.sort$.value };
+
+    if (sort.field === field) {
+      sort.direction = sort.direction === 1 ? -1 : 1;
+    } else {
+      sort = {
+        field,
+        direction: field === "year" ? -1 : 1, // Sort ascending, except for year which is latest first
+      }
+    }
+
+    this.sort$.next(sort);
+  }
 
   public async onWinnerEditClick(item: DbRecord<Winner>): Promise<void> {
     if (!this.clubId || !this.trophyId) {

@@ -1,9 +1,10 @@
-<div class="p-3">
+<div class="p-3" *ngIf="sort$ | async as sort">
   <table class="table table-striped">
     <thead>
       <tr>
-        <th *ngFor="let col of visibleColumns$ | async">
+        <th *ngFor="let col of visibleColumns$ | async" role="button" (click)="onSortHeaderClick(col.field)">
           {{col.title}}
+          <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
         </th>
         <th *ngIf="canEdit"></th>
       </tr>
@@ -23,9 +24,4 @@
     </tbody>
   </table>
 
-</div>
-
-<div class="p-3">
-  <pre>{{visibleColumns$ | async | json}}</pre>
-  <pre>{{winners$ | async | json}}</pre>
 </div>
