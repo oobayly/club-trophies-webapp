@@ -12,6 +12,11 @@ service cloud.firestore {
       	&& get(/databases/$(database)/documents/clubs/$(clubId)).data.public;
     }
     
+    function isTrophyPublic(clubId, trophyId) {
+    	return exists(/databases/$(database)/documents/clubs/$(clubId)/trophies/$(trophyId))
+      	&& get(/databases/$(database)/documents/clubs/$(clubId)/trophies/$(trophyId)).data.public;
+    }    
+
     function isClubAdmin(clubId) {
     	return request.auth != null
       	&& exists(/databases/$(database)/documents/clubs/$(clubId))
@@ -47,7 +52,7 @@ service cloud.firestore {
 
       // Any sub documents can be read, created, updated but not deleted
       match /{document=**} {
-        allow delete: if flase;
+        allow delete: if false;
       	allow read, write: if isClubAdmin(clubId);
       }
       
@@ -62,12 +67,14 @@ service cloud.firestore {
           && request.resource.data.enabled == false
         	&& isClubPublic(clubId);
       }
-    
-      match /trophies/{trophyId}/{document=**} {
+
+      match /trophies/{trophyId} {
         // Anyone can view public trophies, provided the club is also public
-	    	allow read: if resource != null
-  	    	&& resource.data.public
-          && isClubPublic(clubId);
+	    	allow read: if isClubPublic(clubId) && resource != null && resource.data.public == true;
+
+        match /{document=**} {
+          allow read: if isClubPublic(clubId) && isTrophyPublic(clubId, trophyId);          
+        }
       }
     }
   
