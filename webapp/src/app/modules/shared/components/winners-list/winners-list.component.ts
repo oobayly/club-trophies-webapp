@@ -62,6 +62,9 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // ========================
 
   @Input()
+  public boatId?: string | null;
+
+  @Input()
   public canEdit: boolean | null | undefined;
 
   // ========================
@@ -184,7 +187,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
       return;
     }
 
-    await this.modal.showAddWinner(this.clubId, this.trophyId);
+    await this.modal.showAddWinner(this.clubId, this.trophyId, this.boatId);
   }
 
   public onSortHeaderClick(field: keyof Winner): void {

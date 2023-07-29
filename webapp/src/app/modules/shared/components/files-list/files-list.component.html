@@ -25,10 +25,10 @@
           </h5>
         </div>
 
-        <div class="card-footer d-flex flex-row justify-content-between align-items-center" *ngIf="canEdit">
+        <div class="card-footer d-flex flex-row justify-content-between align-items-center">
           <small class="text-muted">Created: {{item.data.created | toDate | date}}</small>
 
-          <div class="edit-buttons">
+          <div class="edit-buttons" *ngIf="canEdit">
             <button class="btn btn-outline-primary btn-sm me-3" (click)="onEditFileClick(item)">
               <i class="bi-pencil-fill"></i>
             </button>

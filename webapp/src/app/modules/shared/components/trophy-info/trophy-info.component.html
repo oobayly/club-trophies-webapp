@@ -2,7 +2,7 @@
   <app-tab-container [(tabIndex)]="tabIndex">
     <!-- Winners -->
     <app-tab-page name="Winners">
-      <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [canEdit]="canEdit$ | async"
+      <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [boatId]="trophy.boatId" [canEdit]="canEdit$ | async"
         (countChange)="winners = $event">
       </app-winners-list>
     </app-tab-page>

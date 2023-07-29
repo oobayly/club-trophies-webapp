@@ -3,7 +3,6 @@ import { TrophyBaseComponent } from "../trophy-base-component";
 import { BehaviorSubject, Observable, first, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore, AngularFirestoreCollection } from "@angular/fire/compat/firestore";
-import { FormBuilder } from "@angular/forms";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Collections, TrophyFile } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
@@ -54,7 +53,6 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
   constructor(
     auth: AngularFireAuth,
     db: AngularFirestore,
-    private readonly formBuilder: FormBuilder,
     private readonly modal: ModalService,
   ) {
     super(auth, db);

@@ -9,6 +9,8 @@ import { Winner } from "@models";
   styleUrls: ["./edit-winner-modal.component.scss"],
 })
 export class EditWinnerModalComponent extends BaseModalComponent<string> {
+  public boatId?: string | null;
+
   public clubId!: string;
 
   public trophyId!: string;

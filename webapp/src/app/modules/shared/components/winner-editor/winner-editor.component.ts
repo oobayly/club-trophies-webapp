@@ -49,6 +49,9 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
   // ========================
 
   @Input()
+  public boatId?: string | null;
+
+  @Input()
   public clubId!: string;
 
   @Input()
@@ -82,6 +85,10 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if ("boatId" in changes) {
+      this.form.patchValue({ boatId: this.boatId || null });
+    }
+
     if ("clubId" in changes) {
       this.clubId$.next(this.clubId);
     }

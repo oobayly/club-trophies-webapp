@@ -95,11 +95,12 @@ export class ModalService {
     });
   }
 
-  public showAddWinner(clubId: string, trophyId: string): Promise<string | undefined> {
+  public showAddWinner(clubId: string, trophyId: string, boatId?: string | null): Promise<string | undefined> {
     return this.showModal(EditWinnerModalComponent, {
       configure: (component) => {
         component.clubId = clubId;
         component.trophyId = trophyId;
+        component.boatId = boatId;
       },
     });
   }

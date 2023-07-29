@@ -186,7 +186,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
       return;
     }
 
-    await this.modal.showAddWinner(this.clubId, item.id);
+    await this.modal.showAddWinner(this.clubId, item.id, item.data.boatId || undefined);
   }
 
   public async onEditTrophyClick(e: Event, item: DbRecord<Trophy>): Promise<void> {
