@@ -1,9 +1,8 @@
 import { Directive, ElementRef, Input, OnChanges, SimpleChanges } from "@angular/core";
-
-export type NgButtonColor = "primary" | "secondary" | "success" | "danger" | "warning" | "info" | "light" | "dark";
+import { NgColor } from "@helpers/angular";
 
 export interface NgButton {
-  color: NgButtonColor;
+  color: NgColor;
   outline?: boolean;
 }
 
@@ -14,7 +13,7 @@ export class NgBtnDirective implements OnChanges {
   private _class?: string;
 
   @Input()
-  public appNgBtn?: NgButtonColor | NgButton;
+  public appNgBtn?: NgColor | NgButton;
 
   constructor(
     private readonly el: ElementRef<HTMLElement>,

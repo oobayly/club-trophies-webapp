@@ -1,9 +1,10 @@
 .file-container {
-  border: 3px solid transparent;
+  border-color: var(--bs-blue);
 
   &.dragging {
+    margin: -3px;
     border-radius: 10px;
-    border: 3px solid blue;
+    border: 3px solid var(--bs-blue);
     border-style: dashed;
   }
 
@@ -27,19 +28,11 @@
       object-fit: contain;
     }
   }
-
-  .no-files {
-    color: var(--bs-blue);
-
-    i {
-      font-size: 6ex;
-    }
-  }
 }
 
 @media print {
   .file-container {
-    scale: .75;
+    scale: 0.75;
     padding: 0;
   }
 
@@ -47,5 +40,4 @@
   .edit-buttons {
     display: none;
   }
-
 }

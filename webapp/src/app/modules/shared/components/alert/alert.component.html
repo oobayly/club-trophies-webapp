@@ -1,0 +1,19 @@
+<div class="alert alert-{{color}} m-0 p-3 d-flex align-items-center" [ngClass]="{'is-hidden': isHidden}">
+  <!-- Close button -->
+  <button class="btn btn-close m-2" *ngIf="canClose" (click)="onCloseClick()"></button>
+
+  <!-- Icon -->
+  <div class="icon me-3" *ngIf="icon$ | async as icon">
+    <i [ngClass]="icon"></i>
+  </div>
+
+  <!-- Content -->
+  <div class="content-container d-flex flex-column">
+    <h4 *ngIf="title" [ngClass]="{'mb-0': !content.childNodes.length}">
+      {{title}}
+    </h4>
+    <div #content>
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

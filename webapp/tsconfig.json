@@ -25,6 +25,15 @@
     "paths": {
       "@models": [
         "../firebase/functions/src/models"
+      ],
+      "@models/*": [
+        "../firebase/functions/src/models/*"
+      ],
+      "@helpers": [
+        "src/app/core/helpers"
+      ],
+      "@helpers/*": [
+        "src/app/core/helpers/*"
       ]
     }
   },

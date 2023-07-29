@@ -1,37 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
-@import "~bootstrap/dist/css/bootstrap.min.css";
-@import "~firebaseui/dist/firebaseui.css";
+@import "firebaseui/dist/firebaseui.css";
 
-/* Importing Bootstrap SCSS file. */
-@import "~bootstrap/scss/bootstrap";
-@import "~bootstrap-icons/font/bootstrap-icons.css";
+@import "bootstrap-utilities"; // Needs to be done before boostrap is loaded
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons.css";
 
-.ng-touched.ng-invalid {
-  @extend .is-invalid;
-}
-
-.ng-submitted {
-  @extend .was-validated;
-}
-
-.text-pre-wrap {
-  white-space: pre-wrap;
-}
-
-.d-contents {
-  display: contents;
-}
-
-.button-grid {
-  display: flex;
-  justify-content: space-around;
-
-  >button {
-    flex: 1 1 0;
-
-    &:not(:first-child) {
-      @extend .ms-4;
-    }
-  }
-
-}
+@import "forms";
+@import "layout";
+@import "text";

@@ -1,0 +1,7 @@
+.ng-touched.ng-invalid {
+  @extend .is-invalid;
+}
+
+.ng-submitted {
+  @extend .was-validated;
+}

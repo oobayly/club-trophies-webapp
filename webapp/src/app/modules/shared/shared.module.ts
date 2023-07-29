@@ -25,7 +25,8 @@ import { AlertModalComponent } from "./modals/alert-modal/alert-modal.component"
 import { InputModalComponent } from "./modals/input-modal/input-modal.component";
 import { NgBtnDirective } from "./directives/ng-btn.directive";
 import { TrophyFileEditorComponent } from "./components/trophy-file-editor/trophy-file-editor.component";
-import { ToDatePipe } from './pipes/to-date.pipe';
+import { ToDatePipe } from "./pipes/to-date.pipe";
+import { AlertComponent } from "./components/alert/alert.component";
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { ToDatePipe } from './pipes/to-date.pipe';
     NgBtnDirective,
     TrophyFileEditorComponent,
     ToDatePipe,
+    AlertComponent,
   ],
   imports: [
     CommonModule,
@@ -61,6 +63,7 @@ import { ToDatePipe } from './pipes/to-date.pipe';
     NgbModalModule,
   ],
   exports: [
+    AlertComponent,
     ClubEditorComponent,
     ClubInfoComponent,
     ClubsListComponent,
@@ -68,6 +71,8 @@ import { ToDatePipe } from './pipes/to-date.pipe';
     TrophyInfoComponent,
     TrophiesListComponent,
     WinnerEditorComponent,
+    NgBtnDirective,
+    ToDatePipe,
   ],
 })
 export class SharedModule {

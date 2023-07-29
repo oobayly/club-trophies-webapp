@@ -1,5 +1,5 @@
 <ng-container *ngIf="clubId$ | async as clubId">
-  <div class="d-flex justify-content-center">
+  <div class="container mw-sm">
     <app-club-info [clubId]="clubId" (clubChange)="onClubChange($event)" (canEditChange)="canEdit = $event">
     </app-club-info>
   </div>

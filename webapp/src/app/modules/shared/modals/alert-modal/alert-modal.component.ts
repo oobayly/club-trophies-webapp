@@ -1,7 +1,8 @@
 import { Component } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { BaseModalComponent } from "../base-modal.component";
-import { NgButton, NgButtonColor } from "../../directives/ng-btn.directive";
+import { NgButton } from "../../directives/ng-btn.directive";
+import { NgColor } from "@helpers/angular";
 
 export interface AlertButton<T = string | boolean | number> extends NgButton {
   text: string;
@@ -14,7 +15,7 @@ export interface AlertButton<T = string | boolean | number> extends NgButton {
   templateUrl: "./alert-modal.component.html",
   styleUrls: ["./alert-modal.component.scss"],
 })
-export class AlertModalComponent<T = NgButtonColor> extends BaseModalComponent<T> {
+export class AlertModalComponent<T = NgColor> extends BaseModalComponent<T> {
   // ========================
   // Properties
   // ========================

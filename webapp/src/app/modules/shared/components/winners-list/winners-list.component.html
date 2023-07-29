@@ -6,11 +6,11 @@
     </button>
   </div>
 
+  <!-- Results table -->
   <ng-container *ngIf="winners$ | async as winners">
-    <!-- Results table -->
     <table class="table table-responsive table-sm table-striped" *ngIf="winners.length; else noWinners">
       <thead>
-        <tr>
+        <tr class="user-select-none">
           <th *ngFor="let col of visibleColumns$ | async" role="button" (click)="onSortHeaderClick(col.field)">
             {{col.title}}
             <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
@@ -35,12 +35,13 @@
         </tr>
       </tbody>
     </table>
-
   </ng-container>
 </div>
 
 <ng-template #noWinners>
-  <div class="alert alert-info">
-    as
+  <div class="container mw-sm">
+    <app-alert>
+      No winners are available for this trophy.
+    </app-alert>
   </div>
 </ng-template>

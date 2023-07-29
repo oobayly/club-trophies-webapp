@@ -11,6 +11,7 @@ import { DbRecord } from "../interfaces/DbRecord";
 import { AlertButton, AlertModalComponent } from "src/app/modules/shared/modals/alert-modal/alert-modal.component";
 import { EditFileModalComponent } from "src/app/modules/shared/modals/edit-file-modal/edit-file-modal.component";
 import { EditWinnerModalComponent } from "src/app/modules/shared/modals/edit-winner-modal/edit-winner-modal.component";
+import { getIconForColor } from "@helpers/angular";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
@@ -48,6 +49,19 @@ export class ModalService {
     ).subscribe(() => {
       ngbModal.dismissAll();
     });
+  }
+
+  private getBootstrapIcon(icon: string): string {
+    switch (icon) {
+      case "question":
+        return "bi-question-circle";
+      case "info":
+      case "warning":
+      case "danger":
+        return getIconForColor(icon) || icon;
+      default:
+        return icon;
+    }
   }
 
   /** Creates a modal of the specified type. */
@@ -196,20 +210,7 @@ export class ModalService {
       buttons = [options.buttons];
     }
 
-    let icon: string;
-
-    if (options.icon === "question") {
-      icon = "bi-question-circle";
-    } else if (options.icon === "info") {
-      icon = "bi-info-circle";
-    } else if (options.icon === "warning") {
-      icon = "bi-exclamation-triangle";
-    } else if (options.icon === "danger") {
-      icon = "bi-exclamation-octagon";
-    } else {
-      icon = options.icon;
-    }
-
+    const icon = this.getBootstrapIcon(options.icon);
     const resp = await this.showModal(AlertModalComponent<TValue>, {
       configure: (component) => {
         component.title = options.title;

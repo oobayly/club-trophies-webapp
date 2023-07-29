@@ -99,21 +99,14 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // ========================
 
   private getAllWinnersObservable(): Observable<DbRecord<Winner>[]> {
-    return combineLatest([
-      this.getTrophyRefObservalble().pipe(filterNotNull()),
-      this.canEdit$.pipe(filterNotNull()),
-    ]).pipe(
-      switchMap(([ref, canEdit]) => {
-        return ref?.collection<Winner>(Collections.Winners, (ref) => {
-          if (canEdit) {
-            return ref;
-          }
-
-          return ref.where("public", "==", true);
-        }).snapshotChanges();
+    return this.getTrophyRefObservalble().pipe(
+      filterNotNull(),
+      switchMap((ref) => ref.collection<Winner>(Collections.Winners).snapshotChanges()),
+      map((x) => {
+        return toRecord(x)
+          .sort((a, b) => b.data.year - a.data.year)
+          ;
       }),
-      map((x) => toRecord(x).sort((a, b) => b.data.year - a.data.year)),
-      tap((items) => console.log(items)),
       tap((items) => this.countChange.next(items.length)),
       takeUntil(this.destroyed$),
       shareReplay(),

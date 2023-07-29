@@ -1,7 +1,7 @@
 <div #fileDrop class="p-3 file-container" *ngIf="photos$ | async as photos" (dragenter)="onDragEnter($event)"
   (dragover)="onDragEnter($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
 
-  <div class="edit-container d-flex align-items-center pb-3 flex-column flex-lg-row" *ngIf="canEdit">
+  <div class="edit-container pb-3" *ngIf="canEdit">
     <div class="file-upload">
       <label for="file-list-upload" class="btn btn-outline-primary">
         <i class="bi-camera-fill pe-2"></i>Upload Photos
@@ -10,13 +10,9 @@
       <input #fileUpload class="form-control" type="file" id="file-list-upload" multiple
         accept="image/png, image/jpeg, image/gif" (change)="onFileChange($event)">
     </div>
-
-    <div class="pt-2 ps-lg-3">
-      <label class="form-label">You can upload photos by using the button, or dragging them onto the page below.</label>
-    </div>
   </div>
 
-  <div class="row g-4 justify-content-center">
+  <div class="row g-4 justify-content-center" *ngIf="photos.length; else noFiles">
 
     <!-- Photo list -->
     <div class="col-auto" *ngFor="let item of photos">
@@ -44,14 +40,21 @@
       </div>
     </div>
 
-    <!-- CTA for uploading when there are no photos -->
-    <div class="col-auto p-3 no-files" role="button" *ngIf="!photos.length && canEdit" (click)="triggerUpload($event);">
-      <h4 class="text-center">
-        <i class="bi-camera-fill"></i><br>
-        Drag photos on to the page,<br>
-        or use the button above to upload photos.
-      </h4>
-    </div>
-
   </div>
 </div>
+
+<ng-template #noFiles>
+  <div class="container mw-sm">
+    <!-- CTA for uploading when there are no photos -->
+    <app-alert icon="bi-camera-fill" *ngIf="canEdit; else noFilesPublic" role="button" (click)="triggerUpload($event)">
+      Drag photos on to the page,<br>
+      or use the button above to upload photos.
+    </app-alert>
+  </div>
+</ng-template>
+
+<ng-template #noFilesPublic>
+  <app-alert>
+    No files are available for this trophy.
+  </app-alert>
+</ng-template>

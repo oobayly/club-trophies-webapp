@@ -1,0 +1,17 @@
+.alert {
+  position: relative;
+
+  &.is-hidden {
+    display: none !important;
+  }
+
+  .icon {
+    font-size: 150%;
+  }
+
+  .btn-close {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
