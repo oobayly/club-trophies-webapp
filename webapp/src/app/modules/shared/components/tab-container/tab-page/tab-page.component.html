@@ -1,3 +1,4 @@
-<div class="tab-page" [hidden]="!active">
+<div class="tab-page" [ngClass]="{'d-none': !active}">
   <ng-content></ng-content>
 </div>
+<div *ngIf=" pageBreak" class="page-break d-none"></div>

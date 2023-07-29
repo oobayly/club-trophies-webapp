@@ -22,6 +22,8 @@ export class ViewClubComponent {
 
   public readonly trophyId$ = this.route.queryParamMap.pipe(map((x) => x.get("trophyId")));
 
+  public trophy?: Trophy;
+
   // ========================
   // Lifecycle
   // ========================
@@ -36,7 +38,8 @@ export class ViewClubComponent {
   // Event handlers
   // ========================
 
-  public async onBackClick(): Promise<void> {
+  public async onBackClick(e: Event): Promise<void> {
+    e.preventDefault();
     await this.router.navigate([]);
   }
 

@@ -16,8 +16,8 @@
 
 <ng-container *ngIf="trophies$ | async as trophies">
   <ul class="list-group">
-    <a [routerLink]="['/clubs', clubId, 'trophies', item.id]" class="list-group-item list-group-item-action"
-      *ngFor="let item of trophies">
+    <a [routerLink]="['/clubs', clubId, 'trophies', item.id]" fragment="winners"
+      class="list-group-item list-group-item-action" *ngFor="let item of trophies">
 
       <div class=" d-flex justify-content-between align-items-center" (click)="onItemClick($event, item)">
         <!-- Name -->
@@ -28,7 +28,7 @@
             <small>Donated {{donated}}</small>
           </div>
           <div class="text-muted" *ngIf="item.data.boatName as boatName">
-            <small>Current Boat Type: {{boatName}}</small>
+            <small>Current Class: {{boatName}}</small>
           </div>
         </div>
 

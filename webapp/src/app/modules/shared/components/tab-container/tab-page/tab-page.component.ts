@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, Input, TemplateRef } from "@angular/core";
+import { Component, Input } from "@angular/core";
 
 @Component({
   selector: "app-tab-page",
@@ -11,11 +11,14 @@ export class TabPageComponent {
   // ========================
 
   @Input()
+  public active?: boolean;
+
+  @Input()
   public icon?: string;
 
   @Input()
   public name?: string;
 
   @Input()
-  public active?: boolean;
+  public pageBreak = false;
 }

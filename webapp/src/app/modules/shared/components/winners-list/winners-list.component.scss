@@ -12,17 +12,8 @@
   .winners-container {
     padding: 0;
 
-    .edit-container {
-      display: none;
-    }
-
     .table {
-      th,
-      td {
-        &.buttons {
-          display: none;
-        }
-      }
+      font-size: 75%;
     }
   }
 }

@@ -22,7 +22,7 @@ interface ColumnSort {
 const Colunms: Column[] = [
   { field: "year", title: "Year" },
   { field: "sail", title: "Sail No." },
-  { field: "boatName", title: "Boat Type" },
+  { field: "boatName", title: "Class" },
   { field: "helm", title: "Helm" },
   { field: "crew", title: "Crew" },
   { field: "name", title: "Boat Name" },

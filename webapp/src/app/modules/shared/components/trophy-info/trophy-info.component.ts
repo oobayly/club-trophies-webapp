@@ -5,10 +5,11 @@ import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { filterNotNull } from "src/app/core/rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { TrophyBaseComponent } from "../trophy-base-component";
+import { ModalService } from "src/app/core/services/modal.service";
 
 export type TabType = "winners" | "info" | "photos";
 
-const TabPages: TabType[] = ["winners", "info", "photos"];
+const TabPages: TabType[] = ["info", "winners", "photos"];
 
 @Component({
   selector: "app-trophy-info",
@@ -54,6 +55,7 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   constructor(
     auth: AngularFireAuth,
     db: AngularFirestore,
+    private readonly modal: ModalService,
   ) {
     super(auth, db);
 
@@ -96,4 +98,12 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   // ========================
   // Event handlers
   // ========================
+
+  public async onEditTrophyClick(trophy: Trophy): Promise<void> {
+    if (!this.clubId || !this.trophyId) {
+      return;
+    }
+
+    await this.modal.showEditTrophy(this.clubId, this.trophyId, trophy);
+  }
 }

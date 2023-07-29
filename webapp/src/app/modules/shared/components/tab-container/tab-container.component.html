@@ -1,4 +1,4 @@
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs no-print">
   <li class="nav-item" *ngFor="let item of tabPages">
     <span class="nav-link" [ngClass]="{'active': item.active}" role="button" (click)="setSelected(item)">
       <i *ngIf="item.icon as icon" class="pe-1" [ngClass]="icon"></i>

@@ -27,6 +27,7 @@ import { NgBtnDirective } from "./directives/ng-btn.directive";
 import { TrophyFileEditorComponent } from "./components/trophy-file-editor/trophy-file-editor.component";
 import { ToDatePipe } from "./pipes/to-date.pipe";
 import { AlertComponent } from "./components/alert/alert.component";
+import { TimestampPipe } from "./pipes/timestamp.pipe";
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { AlertComponent } from "./components/alert/alert.component";
     TrophyFileEditorComponent,
     ToDatePipe,
     AlertComponent,
+    TimestampPipe,
   ],
   imports: [
     CommonModule,
@@ -72,6 +74,7 @@ import { AlertComponent } from "./components/alert/alert.component";
     TrophiesListComponent,
     WinnerEditorComponent,
     NgBtnDirective,
+    TimestampPipe,
     ToDatePipe,
   ],
 })

@@ -42,7 +42,7 @@
   <div class="row">
     <!-- Boat -->
     <div class="col-8 nb-3">
-      <label class="form-label" for="{{formId}}-boatId">Boat Type</label>
+      <label class="form-label" for="{{formId}}-boatId">Class</label>
       <select class="form-select" id="{{formId}}-boatId" formControlName="boatId">
         <option [ngValue]="null">None</option>
         <option *ngFor="let item of boats$ | async" [ngValue]="item.id">{{item.data.name}}</option>

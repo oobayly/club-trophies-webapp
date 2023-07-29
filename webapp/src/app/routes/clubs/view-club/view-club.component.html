@@ -11,11 +11,18 @@
   </div>
 
   <ng-container *ngIf="trophyId$ | async as trophyId">
-    <div class="mb-3">
-      <button class="btn btn-outline-primary" (click)="onBackClick()">Back to All Trophies</button>
-    </div>
+    <nav class="mb-3 no-print" aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="" (click)="onBackClick($event)">Back to All Trophies</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{trophy?.name}}
+        </li>
+      </ol>
+    </nav>
 
-    <app-trophy-info [clubId]="clubId" [trophyId]="trophyId">
+    <app-trophy-info [clubId]="clubId" [trophyId]="trophyId" (trophyChange)="trophy = $event" tab="winners">
     </app-trophy-info>
   </ng-container>
 </ng-container>

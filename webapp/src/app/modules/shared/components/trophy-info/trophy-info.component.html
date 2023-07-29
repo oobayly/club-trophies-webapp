@@ -1,17 +1,61 @@
 <ng-container *ngIf="trophy$ | async as trophy">
   <app-tab-container [(tabIndex)]="tabIndex">
+    <!-- Info-->
+    <app-tab-page name="Trophy Information">
+      <div class="p-3 p-print-0">
+        <h5>
+          {{trophy.name}}
+          <span class="ms-2 no-print" *ngIf=" canEdit$ | async" (click)="onEditTrophyClick(trophy)">
+            <i class=" bi-pencil-fill" role="button" *ngIf="canEdit$ | async"></i>
+          </span>
+        </h5>
+
+        <table class="trophy-info-table">
+          <tbody>
+            <!-- Donor -->
+            <tr>
+              <td>Donated</td>
+              <td>{{(trophy | donated)|| 'Unspecified'}}</td>
+            </tr>
+
+            <!-- Details -->
+            <tr>
+              <td>Details</td>
+              <td>{{trophy.details}}</td>
+            </tr>
+
+            <!-- Conditions -->
+            <tr>
+              <td>Conditions</td>
+              <td>{{trophy.conditions}}</td>
+            </tr>
+
+            <!-- Current class -->
+            <tr>
+              <td>Current Class</td>
+              <td>{{trophy.boatName}}</td>
+            </tr>
+
+            <!-- Archive page -->
+            <tr *ngIf="trophy.page as page">
+              <td>Archive Page</td>
+              <td>{{page}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="footer-info d-flex justify-content-between mt-2 p-2 text-muted" *ngIf="canEdit$ | async">
+          <small>Trophy is <span *ngIf="!trophy.public">not</span> viewable for everyone</small>
+          <small>Last Updated: {{(trophy.modified || trophy.created) | timestamp:true}}</small>
+        </div>
+      </div>
+    </app-tab-page>
+
     <!-- Winners -->
-    <app-tab-page name="Winners">
+    <app-tab-page name=" Winners" [pageBreak]="true">
       <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [boatId]="trophy.boatId" [canEdit]="canEdit$ | async"
         (countChange)="winners = $event">
       </app-winners-list>
-    </app-tab-page>
-
-    <!-- Info-->
-    <app-tab-page name="Info">
-      <div class="p-3">
-        <pre>{{trophy | json}}</pre>
-      </div>
     </app-tab-page>
 
     <!-- Photos -->

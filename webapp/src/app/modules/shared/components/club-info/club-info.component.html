@@ -11,7 +11,7 @@
         </ng-template>
 
         <!-- If uploading is allowed -->
-        <span class="me-1 upload-button" role="button" *ngIf="canEdit$ | async" (click)="onUploadClick()">
+        <span class="me-1 upload-button no-print" role="button" *ngIf="canEdit$ | async" (click)="onUploadClick()">
           <i class="bi bi-camera-fill"></i>
         </span>
       </div>
@@ -23,12 +23,11 @@
           <p class="card-text text-muted">
             <small class="d-flex justify-content-between">
               <span>{{club.shortName}}, {{club.country}}</span>
-              <span>Updated on {{club.modified || club.created | toDate | date}}</span>
             </small>
           </p>
 
           <!-- If uploading is allowed -->
-          <span class="me-1 edit-button" role="button" *ngIf="canEdit$ | async" (click)="onEditClick(club)">
+          <span class="me-1 edit-button no-print" role="button" *ngIf="canEdit$ | async" (click)="onEditClick(club)">
             <i class="bi bi-pencil-fill"></i>
           </span>
         </div>

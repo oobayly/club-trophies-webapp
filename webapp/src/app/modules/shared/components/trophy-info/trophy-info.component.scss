@@ -1,0 +1,46 @@
+.trophy-info-table {
+  tbody {
+    tr {
+      td {
+        white-space: pre-line;
+        padding: 0.25rem 0;
+
+        &:first-child {
+          padding-right: 1.5rem;
+          white-space: nowrap;
+          font-weight: 700;
+          color: var(--bs-gray-600);
+        }
+      }
+    }
+  }
+}
+
+.footer-info {
+  border-top: 1px solid var(--bs-gray-300);
+}
+
+@media screen and (max-width: 576px) {
+  .trophy-info-table {
+    tr {
+      display: block;
+
+      &:not(:first-child) {
+        margin-top: 0.5rem;
+      }
+      td {
+        display: block;
+
+        &:not(:first-child) {
+          margin-left: 0.5rem;
+          padding: 0 !important;
+        }
+      }
+    }
+  }
+
+  .footer-info {
+    text-align: center;
+    flex-direction: column;
+  }
+}

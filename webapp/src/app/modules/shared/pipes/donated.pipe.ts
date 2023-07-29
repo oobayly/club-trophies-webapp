@@ -7,16 +7,15 @@ import { Trophy } from "@models";
 })
 export class DonatedPipe implements PipeTransform {
   transform(value: Trophy): string {
-    const parts: string[] = [];
-
-    if (value.donor) {
-      parts.push("by", value.donor);
+    if (value.donor && value.donated) {
+      return `${value.donor} in ${value.donated}`;
+    } else if (value.donated) {
+      return value.donated;
+    } else if (value.donor) {
+      return value.donor;
     }
-    if (value.donated) {
-      parts.push("in", value.donated);
-    }
 
-    return parts.join(" ");
+    return "";
   }
 
 }

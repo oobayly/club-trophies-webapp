@@ -3,7 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { Club, Trophy } from "@models";
 import { Title } from "@angular/platform-browser";
 import { AppTitle } from "src/app/app-routing.module";
-import { map, tap } from "rxjs";
+import { map } from "rxjs";
 import { TabType } from "src/app/modules/shared/components/trophy-info/trophy-info.component";
 
 @Component({
@@ -14,7 +14,7 @@ import { TabType } from "src/app/modules/shared/components/trophy-info/trophy-in
 export class ViewTrophyComponent {
   public readonly clubId$ = this.router.paramMap.pipe(map((x) => x.get("clubId")));
 
-  public readonly tab$ = this.router.fragment.pipe(tap((x) => console.log(x)), map((x) => x as TabType));
+  public readonly tab$ = this.router.fragment.pipe(map((x) => x as TabType));
 
   public readonly trophyId$ = this.router.paramMap.pipe(map((x) => x.get("trophyId")));
 

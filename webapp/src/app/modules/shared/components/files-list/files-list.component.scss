@@ -27,17 +27,25 @@
       height: 300px;
       object-fit: contain;
     }
+
+    @media screen and (max-width: 576px) {
+      width: 252px;
+      .card-img-top {
+        width: 250px;
+        height: 250px;
+      }
+    }
   }
 }
 
 @media print {
   .file-container {
-    scale: 0.75;
-    padding: 0;
-  }
-
-  .edit-container,
-  .edit-buttons {
-    display: none;
+    .card {
+      width: 252px;
+      .card-img-top {
+        width: 250px;
+        height: 250px;
+      }
+    }
   }
 }
