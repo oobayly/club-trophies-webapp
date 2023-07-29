@@ -4,7 +4,7 @@
   <div class="edit-container d-flex align-items-center pb-3 flex-column flex-lg-row" *ngIf="canEdit">
     <div class="file-upload">
       <label for="file-list-upload" class="btn btn-outline-primary">
-        <i class="bi-camera pe-2"></i>Upload Photos
+        <i class="bi-camera-fill pe-2"></i>Upload Photos
       </label>
 
       <input #fileUpload class="form-control" type="file" id="file-list-upload" multiple
@@ -47,7 +47,7 @@
     <!-- CTA for uploading when there are no photos -->
     <div class="col-auto p-3 no-files" role="button" *ngIf="!photos.length && canEdit" (click)="triggerUpload($event);">
       <h4 class="text-center">
-        <i class="bi-camera"></i><br>
+        <i class="bi-camera-fill"></i><br>
         Drag photos on to the page,<br>
         or use the button above to upload photos.
       </h4>

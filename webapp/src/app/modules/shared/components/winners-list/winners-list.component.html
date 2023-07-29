@@ -1,36 +1,46 @@
 <div class="winners-container p-3" *ngIf="sort$ | async as sort">
+  <!-- Edit controls -->
   <div class="edit-container mb-3" *ngIf="canEdit">
     <button class="btn btn-outline-primary" (click)="onAddWinnerClick()">
       <i class="bi-trophy-fill me-2"></i>Add new winner
     </button>
   </div>
 
-  <table class="table table-responsive table-sm table-striped">
-    <thead>
-      <tr>
-        <th *ngFor="let col of visibleColumns$ | async" role="button" (click)="onSortHeaderClick(col.field)">
-          {{col.title}}
-          <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
-        </th>
-        <th class="buttons" *ngIf="canEdit"></th>
-      </tr>
-    </thead>
+  <ng-container *ngIf="winners$ | async as winners">
+    <!-- Results table -->
+    <table class="table table-responsive table-sm table-striped" *ngIf="winners.length; else noWinners">
+      <thead>
+        <tr>
+          <th *ngFor="let col of visibleColumns$ | async" role="button" (click)="onSortHeaderClick(col.field)">
+            {{col.title}}
+            <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
+          </th>
+          <th class="buttons" *ngIf="canEdit"></th>
+        </tr>
+      </thead>
 
-    <tbody>
-      <tr *ngFor="let item of winners$ | async">
-        <td *ngFor="let value of item.values">
-          {{value}}
-        </td>
-        <td class="buttons" *ngIf="canEdit">
-          <button class="btn btn-outline-primary btn-sm" (click)="onWinnerEditClick(item)">
-            <i class="bi-pencil-fill"></i>
-          </button>
-          <button class="btn btn-outline-danger btn-sm ms-2" (click)="onWinnerDeleteClick(item)">
-            <i class="bi-trash3-fill"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+      <tbody>
+        <tr *ngFor="let item of winners">
+          <td *ngFor="let value of item.values">
+            {{value}}
+          </td>
+          <td class="buttons" *ngIf="canEdit">
+            <button class="btn btn-outline-primary btn-sm" (click)="onWinnerEditClick(item)">
+              <i class="bi-pencil-fill"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-sm ms-2" (click)="onWinnerDeleteClick(item)">
+              <i class="bi-trash3-fill"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
+  </ng-container>
 </div>
+
+<ng-template #noWinners>
+  <div class="alert alert-info">
+    as
+  </div>
+</ng-template>

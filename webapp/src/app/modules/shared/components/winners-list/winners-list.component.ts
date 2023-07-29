@@ -113,6 +113,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
         }).snapshotChanges();
       }),
       map((x) => toRecord(x).sort((a, b) => b.data.year - a.data.year)),
+      tap((items) => console.log(items)),
       tap((items) => this.countChange.next(items.length)),
       takeUntil(this.destroyed$),
       shareReplay(),
