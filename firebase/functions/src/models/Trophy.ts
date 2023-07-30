@@ -2,6 +2,8 @@ import { BoatReference } from "./Boat";
 import { HasPublic, HasTimestamp, UploadInfo } from "./interfaces";
 
 export interface Trophy extends HasPublic, HasTimestamp, BoatReference {
+  /** The ID of the club that the trophy belongs to. */
+  clubId: string;
   /** The conditions for the trophy being awarded. */
   conditions: string;
   /** The details of the trophy. */

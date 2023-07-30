@@ -129,7 +129,10 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
     const isNew = !this.trophyId;
     const doc = this.db.getTrophyDoc(this.clubId, this.trophyId);
     const trophy = await this.db.addBoatRef(
-      this.form.getRawValue(),
+      {
+        ...this.form.getRawValue(),
+        clubId: this.clubId,
+      },
       this.boats$,
     );
 
