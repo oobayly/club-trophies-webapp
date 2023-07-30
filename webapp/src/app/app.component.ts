@@ -3,7 +3,6 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { map, Observable, of, shareReplay, Subject, Subscription, switchMap, takeUntil } from "rxjs";
 import { isAdmin } from "./core/rxjs/auth";
 import { environment } from "src/environments/environment";
-import { Club, Collections } from "@models";
 import { ModalService } from "./core/services/modal.service";
 import { Router } from "@angular/router";
 import { DbService } from "./core/services/db.service";
@@ -84,10 +83,7 @@ export class AppComponent implements OnDestroy, OnInit {
           return of([]);
         }
 
-        return this.db.firestore.collection<Club>(
-          Collections.Clubs,
-          (ref) => ref.where("admins", "array-contains", user.uid),
-        ).snapshotChanges();
+        return this.db.getClubsCollection((ref) => ref.where("admins", "array-contains", user.uid)).snapshotChanges();
       }),
       map((items) => {
         return items

@@ -45,7 +45,7 @@
       <label class="form-label" for="{{formId}}-boatRef">Class</label>
       <select class="form-select" id="{{formId}}-boatRef" formControlName="boatRef">
         <option [ngValue]="null">None</option>
-        <option *ngFor="let item of boats$ | async" [ngValue]="item.ref.path">{{item.data.name}}</option>
+        <option *ngFor="let item of boats$ | async" [ngValue]="item.ref">{{item.data.name}}</option>
       </select>
     </div>
 

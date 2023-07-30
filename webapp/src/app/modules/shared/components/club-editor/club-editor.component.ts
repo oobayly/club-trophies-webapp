@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleCha
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
-import { Club, Collections } from "@models";
+import { Club } from "@models";
 import { getCountries } from "src/app/core/helpers/i18n";
 import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
@@ -95,7 +95,7 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
 
   private async saveClub(): Promise<string> {
     const isNew = !this.clubId;
-    const doc = this.db.firestore.collection(Collections.Clubs).doc<Club>(this.clubId || undefined);
+    const doc = this.db.getClubDoc(this.clubId || undefined);
     const club = this.form.getRawValue();
 
     if (isNew) {

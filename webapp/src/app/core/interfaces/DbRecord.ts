@@ -2,7 +2,7 @@ import { Action, DocumentChangeAction, DocumentSnapshot, QueryDocumentSnapshot }
 
 export interface DbRecord<T = unknown> {
   id: string;
-  ref: firebase.default.firestore.DocumentReference<firebase.default.firestore.DocumentData | T>;
+  ref: string;
   data: T;
 }
 
@@ -32,7 +32,7 @@ function toRecord<T = unknown>(
 
       return {
         id: doc.id,
-        ref: doc.ref,
+        ref: doc.ref.path,
         data: doc.data(),
       } as DbRecord<T>;
     });
@@ -40,7 +40,7 @@ function toRecord<T = unknown>(
     return value.docs.map((doc) => {
       return {
         id: doc.id,
-        ref: doc.ref,
+        ref: doc.ref.path,
         data: doc.data(),
       } as DbRecord<T>;
     });
@@ -49,13 +49,13 @@ function toRecord<T = unknown>(
 
     return {
       id: doc.id,
-      ref: doc.ref,
+      ref: doc.ref.path,
       data: doc.data(),
     };
   } else {
     return {
       id: value.id,
-      ref: value.ref,
+      ref: value.ref.path,
       data: value.data(),
     };
   }

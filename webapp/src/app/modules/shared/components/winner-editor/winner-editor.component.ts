@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { Subject, BehaviorSubject, Subscription, firstValueFrom, Observable, shareReplay, switchMap, takeUntil } from "rxjs";
-import { Boat, Collections, Winner } from "@models";
+import { Subject, BehaviorSubject, Subscription, Observable, shareReplay, switchMap, takeUntil } from "rxjs";
+import { Boat, Winner } from "@models";
 import { DbRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
-import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
+import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
 interface WinnerFormData {
@@ -130,12 +130,6 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
     });
   }
 
-  private async getBoat(ref: string | null): Promise<DbRecord<Boat> | null> {
-    const found = (await firstValueFrom(this.boats$)).find((x => x.ref.path === ref));
-
-    return found || null;
-  }
-
   private getBoatsObservable(): Observable<DbRecord<Boat>[]> {
     return this.clubId$.pipe(
       filterNotNull(),
@@ -147,27 +141,16 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
 
   public async saveWinner(): Promise<string> {
     const isNew = !this.winnerId;
-    const doc = this.db.firestore.collection(Collections.Clubs).doc(this.clubId)
-      .collection(Collections.Trophies).doc(this.trophyId)
-      .collection<Winner>(Collections.Winners).doc(this.winnerId || undefined)
-      ;
-    const winner = this.form.getRawValue();
-    const boat = await this.getBoat(winner.boatRef);
+    const doc = this.db.getWinnerDoc(this.clubId, this.trophyId, this.winnerId);
+    const winner = await this.db.addBoatRef(
+      this.form.getRawValue(),
+      this.boats$,
+    );
 
     if (isNew) {
-      await doc.set({
-        ...winner,
-        boatName: boat?.data.name || null,
-        boatRef: boat?.ref || null,
-        ...createdTimestamp(),
-      });
+      await this.db.addRecord(doc, winner);
     } else {
-      await doc.update({
-        ...winner,
-        boatName: boat?.data.name || null,
-        boatRef: boat?.ref || null,
-        ...modifiedTimestamp(),
-      });
+      await this.db.updateRecord(doc, winner);
     }
 
     return doc.ref.id;

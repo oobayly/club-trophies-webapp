@@ -3,7 +3,7 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { Query, QueryFn } from "@angular/fire/compat/firestore";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { CanEditDbRecord, DbRecord, toCanEditRecord, toRecord } from "src/app/core/interfaces/DbRecord";
-import { Club, Collections } from "@models";
+import { Club } from "@models";
 import { distinctUid } from "src/app/core/rxjs/auth";
 import { ModalService } from "src/app/core/services/modal.service";
 import { DbService } from "src/app/core/services/db.service";
@@ -85,7 +85,7 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
           return of(undefined);
         }
 
-        return this.db.firestore.collection<Club>(Collections.Clubs, query).snapshotChanges().pipe(
+        return this.db.getClubsCollection(query).snapshotChanges().pipe(
           catchError((err) => {
             console.log("Got an error: " + err.code);
 

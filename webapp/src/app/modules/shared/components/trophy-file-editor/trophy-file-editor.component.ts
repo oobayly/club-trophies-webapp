@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { Collections, TrophyFile } from "@models";
+import { TrophyFile } from "@models";
 import { BehaviorSubject, Subject, Subscription } from "rxjs";
-import { modifiedTimestamp, uuid } from "src/app/core/helpers";
+import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
 interface FileFormData {
@@ -94,16 +94,12 @@ export class TrophyFileEditorComponent implements OnChanges, OnDestroy {
   }
 
   public async saveFile(): Promise<string> {
-    const doc = this.db.firestore.collection(Collections.Clubs).doc(this.clubId)
-      .collection(Collections.Trophies).doc(this.trophyId)
-      .collection<TrophyFile>(Collections.Files).doc(this.fileId)
-      ;
-    const file = this.form.getRawValue();
+    const doc = this.db.getFileDoc(this.clubId, this.trophyId, this.fileId);
 
-    await doc.update({
-      ...file,
-      ...modifiedTimestamp(),
-    });
+    await this.db.updateRecord(
+      doc,
+      this.form.getRawValue(),
+    );
 
     return doc.ref.id;
   }

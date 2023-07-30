@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { BehaviorSubject, Observable, Subject, Subscription, firstValueFrom, shareReplay, switchMap, takeUntil } from "rxjs";
-import { Boat, Collections, Trophy } from "@models"
+import { BehaviorSubject, Observable, Subject, Subscription, shareReplay, switchMap, takeUntil } from "rxjs";
+import { Boat, Trophy } from "@models"
 import { DbRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
-import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
+import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
 interface TrophyFormData {
@@ -116,12 +116,6 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
     });
   }
 
-  private async getBoat(ref: string | null): Promise<DbRecord<Boat> | null> {
-    const found = (await firstValueFrom(this.boats$)).find((x => x.ref.path === ref));
-
-    return found || null;
-  }
-
   private getBoatsObservable(): Observable<DbRecord<Boat>[]> {
     return this.clubId$.pipe(
       filterNotNull(),
@@ -133,25 +127,16 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
 
   public async saveTrophy(): Promise<string> {
     const isNew = !this.trophyId;
-    const doc = this.db.firestore.collection(Collections.Clubs).doc(this.clubId)
-      .collection<Trophy>(Collections.Trophies).doc(this.trophyId || undefined);
-    const trophy = this.form.getRawValue();
-    const boat = await this.getBoat(trophy?.boatRef);
+    const doc = this.db.getTrophyDoc(this.clubId, this.trophyId);
+    const trophy = await this.db.addBoatRef(
+      this.form.getRawValue(),
+      this.boats$,
+    );
 
     if (isNew) {
-      await doc.set({
-        ...trophy,
-        boatName: boat?.data.name || null,
-        boatRef: boat?.ref || null,
-        ...createdTimestamp(),
-      });
+      await this.db.addRecord(doc, trophy);
     } else {
-      await doc.update({
-        ...trophy,
-        boatName: boat?.data.name || null,
-        boatRef: boat?.ref || null,
-        ...modifiedTimestamp(),
-      });
+      await this.db.updateRecord(doc, trophy);
     }
 
     return doc.ref.id;
