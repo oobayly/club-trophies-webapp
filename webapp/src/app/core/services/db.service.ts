@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, QueryFn } from "@angular/fire/compat/firestore";
-import { Boat, BoatReference, Club, Collections, DocumentRef, HasTimestamp, Trophy, TrophyFile, Winner } from "@models";
+import { Boat, BoatReference, Club, Collections, DocumentRef, HasTimestamp, Search, SearchResult, SearchResultList, Trophy, TrophyFile, Winner } from "@models";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import { Observable, map, of, combineLatest, firstValueFrom } from "rxjs";
+import { Observable, map, of, combineLatest, firstValueFrom, switchMap } from "rxjs";
 import { DbRecord, toRecord } from "../interfaces/DbRecord";
 
 type TimestampProps = "created" | "modified";
@@ -184,4 +184,38 @@ export class DbService {
   public getWinnerDoc(clubId: string, trophyId: string, winnerId?: string | null): AngularFirestoreDocument<Winner> {
     return this.getWinnersCollection(clubId, trophyId).doc(winnerId || undefined);
   };
+
+  public searchWinners(value: Omit<Search, "uid">): Observable<SearchResult[]> {
+    const searchDoc = this.firestore.collection<Search>(Collections.Searches).doc();
+
+    return this.auth.user.pipe(
+      switchMap(async (user) => {
+        await searchDoc.set({
+          ...value,
+          uid: user?.uid || null,
+        });
+      }),
+      switchMap(() => {
+        return searchDoc.collection<SearchResultList>(Collections.Results).snapshotChanges();
+      }),
+      map((snapshot) => {
+        return toRecord(snapshot)
+          .reduce((accum, item) => {
+            accum.push(...item.data.results);
+
+            return accum;
+          }, [] as SearchResult[])
+          .sort((a, b) => {
+            let resp = a.clubName.localeCompare(b.clubName);
+
+            if (resp !== 0) {
+              return resp;
+            }
+
+            return b.year - a.year;
+          })
+          ;
+      }),
+    );
+  }
 }

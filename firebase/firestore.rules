@@ -86,6 +86,14 @@ service cloud.firestore {
         }
       }
     }
+
+    match /searches/{searchId} {
+      allow create: if request.resource != null;
+
+      match /results/{resultId} {
+        allow read: if true;
+      }
+    }
   
   	match /{document=**} {
       allow read, write: if false;

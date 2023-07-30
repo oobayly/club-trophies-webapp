@@ -7,3 +7,6 @@ export const LogoPath = `${ClubPath}/${Collections.Logos}/{loogId}`;
 export const TrophiesPath = `${ClubPath}/${Collections.Trophies}/{trophyId}`;
 export const TrophyFilePath = `${ClubPath}/${Collections.Trophies}/{trophyId}/${Collections.Files}/{fileId}`;
 export const WinnerPath = `${TrophiesPath}/${Collections.Winners}/{winnerId}`;
+
+export const SearchPath = `${Collections.Searches}/{searchId}`;
+export const SearchResultsPath = `${SearchPath}/${Collections.Results}/{resultId}`;

@@ -7,5 +7,6 @@ export * from "./Club";
 export * from "./Domain";
 export * from "./Enumerations";
 export * from "./interfaces";
+export * from "./Search";
 export * from "./Trophy";
 export * from "./Winner";

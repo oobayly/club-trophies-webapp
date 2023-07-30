@@ -2,8 +2,9 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as path from "path";
 import { Boat, BoatReference, Club, ClubAdmin, ClubLogoRequest, Collections, TrophyFile, UploadInfo } from "../models";
-import { AdminPath, LogoPath, TrophyFilePath } from "./paths";
+import { AdminPath, LogoPath, SearchPath, TrophyFilePath } from "./paths";
 import { IsEmulated } from "../helpers";
+import { search } from "./search";
 
 // interface TrophyIds {
 //   type: "created" | "updated" | "deleted";
@@ -167,6 +168,10 @@ export const onClubAdminWrite = functions.firestore.document(AdminPath).onWrite(
 
     trans.update(clubRef, update);
   });
+});
+
+export const onSearchCreate = functions.firestore.document(SearchPath).onCreate(async (change) => {
+  await search(change);
 });
 
 // export const onTrophyWrite = functions.firestore.document(`${ClubPath}/trophies/{path=**}`).onWrite(async (change) => {

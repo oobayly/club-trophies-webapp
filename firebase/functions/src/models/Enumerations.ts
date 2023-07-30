@@ -4,6 +4,9 @@ export enum Collections {
   Logos = "logos",
   Clubs = "clubs",
   Files = "files",
+  Results = "results",
+  Searches = "searches",
   Trophies = "trophies",
+  Users = "users",
   Winners = "winners",
 }
