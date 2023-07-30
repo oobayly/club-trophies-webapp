@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder } from "@angular/forms";
 import { Collections, Winner } from "@models";
 import { BehaviorSubject, Observable, combineLatest, firstValueFrom, map, of, shareReplay, switchMap, takeUntil, tap } from "rxjs";
@@ -8,6 +7,7 @@ import { filterNotNull } from "src/app/core/rxjs";
 import { TrophyBaseComponent } from "../trophy-base-component";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { ModalService } from "src/app/core/services/modal.service";
+import { DbService } from "src/app/core/services/db.service";
 
 interface Column {
   field: keyof Winner;
@@ -62,7 +62,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // ========================
 
   @Input()
-  public boatId?: string | null;
+  public boatRef?: string;
 
   @Input()
   public canEdit: boolean | null | undefined;
@@ -80,7 +80,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
 
   constructor(
     auth: AngularFireAuth,
-    db: AngularFirestore,
+    db: DbService,
     private readonly formBuilder: FormBuilder,
     private readonly modal: ModalService,
   ) {
@@ -187,7 +187,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
       return;
     }
 
-    await this.modal.showAddWinner(this.clubId, this.trophyId, this.boatId);
+    await this.modal.showAddWinner(this.clubId, this.trophyId, this.boatRef);
   }
 
   public onSortHeaderClick(field: keyof Winner): void {

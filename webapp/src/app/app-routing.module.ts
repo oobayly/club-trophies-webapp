@@ -2,10 +2,16 @@ import { Injectable, NgModule } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { RouterModule, RouterStateSnapshot, Routes, TitleStrategy } from "@angular/router";
 import { AuthGuard, authGuardForRole } from "./core/guards/auth.guard";
+import { HomeComponent } from "./routes/home/home.component";
 
 export const AppTitle = "Club Trophies";
 
 const routes: Routes = [
+  {
+    path: "",
+    pathMatch: "full",
+    component: HomeComponent,
+  },
   {
     path: "admin",
     loadChildren: () => import("./routes/admin/admin.module").then((m) => m.AdminModule),

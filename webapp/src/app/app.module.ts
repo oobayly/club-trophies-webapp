@@ -11,10 +11,12 @@ import { environment } from "src/environments/environment";
 import { firebaseConfig, firebaseUiAuthConfig } from "src/environments/firebase";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
+import { HomeComponent } from './routes/home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
   ],
   imports: [
     // Angular

@@ -2,13 +2,14 @@ import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleCh
 import { TrophyBaseComponent } from "../trophy-base-component";
 import { BehaviorSubject, Observable, first, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, AngularFirestoreCollection } from "@angular/fire/compat/firestore";
+import { AngularFirestoreCollection } from "@angular/fire/compat/firestore";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Collections, TrophyFile } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
 import { environment } from "src/environments/environment";
 import { compareTimestamps, createdTimestamp } from "src/app/core/helpers";
+import { DbService } from "src/app/core/services/db.service";
 
 @Component({
   selector: "app-files-list",
@@ -52,7 +53,7 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
 
   constructor(
     auth: AngularFireAuth,
-    db: AngularFirestore,
+    db: DbService,
     private readonly modal: ModalService,
   ) {
     super(auth, db);

@@ -1,9 +1,10 @@
 import { Component, Input, OnDestroy } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/compat/firestore";
+import { AngularFirestoreDocument } from "@angular/fire/compat/firestore";
 import { Club, Collections } from "@models";
 import { BehaviorSubject, Observable, Subject, combineLatest, distinctUntilChanged, map, of, shareReplay, switchMap, takeUntil } from "rxjs";
 import { isAdmin } from "src/app/core/rxjs";
+import { DbService } from "src/app/core/services/db.service";
 
 @Component({
   template: "",
@@ -25,7 +26,7 @@ export abstract class ClubBaseComponent implements OnDestroy {
 
   constructor(
     protected readonly auth: AngularFireAuth,
-    protected readonly db: AngularFirestore,
+    protected readonly db: DbService,
   ) {
   }
 
@@ -61,7 +62,7 @@ export abstract class ClubBaseComponent implements OnDestroy {
           return of(undefined);
         }
 
-        return this.db.collection<Club>(Collections.Clubs).doc(clubId).snapshotChanges();
+        return this.db.firestore.collection<Club>(Collections.Clubs).doc(clubId).snapshotChanges();
       }),
       map((x) => x?.payload.data()),
       takeUntil(this.destroyed$),
@@ -77,7 +78,7 @@ export abstract class ClubBaseComponent implements OnDestroy {
           return undefined;
         }
 
-        return this.db.collection<Club>(Collections.Clubs).doc(clubId);
+        return this.db.firestore.collection<Club>(Collections.Clubs).doc(clubId);
       }),
     );
   }

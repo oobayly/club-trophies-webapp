@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { Subject, BehaviorSubject, Subscription, firstValueFrom, Observable, map, shareReplay, switchMap, takeUntil } from "rxjs";
+import { Subject, BehaviorSubject, Subscription, firstValueFrom, Observable, shareReplay, switchMap, takeUntil } from "rxjs";
 import { Boat, Collections, Winner } from "@models";
-import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
+import { DbRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
 import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
+import { DbService } from "src/app/core/services/db.service";
 
 interface WinnerFormData {
   club: FormControl<string>;
@@ -16,8 +16,7 @@ interface WinnerFormData {
   sail: FormControl<string>;
   owner: FormControl<string>;
   year: FormControl<number>;
-  boatId: FormControl<string | null>;
-  boatName: FormControl<string | null>;
+  boatRef: FormControl<string | null>;
 }
 
 @Component({
@@ -49,7 +48,7 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
   // ========================
 
   @Input()
-  public boatId?: string | null;
+  public boatRef?: string;
 
   @Input()
   public clubId!: string;
@@ -78,23 +77,26 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
   // ========================
 
   constructor(
-    private readonly db: AngularFirestore,
+    private readonly db: DbService,
     private readonly formBuilder: FormBuilder,
   ) {
     this.boats$ = this.getBoatsObservable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ("boatId" in changes) {
-      this.form.patchValue({ boatId: this.boatId || null });
+    if ("boatRef" in changes) {
+      this.form.patchValue({ boatRef: this.boatRef || null });
     }
 
     if ("clubId" in changes) {
       this.clubId$.next(this.clubId);
     }
 
-    if ("winner" in changes) {
-      this.form.patchValue(this.winner || {}, {
+    if ("winner" in changes && this.winner) {
+      this.form.patchValue({
+        ...this.winner,
+        boatRef: this.winner?.boatRef?.path || this.boatRef || null,
+      }, {
         emitEvent: false,
       })
 
@@ -122,34 +124,22 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
       sail: this.formBuilder.control<string>("", { nonNullable: true }),
       owner: this.formBuilder.control<string>("", { nonNullable: true }),
       year: this.formBuilder.control<number>(new Date().getFullYear(), { nonNullable: true }),
-      boatId: this.formBuilder.control<string | null>(null),
-      boatName: this.formBuilder.control<string | null>(null),
+      boatRef: this.formBuilder.control<string | null>(null),
     }, {
       updateOn: "change",
     });
   }
 
-  private async getBoatName(id: string): Promise<string> {
-    const found = (await firstValueFrom(this.boats$)).find((x => x.id === id));
+  private async getBoat(ref: string | null): Promise<DbRecord<Boat> | null> {
+    const found = (await firstValueFrom(this.boats$)).find((x => x.ref.path === ref));
 
-    if (!found) {
-      throw new Error("No boat found with that ID.")
-    }
-
-    return found.data.name;
+    return found || null;
   }
 
   private getBoatsObservable(): Observable<DbRecord<Boat>[]> {
     return this.clubId$.pipe(
       filterNotNull(),
-      switchMap((clubId) => {
-        return this.db
-          .collection(Collections.Clubs).doc(clubId)
-          .collection<Boat>(Collections.Boats)
-          .snapshotChanges()
-          ;
-      }),
-      map((x) => toRecord(x).sort((a, b) => a.data.name.localeCompare(b.data.name))),
+      switchMap((clubId) => this.db.getBoats(clubId)),
       takeUntil(this.destroyed$),
       shareReplay(),
     );
@@ -157,27 +147,25 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
 
   public async saveWinner(): Promise<string> {
     const isNew = !this.winnerId;
-    const doc = this.db.collection(Collections.Clubs).doc(this.clubId)
+    const doc = this.db.firestore.collection(Collections.Clubs).doc(this.clubId)
       .collection(Collections.Trophies).doc(this.trophyId)
       .collection<Winner>(Collections.Winners).doc(this.winnerId || undefined)
       ;
     const winner = this.form.getRawValue();
-
-    if (winner.boatId) {
-      winner.boatName = await this.getBoatName(winner.boatId);
-    } else {
-      winner.boatId = null;
-      winner.boatName = null;
-    }
+    const boat = await this.getBoat(winner.boatRef);
 
     if (isNew) {
       await doc.set({
         ...winner,
+        boatName: boat?.data.name || null,
+        boatRef: boat?.ref || null,
         ...createdTimestamp(),
       });
     } else {
       await doc.update({
         ...winner,
+        boatName: boat?.data.name || null,
+        boatRef: boat?.ref || null,
         ...modifiedTimestamp(),
       });
     }

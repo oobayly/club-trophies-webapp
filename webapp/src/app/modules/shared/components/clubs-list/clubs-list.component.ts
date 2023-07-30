@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, Query, QueryFn } from "@angular/fire/compat/firestore";
+import { Query, QueryFn } from "@angular/fire/compat/firestore";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { CanEditDbRecord, DbRecord, toCanEditRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Club, Collections } from "@models";
 import { distinctUid } from "src/app/core/rxjs/auth";
 import { ModalService } from "src/app/core/services/modal.service";
+import { DbService } from "src/app/core/services/db.service";
 
 export type ViewMode = "all" | "mine" | "public";
 
@@ -45,7 +46,7 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
 
   constructor(
     private readonly auth: AngularFireAuth,
-    private readonly db: AngularFirestore,
+    private readonly db: DbService,
     private readonly modal: ModalService,
   ) {
     this.clubs$ = this.getClubsObservable();
@@ -84,7 +85,7 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
           return of(undefined);
         }
 
-        return this.db.collection<Club>(Collections.Clubs, query).snapshotChanges().pipe(
+        return this.db.firestore.collection<Club>(Collections.Clubs, query).snapshotChanges().pipe(
           catchError((err) => {
             console.log("Got an error: " + err.code);
 

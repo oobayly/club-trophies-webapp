@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Output } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Observable, tap } from "rxjs";
 import { Club } from "@models";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { ModalService } from "src/app/core/services/modal.service";
 import { ClubBaseComponent } from "../club-base-component";
+import { DbService } from "src/app/core/services/db.service";
 
 @Component({
   selector: "app-club-info",
@@ -40,7 +40,7 @@ export class ClubInfoComponent extends ClubBaseComponent {
 
   constructor(
     auth: AngularFireAuth,
-    db: AngularFirestore,
+    db: DbService,
     private readonly modal2: ModalService,
   ) {
     super(auth, db);

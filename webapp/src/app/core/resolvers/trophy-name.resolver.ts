@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import {
   Resolve,
   RouterStateSnapshot,
@@ -7,13 +6,14 @@ import {
 } from "@angular/router";
 import { Club, Collections, Trophy } from "@models";
 import { catchError, map, Observable, of } from "rxjs";
+import { DbService } from "../services/db.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class TrophyNameResolver implements Resolve<string> {
   constructor(
-    private readonly db: AngularFirestore,
+    private readonly db: DbService,
   ) { }
 
   resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<string> {
@@ -24,7 +24,7 @@ export class TrophyNameResolver implements Resolve<string> {
       return of("");
     }
 
-    return this.db
+    return this.db.firestore
       .collection<Club>(Collections.Clubs).doc(clubId)
       .collection<Trophy>(Collections.Trophies).doc(trophyId)
       .snapshotChanges().pipe(

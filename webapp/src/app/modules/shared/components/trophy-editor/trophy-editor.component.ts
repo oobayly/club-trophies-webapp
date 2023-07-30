@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { BehaviorSubject, Observable, Subject, Subscription, firstValueFrom, map, shareReplay, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, Observable, Subject, Subscription, firstValueFrom, shareReplay, switchMap, takeUntil } from "rxjs";
 import { Boat, Collections, Trophy } from "@models"
-import { AngularFirestore } from "@angular/fire/compat/firestore";
-import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
+import { DbRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
 import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
+import { DbService } from "src/app/core/services/db.service";
 
 interface TrophyFormData {
   conditions: FormControl<string>;
@@ -14,8 +14,7 @@ interface TrophyFormData {
   donor: FormControl<string>;
   name: FormControl<string>;
   page: FormControl<string>;
-  boatId: FormControl<string | null>;
-  boatName: FormControl<string | null>;
+  boatRef: FormControl<string | null>;
   public: FormControl<boolean>;
 }
 
@@ -69,7 +68,7 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
   // ========================
 
   constructor(
-    private readonly db: AngularFirestore,
+    private readonly db: DbService,
     private readonly formBuilder: FormBuilder,
   ) {
     this.boats$ = this.getBoatsObservable();
@@ -81,7 +80,10 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
     }
 
     if ("trophy" in changes) {
-      this.form.patchValue(this.trophy || {}, {
+      this.form.patchValue({
+        ...this.trophy,
+        boatRef: this.trophy?.boatRef?.path || null,
+      }, {
         emitEvent: false,
       })
 
@@ -107,35 +109,23 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
       donor: this.formBuilder.control<string>("", { nonNullable: true }),
       name: this.formBuilder.control<string>("", { nonNullable: true }),
       page: this.formBuilder.control<string>("", { nonNullable: true }),
-      boatId: this.formBuilder.control<string | null>(null),
-      boatName: this.formBuilder.control<string | null>(null),
+      boatRef: this.formBuilder.control<string | null>(null),
       public: this.formBuilder.control<boolean>(true, { nonNullable: true }),
     }, {
       updateOn: "change",
     });
   }
 
-  private async getBoatName(id: string): Promise<string> {
-    const found = (await firstValueFrom(this.boats$)).find((x => x.id === id));
+  private async getBoat(ref: string | null): Promise<DbRecord<Boat> | null> {
+    const found = (await firstValueFrom(this.boats$)).find((x => x.ref.path === ref));
 
-    if (!found) {
-      throw new Error("No boat found with that ID.")
-    }
-
-    return found.data.name;
+    return found || null;
   }
 
   private getBoatsObservable(): Observable<DbRecord<Boat>[]> {
     return this.clubId$.pipe(
       filterNotNull(),
-      switchMap((clubId) => {
-        return this.db
-          .collection(Collections.Clubs).doc(clubId)
-          .collection<Boat>(Collections.Boats)
-          .snapshotChanges()
-          ;
-      }),
-      map((x) => toRecord(x).sort((a, b) => a.data.name.localeCompare(b.data.name))),
+      switchMap((clubId) => this.db.getBoats(clubId)),
       takeUntil(this.destroyed$),
       shareReplay(),
     );
@@ -143,25 +133,23 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
 
   public async saveTrophy(): Promise<string> {
     const isNew = !this.trophyId;
-    const doc = this.db.collection(Collections.Clubs).doc(this.clubId)
+    const doc = this.db.firestore.collection(Collections.Clubs).doc(this.clubId)
       .collection<Trophy>(Collections.Trophies).doc(this.trophyId || undefined);
     const trophy = this.form.getRawValue();
-
-    if (trophy.boatId) {
-      trophy.boatName = await this.getBoatName(trophy.boatId);
-    } else {
-      trophy.boatId = null;
-      trophy.boatName = null;
-    }
+    const boat = await this.getBoat(trophy?.boatRef);
 
     if (isNew) {
       await doc.set({
         ...trophy,
+        boatName: boat?.data.name || null,
+        boatRef: boat?.ref || null,
         ...createdTimestamp(),
       });
     } else {
       await doc.update({
         ...trophy,
+        boatName: boat?.data.name || null,
+        boatRef: boat?.ref || null,
         ...modifiedTimestamp(),
       });
     }

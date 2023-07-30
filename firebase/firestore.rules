@@ -27,6 +27,15 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if isAdmin();
     }
+
+    // All boats are readable
+    match /{path=**}/boats/{boatId} {
+      allow read: if true;
+    }
+
+    match /boats/{boatId} {
+      allow write: if isAdmin();
+    }
     
   	match /clubs/{clubId} {
     	// Anyone can view public clubs

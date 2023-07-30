@@ -1,3 +1,8 @@
+export interface DocumentRef {
+  id: string;
+  path: string;
+}
+
 export interface HasPublic {
   /** A flag indicating whether the record is public. */
   public: boolean;

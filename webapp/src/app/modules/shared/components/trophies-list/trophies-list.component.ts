@@ -1,17 +1,17 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { BoatReference, Collections, Trophy } from "@models";
+import { Collections, Trophy } from "@models";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, startWith, switchMap, takeUntil } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
 import { ClubBaseComponent } from "../club-base-component";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { DbService } from "src/app/core/services/db.service";
 
 interface TrophyFilter {
   name: FormControl<string>;
-  boatId: FormControl<string>
+  boatName: FormControl<string>
 }
 
 @Component({
@@ -26,7 +26,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
 
   private readonly allTrophies$: Observable<DbRecord<Trophy>[] | undefined>;
 
-  public readonly boats$ = new Observable<BoatReference[]>;
+  public readonly boats$ = new Observable<string[]>;
 
   public readonly canEdit$ = new BehaviorSubject<boolean | undefined>(undefined);
 
@@ -57,7 +57,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
 
   constructor(
     auth: AngularFireAuth,
-    db: AngularFirestore,
+    db: DbService,
     private readonly formBuilder: FormBuilder,
     private readonly modal: ModalService,
   ) {
@@ -81,26 +81,27 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
   private buildFilterForm(): FormGroup<TrophyFilter> {
     return this.formBuilder.group<TrophyFilter>({
       name: this.formBuilder.control<string>("", { nonNullable: true }),
-      boatId: this.formBuilder.control<string>("all", { nonNullable: true }),
+      boatName: this.formBuilder.control<string>("all", { nonNullable: true }),
     }, {
       updateOn: "change",
     });
   }
 
-  private getBoatsObservable(): Observable<BoatReference[]> {
+  private getBoatsObservable(): Observable<string[]> {
     return this.allTrophies$.pipe(
       map((trophies) => {
-        return (trophies || [])?.reduce((accum, item) => {
-          if ("boatId" in item.data) {
-            const { boatId, boatName } = item.data as BoatReference;
+        return (trophies || [])
+          .reduce((accum, item) => {
+            const { boatName } = item.data;
 
-            if (!accum.some((x) => x.boatId === boatId)) {
-              accum.push({ boatId, boatName });
+            if (boatName && !accum.includes(boatName)) {
+              accum.push(boatName);
             }
-          }
 
-          return accum;
-        }, [] as BoatReference[]);
+            return accum;
+          }, [] as string[])
+          .sort()
+          ;
       }),
     );
   }
@@ -115,7 +116,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
           return of(undefined);
         }
 
-        const ref = this.db
+        const ref = this.db.firestore
           .collection(Collections.Clubs).doc(clubId)
           .collection<Trophy>(Collections.Trophies, (ref) => {
             if (!canEdit) {
@@ -145,21 +146,21 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
       this.allTrophies$,
     ]).pipe(
       map(([filter, trophies]) => {
-        const boatId = filter?.boatId || "all";
+        const boatName = filter?.boatName || "all";
         const name = filter?.name?.trim()?.toUpperCase();
 
         if (!trophies) {
           trophies = [];
         }
 
-        if (boatId === "all") {
+        if (boatName === "all") {
           // Do nothing
-        } else if (boatId === "none") {
+        } else if (boatName === "none") {
           // Without boat
-          trophies = trophies.filter((x) => !x.data.boatId);
+          trophies = trophies.filter((x) => !x.data.boatRef);
         } else {
           // Match boat
-          trophies = trophies.filter((x) => x.data.boatId === boatId);
+          trophies = trophies.filter((x) => x.data.boatRef?.path === boatName);
         }
 
         if (name) {
@@ -186,7 +187,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
       return;
     }
 
-    await this.modal.showAddWinner(this.clubId, item.id, item.data.boatId || undefined);
+    await this.modal.showAddWinner(this.clubId, item.id, item.data.boatRef?.path);
   }
 
   public async onEditTrophyClick(e: Event, item: DbRecord<Trophy>): Promise<void> {
@@ -212,7 +213,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
   public onResetFilterClick(): void {
     this.filter.setValue({
       name: "",
-      boatId: "all",
+      boatName: "all",
     });
   }
 }

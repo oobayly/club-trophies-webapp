@@ -6,7 +6,7 @@
   <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
 </div>
 <div class="modal-body">
-  <app-winner-editor [clubId]="clubId" [trophyId]="trophyId" [winnerId]="winnerId" [winner]="winner" [boatId]="boatId"
+  <app-winner-editor [clubId]="clubId" [trophyId]="trophyId" [winnerId]="winnerId" [winner]="winner" [boatRef]="boatRef"
     (cancelled)="dismiss()" (saved)="close($event)">
   </app-winner-editor>
 </div>

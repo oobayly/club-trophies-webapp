@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
 import { Observable, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { Club, Trophy } from "@models";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { filterNotNull } from "src/app/core/rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { TrophyBaseComponent } from "../trophy-base-component";
 import { ModalService } from "src/app/core/services/modal.service";
+import { DbService } from "src/app/core/services/db.service";
 
 export type TabType = "winners" | "info" | "photos";
 
@@ -54,7 +54,7 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
 
   constructor(
     auth: AngularFireAuth,
-    db: AngularFirestore,
+    db: DbService,
     private readonly modal: ModalService,
   ) {
     super(auth, db);

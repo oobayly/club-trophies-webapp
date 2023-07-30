@@ -53,8 +53,8 @@
 
     <!-- Winners -->
     <app-tab-page name=" Winners" [pageBreak]="true">
-      <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [boatId]="trophy.boatId" [canEdit]="canEdit$ | async"
-        (countChange)="winners = $event">
+      <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [boatRef]="trophy.boatRef?.path"
+        [canEdit]="canEdit$ | async" (countChange)="winners = $event">
       </app-winners-list>
     </app-tab-page>
 

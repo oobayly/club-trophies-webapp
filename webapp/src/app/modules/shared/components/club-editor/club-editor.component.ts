@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { Club, Collections } from "@models";
 import { getCountries } from "src/app/core/helpers/i18n";
 import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
+import { DbService } from "src/app/core/services/db.service";
 
 interface ClubFormData {
   country: FormControl<string>;
@@ -58,7 +58,7 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
 
   constructor(
     private readonly auth: AngularFireAuth,
-    private readonly db: AngularFirestore,
+    private readonly db: DbService,
     private readonly formBuilder: FormBuilder,
   ) {
   }
@@ -95,7 +95,7 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
 
   private async saveClub(): Promise<string> {
     const isNew = !this.clubId;
-    const doc = this.db.collection(Collections.Clubs).doc<Club>(this.clubId || undefined);
+    const doc = this.db.firestore.collection(Collections.Clubs).doc<Club>(this.clubId || undefined);
     const club = this.form.getRawValue();
 
     if (isNew) {

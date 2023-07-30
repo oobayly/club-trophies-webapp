@@ -1,9 +1,10 @@
 import { Component, Input } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/compat/firestore";
+import { AngularFirestoreDocument } from "@angular/fire/compat/firestore";
 import { ClubBaseComponent } from "./club-base-component";
 import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, map } from "rxjs";
 import { Collections, Trophy } from "@models";
+import { DbService } from "src/app/core/services/db.service";
 
 @Component({
   template: "",
@@ -21,7 +22,7 @@ export abstract class TrophyBaseComponent extends ClubBaseComponent {
 
   constructor(
     auth: AngularFireAuth,
-    db: AngularFirestore,
+    db: DbService,
   ) {
     super(auth, db);
   }
@@ -36,7 +37,7 @@ export abstract class TrophyBaseComponent extends ClubBaseComponent {
           return undefined;
         }
 
-        return this.db.collection(Collections.Clubs).doc(clubId).collection<Trophy>(Collections.Trophies).doc(trophyId);
+        return this.db.firestore.collection(Collections.Clubs).doc(clubId).collection<Trophy>(Collections.Trophies).doc(trophyId);
       }),
     );
   }

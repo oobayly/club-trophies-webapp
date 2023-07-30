@@ -2,10 +2,10 @@
   <span class="input-group-text d-none d-lg-inline">Filter</span>
   <input type="text" class="form-control" formControlName="name" placeholder="Filter trophy by name">
 
-  <select class="form-select" formControlName="boatId">
+  <select class="form-select" formControlName="boatName">
     <option value="all">All boats</option>
     <option value="none">Pavilion</option>
-    <option [ngValue]="item.boatId" *ngFor="let item of boats$ | async">{{item.boatName}}</option>
+    <option [ngValue]="item" *ngFor="let item of boats$ | async">{{item}}</option>
   </select>
 
   <button type="button" class="btn btn-dark" (click)="onResetFilterClick()">

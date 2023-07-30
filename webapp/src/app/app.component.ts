@@ -3,10 +3,10 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { map, Observable, of, shareReplay, Subject, Subscription, switchMap, takeUntil } from "rxjs";
 import { isAdmin } from "./core/rxjs/auth";
 import { environment } from "src/environments/environment";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { Club, Collections } from "@models";
 import { ModalService } from "./core/services/modal.service";
 import { Router } from "@angular/router";
+import { DbService } from "./core/services/db.service";
 
 /** Collection of emulated users. */
 const Emails = [
@@ -53,7 +53,7 @@ export class AppComponent implements OnDestroy, OnInit {
 
   constructor(
     private readonly auth: AngularFireAuth,
-    private readonly db: AngularFirestore,
+    private readonly db: DbService,
     private readonly modal: ModalService,
     private readonly router: Router,
   ) {
@@ -84,7 +84,7 @@ export class AppComponent implements OnDestroy, OnInit {
           return of([]);
         }
 
-        return this.db.collection<Club>(
+        return this.db.firestore.collection<Club>(
           Collections.Clubs,
           (ref) => ref.where("admins", "array-contains", user.uid),
         ).snapshotChanges();
