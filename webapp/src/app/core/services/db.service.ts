@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, QueryFn } from "@angular/fire/compat/firestore";
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChangeAction, QueryFn } from "@angular/fire/compat/firestore";
 import { Boat, BoatReference, Club, Collections, DocumentRef, HasTimestamp, Search, SearchResult, SearchResultList, Trophy, TrophyFile, Winner } from "@models";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import { Observable, map, of, combineLatest, firstValueFrom, switchMap } from "rxjs";
+import { Observable, map, switchMap, firstValueFrom } from "rxjs";
 import { DbRecord, toRecord } from "../interfaces/DbRecord";
 
 type TimestampProps = "created" | "modified";
@@ -53,61 +53,56 @@ export class DbService {
   // Boats
   // ========================
 
-  public getBoats(): Observable<DbRecord<Boat>[]>;
-  public getBoats(clubId: string, excludePublic?: boolean): Observable<DbRecord<Boat>[]>;
-  public getBoats(clubId?: string, excludePublic = false): Observable<DbRecord<Boat>[]> {
-    let resp$: Observable<DbRecord<Boat>[]>;
+  public getAllBoats(): Observable<DbRecord<Boat>[]> {
+    return this.firestore.collectionGroup<Boat>(Collections.Boats)
+      .snapshotChanges()
+      .pipe(
+        map((snapshot) => {
+          return toRecord(snapshot)
+            .sort((a, b) => a.data.name.localeCompare(b.data.name))
+            ;
+        }),
+      );
+  }
+
+  public getBoats(clubId?: string): Observable<DbRecord<Boat>[]> {
+    let resp$: Observable<DocumentChangeAction<Boat>[]>;
 
     if (!clubId) {
       // All boats
       resp$ = this.firestore
-        .collectionGroup<Boat>(Collections.Boats)
+        .collection<Boat>(Collections.Boats)
         .snapshotChanges()
-        .pipe(
-          map((x) => toRecord(x)),
-        );
     } else {
       // For the specified club
-      const forClub$ = this.firestore
+      resp$ = this.firestore
         .collection(Collections.Clubs).doc(clubId)
         .collection<Boat>(Collections.Boats)
-        .snapshotChanges().pipe(map((x) => toRecord(x)))
+        .snapshotChanges()
         ;
-      let pub$: Observable<DbRecord<Boat>[]>;
-
-      if (excludePublic) {
-        pub$ = of([]);
-      } else {
-        pub$ = this.firestore
-          .collection<Boat>(Collections.Boats)
-          .snapshotChanges().pipe(map((x) => toRecord(x)))
-      }
-
-      resp$ = combineLatest([forClub$, pub$]).pipe(
-        map(([forClub, pub]) => [...forClub, ...pub]),
-      );
     }
 
-    return resp$.pipe(map((items) => items.sort((a, b) => a.data.name.localeCompare(b.data.name))));
+    return resp$.pipe(
+      map((snapshot) => {
+        return toRecord(snapshot)
+          .sort((a, b) => a.data.name.localeCompare(b.data.name))
+          ;
+      }),
+    );
   }
 
-  public async addBoatRef<T extends { boatRef: string | null }>(value: T, boats$?: Observable<DbRecord<Boat>[]>): Promise<T & BoatReference> {
+  public async addBoatRef<T extends { boatRef: string | null }>(value: T): Promise<T & BoatReference> {
     const { boatRef: refString } = value;
-    let boatName: string | null;
-    let boatRef: DocumentRef | null;
+    let boatName: string | null = null;
+    let boatRef: DocumentRef | null = null;
 
-    if (refString && boats$) {
-      const found = (await firstValueFrom(boats$)).find((x) => x.ref === refString);
+    if (refString) {
+      const snapshot = await firstValueFrom(this.firestore.doc<Boat>(refString).get());
 
-      if (!found) {
-        throw new Error("No boat found.");
+      if (snapshot.exists) {
+        boatName = snapshot.data()!.name;
+        boatRef = snapshot.ref;
       }
-
-      boatName = found.data.name;
-      boatRef = this.firestore.doc(refString).ref;
-    } else {
-      boatName = null;
-      boatRef = null;
     }
 
     return {

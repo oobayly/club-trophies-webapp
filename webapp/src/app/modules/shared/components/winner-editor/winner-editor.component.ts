@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { Subject, BehaviorSubject, Subscription, Observable, shareReplay, switchMap, takeUntil } from "rxjs";
-import { Boat, Winner } from "@models";
-import { DbRecord } from "src/app/core/interfaces/DbRecord";
-import { filterNotNull } from "src/app/core/rxjs";
+import { Subject, BehaviorSubject, Subscription } from "rxjs";
+import { Winner } from "@models";
 import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
@@ -28,8 +26,6 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
   // ========================
   // Properties
   // ========================
-
-  public readonly boats$: Observable<DbRecord<Boat>[]>;
 
   private readonly clubId$ = new BehaviorSubject<string | undefined>(undefined);
 
@@ -80,7 +76,6 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
     private readonly db: DbService,
     private readonly formBuilder: FormBuilder,
   ) {
-    this.boats$ = this.getBoatsObservable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -130,26 +125,14 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
     });
   }
 
-  private getBoatsObservable(): Observable<DbRecord<Boat>[]> {
-    return this.clubId$.pipe(
-      filterNotNull(),
-      switchMap((clubId) => this.db.getBoats(clubId)),
-      takeUntil(this.destroyed$),
-      shareReplay(),
-    );
-  }
-
   public async saveWinner(): Promise<string> {
     const isNew = !this.winnerId;
     const doc = this.db.getWinnerDoc(this.clubId, this.trophyId, this.winnerId);
-    const winner = await this.db.addBoatRef(
-      {
-        ...this.form.getRawValue(),
-        clubId: this.clubId,
-        trophyId: this.trophyId,
-      },
-      this.boats$,
-    );
+    const winner = await this.db.addBoatRef({
+      ...this.form.getRawValue(),
+      clubId: this.clubId,
+      trophyId: this.trophyId,
+    });
 
     if (isNew) {
       await this.db.addRecord(doc, winner);

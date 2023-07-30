@@ -28,6 +28,7 @@ import { TrophyFileEditorComponent } from "./components/trophy-file-editor/troph
 import { ToDatePipe } from "./pipes/to-date.pipe";
 import { AlertComponent } from "./components/alert/alert.component";
 import { TimestampPipe } from "./pipes/timestamp.pipe";
+import { BoatSelectComponent } from "./forms/boat-select/boat-select.component";
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { TimestampPipe } from "./pipes/timestamp.pipe";
     ToDatePipe,
     AlertComponent,
     TimestampPipe,
+    BoatSelectComponent,
   ],
   imports: [
     CommonModule,

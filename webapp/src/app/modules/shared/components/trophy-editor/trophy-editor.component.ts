@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { BehaviorSubject, Observable, Subject, Subscription, shareReplay, switchMap, takeUntil } from "rxjs";
-import { Boat, Trophy } from "@models"
-import { DbRecord } from "src/app/core/interfaces/DbRecord";
-import { filterNotNull } from "src/app/core/rxjs";
+import { BehaviorSubject, Subject, Subscription } from "rxjs";
+import { Trophy } from "@models"
 import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
@@ -27,8 +25,6 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
   // ========================
   // Properties
   // ========================
-
-  public readonly boats$: Observable<DbRecord<Boat>[]>;
 
   private readonly clubId$ = new BehaviorSubject<string | undefined>(undefined);
 
@@ -71,7 +67,6 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
     private readonly db: DbService,
     private readonly formBuilder: FormBuilder,
   ) {
-    this.boats$ = this.getBoatsObservable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -116,25 +111,13 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
     });
   }
 
-  private getBoatsObservable(): Observable<DbRecord<Boat>[]> {
-    return this.clubId$.pipe(
-      filterNotNull(),
-      switchMap((clubId) => this.db.getBoats(clubId)),
-      takeUntil(this.destroyed$),
-      shareReplay(),
-    );
-  }
-
   public async saveTrophy(): Promise<string> {
     const isNew = !this.trophyId;
     const doc = this.db.getTrophyDoc(this.clubId, this.trophyId);
-    const trophy = await this.db.addBoatRef(
-      {
-        ...this.form.getRawValue(),
-        clubId: this.clubId,
-      },
-      this.boats$,
-    );
+    const trophy = await this.db.addBoatRef({
+      ...this.form.getRawValue(),
+      clubId: this.clubId,
+    });
 
     if (isNew) {
       await this.db.addRecord(doc, trophy);

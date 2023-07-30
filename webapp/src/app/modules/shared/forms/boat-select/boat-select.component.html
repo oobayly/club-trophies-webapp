@@ -1,0 +1,19 @@
+<label class="form-label" for="{{formId}}-boatRef" *ngIf="label">{{label}}</label>
+
+<select class="form-select" id="{{formId}}-boatRef" [formControl]="form">
+  <option [ngValue]="null">None</option>
+
+  <ng-container *ngIf="boats$ | async as boats">
+    <optgroup label="My Classes" *ngIf="boats.mine.length">
+      <option *ngFor="let item of boats.mine" [ngValue]="item.ref">{{item.data.name}}</option>
+    </optgroup>
+
+    <optgroup label="Public Classes" *ngIf="boats.others.length">
+      <option *ngFor="let item of boats.others" [ngValue]="item.ref">{{item.data.name}}</option>
+    </optgroup>
+
+    <optgroup label="All Classes" *ngIf="boats.all.length">
+      <option *ngFor="let item of boats.all" [ngValue]="item.ref">{{item.data.name}}</option>
+    </optgroup>
+  </ng-container>
+</select>
