@@ -22,6 +22,14 @@ export interface HasTimestamp {
   modified: TimestampType | null;
 }
 
+/** These properties are added by the firestore functions */
+export interface HasTrophyParent {
+  /** The ID of the parent club. */
+  clubId: string;
+  /** TheID of the parent trophy.  */
+  trophyId: string;
+}
+
 export interface UploadInfo {
   /** The signed URL to be used for uploading the file. */
   url: string;

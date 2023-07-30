@@ -1,7 +1,7 @@
 import { BoatReference } from "./Boat";
-import { HasTimestamp } from "./interfaces";
+import { HasTimestamp, HasTrophyParent } from "./interfaces";
 
-export interface Winner extends BoatReference, HasTimestamp {
+export interface Winner extends BoatReference, HasTimestamp, HasTrophyParent {
   /** The name of the club. */
   club: string;
   /** The name of the crew. */

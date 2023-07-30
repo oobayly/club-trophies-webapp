@@ -2,7 +2,6 @@ import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleCh
 import { TrophyBaseComponent } from "../trophy-base-component";
 import { BehaviorSubject, Observable, first, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestoreCollection } from "@angular/fire/compat/firestore";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Collections, TrophyFile } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
@@ -99,28 +98,29 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
       return;
     }
 
-    const colRef = (await firstValueFrom(this.getTrophyRefObservalble()))?.collection<TrophyFile>(Collections.Files);
+    const { clubId, trophyId } = this;
 
-    if (!colRef) {
+    if (!clubId || !trophyId) {
       return;
     }
 
     for (let i = 0; i < files.length; i++) {
-      await this.uploadFile(colRef, files[i]);
+      await this.uploadFile(clubId, trophyId, files[i]);
     }
   }
 
-  private async uploadFile(colRef: AngularFirestoreCollection<TrophyFile>, file: File): Promise<string> {
-    const docRef = colRef.doc();
-
+  private async uploadFile(clubId: string, trophyId: string, file: File): Promise<string> {
     // Listen for the document we're going to create, and get it once the upload data is present
-    const snapshot = docRef.snapshotChanges().pipe(
+    const doc = this.db.getFileDoc(clubId, trophyId);
+    const snapshot = doc.snapshotChanges().pipe(
       map((item) => item.payload.data()?.uploadInfo),
       filterNotNull(),
       first(),
     );
 
-    await docRef.set({
+    await doc.set({
+      clubId,
+      trophyId,
       contentType: file.type,
       description: "",
       name: file.name,
@@ -140,11 +140,11 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
       });
     } catch {
       if (!environment.emulate) {
-        await docRef.delete();
+        await doc.delete();
       }
     }
 
-    return docRef.ref.id;
+    return doc.ref.id;
   }
 
   // ========================

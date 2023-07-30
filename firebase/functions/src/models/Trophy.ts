@@ -1,5 +1,5 @@
 import { BoatReference } from "./Boat";
-import { HasPublic, HasTimestamp, UploadInfo } from "./interfaces";
+import { HasPublic, HasTimestamp, HasTrophyParent, UploadInfo } from "./interfaces";
 
 export interface Trophy extends HasPublic, HasTimestamp, BoatReference {
   /** The ID of the club that the trophy belongs to. */
@@ -18,7 +18,7 @@ export interface Trophy extends HasPublic, HasTimestamp, BoatReference {
   page: string;
 }
 
-export interface TrophyFile extends HasTimestamp {
+export interface TrophyFile extends HasTimestamp, HasTrophyParent {
   /** The file MIME type. */
   contentType: string;
   /** The file description. */
