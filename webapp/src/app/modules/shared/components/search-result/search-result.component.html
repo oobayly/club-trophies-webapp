@@ -17,7 +17,7 @@
 </ng-container>
 
 <ng-template #emptySet>
-  <div class="container mw-sm p-3">
+  <div class="container mw-sm p-3 d-print-none">
     <app-alert color="info">
       No winners could be found for the search criteria provided.
     </app-alert>
@@ -25,7 +25,7 @@
 </ng-template>
 
 <ng-template #loadingOrError>
-  <div class="container mw-sm p-3" *ngIf="hasError; else loading">
+  <div class="container mw-sm p-3 d-print-none" *ngIf="hasError; else loading">
     <app-alert color="warning">
       <div>No search results could be found.</div>
       <div>The link may have expired.</div>
