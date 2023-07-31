@@ -1,7 +1,131 @@
 import * as admin from "firebase-admin";
-import { Club, Collections, Search, SearchResult, SearchResultList, Trophy, Winner } from "../models"
+import { Club, Collections, Search, SearchClubInfo, SearchResult, SearchResultList, SearchTrophyInfo, Trophy, Winner } from "../models"
 
-type ItemMap<T> = { [key: string]: T };
+
+const batchRequests = async (
+  collection: admin.firestore.CollectionReference<admin.firestore.DocumentData>, ids: string[]
+): Promise<admin.firestore.QuerySnapshot<admin.firestore.DocumentData>[]> => {
+  const snapshots: Promise<admin.firestore.QuerySnapshot<admin.firestore.DocumentData>>[] = [];
+  const batchSize = 10;
+
+  // So we don't modified the original array
+  ids = [...ids];
+
+  // Batch into groups of 10 so we can leverage "in"
+  do {
+    const batchIds = ids.splice(0, batchSize);
+
+    if (batchIds.length) {
+      snapshots.push(collection.where(admin.firestore.FieldPath.documentId(), "in", batchIds).get());
+    }
+  } while (ids.length);
+
+  return await Promise.all(snapshots);
+}
+
+const getClubIds = (winners: Winner[]): string[] => {
+  return winners
+    .reduce((accum, item) => {
+      const { clubId } = item;
+
+      if (!accum.includes(clubId)) {
+        accum.push(clubId);
+      }
+
+      return accum;
+    }, [] as string[])
+    ;
+}
+
+const getClubTrophyIds = (clubId: string, winners: Winner[]): string[] => {
+  return winners
+    .filter((x) => x.clubId === clubId)
+    .reduce((accum, item) => {
+      const { trophyId } = item;
+
+      if (!accum.includes(trophyId)) {
+        accum.push(trophyId);
+      }
+
+      return accum;
+    }, [] as string[])
+    ;
+}
+
+const getClubs = async (uid: string | null, clubIds: string[]): Promise<SearchClubInfo[]> => {
+  const list: SearchClubInfo[] = [];
+
+  const snapshots = await batchRequests(
+    admin.firestore().collection(Collections.Clubs),
+    clubIds
+  );
+
+  // Combine all the snapshots
+  snapshots.forEach((snapshot) => {
+    // Filtering those that the user is allowed to view
+    // They must be public, or the user has to be an admin
+    snapshot.forEach((item) => {
+      const club = item.data() as Club;
+      const isAdmin = club.admins.includes(uid || "");
+      const canView = isAdmin || club.public;
+
+      if (canView) {
+        list.push({
+          clubId: item.id,
+          name: club.name,
+          isAdmin,
+          trophies: [],
+        })
+      }
+    });
+  });
+
+  return list.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+const getClubTrophies = async (info: SearchClubInfo, winners: Winner[]): Promise<SearchTrophyInfo[]> => {
+  const { clubId } = info;
+  const trophyIds = getClubTrophyIds(clubId, winners);
+  const list: SearchTrophyInfo[] = [];
+
+  const snapshots = await batchRequests(
+    admin.firestore().collection(Collections.Clubs).doc(clubId).collection(Collections.Trophies),
+    trophyIds
+  );
+
+  // Combine all the snapshots
+  snapshots.forEach((snapshot) => {
+    // Filtering those that the user is allowed to view
+    // They must be public, or the user has to be an admin
+    snapshot.docs.forEach((item) => {
+      const trophy = item.data() as Trophy;
+      const canView = info.isAdmin || trophy.public;
+
+      if (canView) {
+        list.push({
+          trophyId: item.id,
+          name: trophy.name,
+        });
+      }
+    });
+  });
+
+  return list.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+const getSearchClubInfo = async (uid: string | null, winners: Winner[]): Promise<SearchClubInfo[]> => {
+  const clubIds = getClubIds(winners);
+  const list = await getClubs(uid, clubIds);
+
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i];
+
+    item.trophies = await getClubTrophies(item, winners);
+    delete item.isAdmin; // This is no longer needed
+  }
+
+  return list;
+}
 
 const getWinners = async (search: Search): Promise<Winner[]> => {
   const query = admin.firestore().collectionGroup(Collections.Winners) as unknown as admin.firestore.Query<Winner>;
@@ -18,32 +142,7 @@ const getWinners = async (search: Search): Promise<Winner[]> => {
   return snapshot.docs.map((x) => x.data());
 }
 
-const getNames = async <T>(winners: Winner[], selector: (item: Winner) => string, getName: (item: T) => string): Promise<ItemMap<string>> => {
-  const db = admin.firestore();
-  const queries = winners
-    .reduce((accum, item) => {
-      const path = selector(item);
-
-      if (!accum.includes(path)) {
-        accum.push(path);
-      }
-
-      return accum;
-    }, [] as string[])
-    .map((path) => db.doc(path).get())
-    ;
-
-  return (await Promise.all(queries))
-    .reduce((accum, item) => {
-      accum[item.id] = getName(item.data() as T);
-
-      return accum;
-    }, {} as ItemMap<string>);
-
-}
-
-const saveResults = async (parent: admin.firestore.DocumentReference, results: SearchResult[]): Promise<void> => {
-  const batch = parent.firestore.batch();
+const batchSearchResults = (batch: admin.firestore.WriteBatch, parent: admin.firestore.DocumentReference, results: SearchResult[]): void => {
   const batchSize = 100;
 
   // Group into batches, to avoid the 1MB document limit
@@ -58,45 +157,51 @@ const saveResults = async (parent: admin.firestore.DocumentReference, results: S
 
     batch.set(ref, list);
   } while (results.length);
-
-  await batch.commit();
 }
 
 export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<void> => {
   const winners = await getWinners(doc.data() as Search);
-  const clubNames = await getNames<Club>(
-    winners,
-    (item) => `${Collections.Clubs}/${item.clubId}`,
-    (item) => item.name
-  );
-  const trophyNames = await getNames<Trophy>(
-    winners,
-    (item) => `${Collections.Clubs}/${item.clubId}/${Collections.Trophies}/${item.trophyId}`,
-    (item) => item.name
-  );
+  const search = doc.data() as Search;
+  const clubs = await getSearchClubInfo(search.uid, winners);
   const expireAfter = new Date(Date.now() + 86400000); // Expire after 1 day
 
-  const results = winners.map((item): SearchResult => {
-    const { year, sail, helm, crew, owner, name, boatName, club, clubId, trophyId } = item;
+  const results = winners
+    .reduce((accum, item) => {
+      const { clubId, trophyId } = item;
 
-    return {
-      year,
-      sail,
-      helm,
-      crew,
-      owner,
-      name,
-      boatName,
-      club,
-      clubId,
-      trophyId,
-      clubName: clubNames[item.clubId],
-      trophyName: trophyNames[item.trophyId],
-    }
+      // Only return items that are in the club info list
+      const info = clubs.find((x) => x.clubId === clubId);
+      const canView = !!info && info.trophies.some((x) => x.trophyId === trophyId);
+
+      if (canView) {
+        const { year, sail, helm, crew, owner, name, boatName, club, clubId, trophyId } = item;
+
+        accum.push({
+          year,
+          sail,
+          helm,
+          crew,
+          owner,
+          name,
+          boatName,
+          club,
+          clubId,
+          trophyId,
+        })
+      }
+
+      return accum;
+    }, [] as SearchResult[])
+
+  // Batch up all our writes as there may be multiple pages
+  const batch = doc.ref.firestore.batch();
+
+  batch.update(doc.ref, {
+    expireAfter,
+    clubs,
   });
 
-  await Promise.all([
-    saveResults(doc.ref, results),
-    doc.ref.update({ expireAfter }),
-  ]);
+  batchSearchResults(batch, doc.ref, results);
+
+  await batch.commit();
 }

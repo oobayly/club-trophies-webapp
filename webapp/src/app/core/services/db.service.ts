@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChangeAction, QueryFn } from "@angular/fire/compat/firestore";
-import { Boat, BoatReference, Club, Collections, DocumentRef, HasTimestamp, Search, SearchResult, SearchResultList, Trophy, TrophyFile, Winner } from "@models";
+import { Boat, BoatReference, Club, Collections, DocumentRef, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import { Observable, map, switchMap, firstValueFrom } from "rxjs";
+import { Observable, map, firstValueFrom, combineLatest } from "rxjs";
 import { DbRecord, toRecord } from "../interfaces/DbRecord";
 
 type TimestampProps = "created" | "modified";
@@ -180,36 +180,51 @@ export class DbService {
     return this.getWinnersCollection(clubId, trophyId).doc(winnerId || undefined);
   };
 
-  public searchWinners(value: Omit<Search, "uid">): Observable<SearchResult[]> {
-    const searchDoc = this.firestore.collection<Search>(Collections.Searches).doc();
+  // ========================
+  // Searching
+  // ========================
 
-    return this.auth.user.pipe(
-      switchMap(async (user) => {
-        await searchDoc.set({
-          ...value,
-          uid: user?.uid || null,
-        });
+  public async createSearch(value: Omit<Search, "uid">): Promise<string> {
+    const uid = (await this.auth.currentUser)?.uid || null;
+
+    const doc = this.firestore.collection<Search>(Collections.Searches).doc();
+
+    await doc.set({
+      ...value,
+      uid,
+    });
+
+    return doc.ref.id;
+  }
+
+  public getSearchResults(id: string): Observable<SearchWithResults | undefined> {
+    const doc = this.firestore.collection<Search>(Collections.Searches).doc(id);
+
+    return combineLatest([
+      doc.snapshotChanges(),
+      doc.collection<SearchResultList>(Collections.Results).snapshotChanges(),
+    ]).pipe(
+      map(([search, resultPages]) => {
+        const results = resultPages.reduce((accum, item) => {
+          accum.push(...item.payload.doc.data().results);
+
+          return accum;
+        }, [] as SearchResult[]);
+
+        return {
+          search: search.payload.data(),
+          results,
+        };
       }),
-      switchMap(() => {
-        return searchDoc.collection<SearchResultList>(Collections.Results).snapshotChanges();
-      }),
-      map((snapshot) => {
-        return toRecord(snapshot)
-          .reduce((accum, item) => {
-            accum.push(...item.data.results);
+      map(({ search, results }) => {
+        if (!search || !results) {
+          return undefined;
+        }
 
-            return accum;
-          }, [] as SearchResult[])
-          .sort((a, b) => {
-            let resp = a.clubName.localeCompare(b.clubName);
-
-            if (resp !== 0) {
-              return resp;
-            }
-
-            return b.year - a.year;
-          })
-          ;
+        return {
+          ...search,
+          results,
+        };
       }),
     );
   }
