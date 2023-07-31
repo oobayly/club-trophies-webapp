@@ -1,0 +1,2 @@
+# Ignore any private data exported by legacy.ts
+legacy.ts

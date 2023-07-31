@@ -3,11 +3,13 @@ import { onBoatNameChange, onLogoCreate, onClubAdminWrite, onTrophyFileWrite, on
 import { api } from "./https";
 import { onStorageItemDelete, onStorageItemFinalize } from "./storage";
 import { IsEmulated } from "./helpers";
+import { importer } from "./importer";
 
 admin.initializeApp();
 
 if (IsEmulated) {
   exports.api = api;
+  exports.importer = importer;
 }
 
 exports.onBoatNameChange = onBoatNameChange;
