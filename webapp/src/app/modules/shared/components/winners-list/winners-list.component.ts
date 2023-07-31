@@ -28,7 +28,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // ========================
 
   @Input()
-  public boatRef?: string;
+  public boatRef?: string | null;
 
   @Input()
   public canEdit: boolean | null | undefined;
@@ -84,6 +84,6 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
       return;
     }
 
-    await this.modal.showAddWinner(this.clubId, this.trophyId, this.boatRef);
+    await this.modal.showAddWinner(this.clubId, this.trophyId, this.boatRef || undefined);
   }
 }

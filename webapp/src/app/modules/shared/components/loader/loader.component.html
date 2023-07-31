@@ -1,0 +1,6 @@
+<div class="d-flex flex-row align-items-center" [ngClass]="{'justify-content-center': center}">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <div class="ms-3 fw-bold" *ngIf="text">{{text}}</div>
+</div>

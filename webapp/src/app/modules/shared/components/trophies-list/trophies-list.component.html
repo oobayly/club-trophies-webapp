@@ -9,13 +9,13 @@
   </select>
 
   <button type="button" class="btn btn-dark" (click)="onResetFilterClick()">
-    <span class="d-none d-lg-inline">Reset</span>
+    <span class="d-none d-lg-inline">Clear</span>
     <i class="bi-x-circle d-lg-none"></i>
   </button>
 </form>
 
-<ng-container *ngIf="trophies$ | async as trophies">
-  <ul class="list-group">
+<ng-container *ngIf="trophies$ | async as trophies; else loadingOrError">
+  <ul class="list-group" *ngIf="trophies.length; else noTrophies">
     <a [routerLink]="['/clubs', clubId, 'trophies', item.id]" fragment="winners"
       class="list-group-item list-group-item-action" *ngFor="let item of trophies">
 
@@ -24,11 +24,9 @@
         <div class="me-auto pe-2 flex-fill">
           <div class="fw-bold">{{item.data.name}}</div>
           <div class="text-pre-wrap trophy-conditions">{{item.data.conditions}}</div>
-          <div class="text-muted" *ngIf="item.data | donated as donated">
-            <small>Donated {{donated}}</small>
-          </div>
-          <div class="text-muted" *ngIf="item.data.boatName as boatName">
-            <small>Current Class: {{boatName}}</small>
+          <div class="trophy-info d-flex flex-column flex-md-row text-muted">
+            <small *ngIf="item.data | donated:'by':'in' as donated">Donated {{donated}}</small>
+            <small *ngIf="item.data.boatName as boatName">{{boatName}}</small>
           </div>
         </div>
 
@@ -46,3 +44,17 @@
   </ul>
 
 </ng-container>
+
+<ng-template #loadingOrError>
+  <div class="container mw-sm p-3">
+    <app-loader text="Loading trophies..."></app-loader>
+  </div>
+</ng-template>
+
+<ng-template #noTrophies>
+  <div class="container mw-sm">
+    <app-alert>
+      No trophies matching the filter can be found.
+    </app-alert>
+  </div>
+</ng-template>

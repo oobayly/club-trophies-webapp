@@ -17,15 +17,25 @@
 </ng-container>
 
 <ng-template #emptySet>
-  Empty
-</ng-template>
-
-<ng-template #loadingOrError>
-  <div class="" *ngIf="hasError; else loading">
-    Error
+  <div class="container mw-sm p-3">
+    <app-alert color="info">
+      No winners could be found for the search criteria provided.
+    </app-alert>
   </div>
 </ng-template>
 
+<ng-template #loadingOrError>
+  <div class="container mw-sm p-3" *ngIf="hasError; else loading">
+    <app-alert color="warning">
+      <div>No search results could be found.</div>
+      <div>The link may have expired.</div>
+    </app-alert>
+  </div>
+
+</ng-template>
+
 <ng-template #loading>
-  Loading
+  <div class="container mw-sm p-3">
+    <app-loader text="Loading search results..."></app-loader>
+  </div>
 </ng-template>

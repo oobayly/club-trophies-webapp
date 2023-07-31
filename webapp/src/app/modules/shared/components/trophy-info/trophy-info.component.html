@@ -1,8 +1,8 @@
-<ng-container *ngIf="trophy$ | async as trophy">
-  <app-tab-container [(tabIndex)]="tabIndex">
-    <!-- Info-->
-    <app-tab-page name="Trophy Information">
-      <div class="p-3 p-print-0">
+<app-tab-container [(tabIndex)]="tabIndex">
+  <!-- Info-->
+  <app-tab-page name="Trophy Information" icon="bi-info-circle-fill">
+    <div class="p-3 p-print-0">
+      <ng-container *ngIf="trophy$ | async as trophy; else loadingOrError">
         <h5>
           {{trophy.name}}
           <span class="ms-2 no-print" *ngIf=" canEdit$ | async" (click)="onEditTrophyClick(trophy)">
@@ -48,21 +48,26 @@
           <small>Trophy is <span *ngIf="!trophy.public">not</span> viewable for everyone</small>
           <small>Last Updated: {{(trophy.modified || trophy.created) | timestamp:true}}</small>
         </div>
-      </div>
-    </app-tab-page>
+      </ng-container>
+    </div>
+  </app-tab-page>
 
-    <!-- Winners -->
-    <app-tab-page name=" Winners" [pageBreak]="true">
-      <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [boatRef]="trophy.boatRef?.path"
-        [canEdit]="canEdit$ | async" (countChange)="winners = $event">
-      </app-winners-list>
-    </app-tab-page>
+  <!-- Winners -->
+  <app-tab-page name=" Winners" icon="bi-trophy-fill">
+    <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [boatRef]="boatRef$ | async" [canEdit]="canEdit$ | async"
+      (countChange)="winners = $event">
+    </app-winners-list>
+  </app-tab-page>
 
-    <!-- Photos -->
-    <app-tab-page name="Photos">
-      <app-files-list [clubId]="clubId" [trophyId]="trophyId" [canEdit]="canEdit$ | async"
-        (countChange)="files = $event">
-      </app-files-list>
-    </app-tab-page>
-  </app-tab-container>
-</ng-container>
+  <!-- Photos - If there are any photos, then make the page break -->
+  <app-tab-page name="Photos" icon="bi-camera-fill" [pageBreakBefore]="!!files">
+    <app-files-list [clubId]="clubId" [trophyId]="trophyId" [canEdit]="canEdit$ | async" (countChange)="files = $event">
+    </app-files-list>
+  </app-tab-page>
+</app-tab-container>
+
+<ng-template #loadingOrError>
+  <div class="container mw-sm p-3">
+    <app-loader text="Loading trophy..."></app-loader>
+  </div>
+</ng-template>

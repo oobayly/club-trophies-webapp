@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, HostBinding, Input } from "@angular/core";
 
 @Component({
   selector: "app-tab-page",
@@ -6,6 +6,8 @@ import { Component, Input } from "@angular/core";
   styleUrls: ["./tab-page.component.scss"],
 })
 export class TabPageComponent {
+  @HostBinding("class") role = "d-contents";
+
   // ========================
   // Inputs
   // ========================
@@ -20,5 +22,5 @@ export class TabPageComponent {
   public name?: string;
 
   @Input()
-  public pageBreak = false;
+  public pageBreakBefore = false;
 }

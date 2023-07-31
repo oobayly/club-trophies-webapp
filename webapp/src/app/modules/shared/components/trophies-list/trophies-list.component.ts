@@ -160,7 +160,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
           trophies = trophies.filter((x) => !x.data.boatRef);
         } else {
           // Match boat
-          trophies = trophies.filter((x) => x.data.boatRef?.path === boatName);
+          trophies = trophies.filter((x) => x.data.boatName === boatName);
         }
 
         if (name) {

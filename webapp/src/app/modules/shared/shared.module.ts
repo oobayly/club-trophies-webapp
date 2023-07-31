@@ -31,6 +31,7 @@ import { TimestampPipe } from "./pipes/timestamp.pipe";
 import { BoatSelectComponent } from "./forms/boat-select/boat-select.component";
 import { SearchResultComponent } from "./components/search-result/search-result.component";
 import { WinnerTableComponent } from "./components/winner-table/winner-table.component";
+import { LoaderComponent } from "./components/loader/loader.component";
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { WinnerTableComponent } from "./components/winner-table/winner-table.com
     BoatSelectComponent,
     SearchResultComponent,
     WinnerTableComponent,
+    LoaderComponent,
   ],
   imports: [
     CommonModule,
@@ -80,6 +82,7 @@ import { WinnerTableComponent } from "./components/winner-table/winner-table.com
     TrophiesListComponent,
     WinnerEditorComponent,
     SearchResultComponent,
+    LoaderComponent,
     NgBtnDirective,
     TimestampPipe,
     ToDatePipe,

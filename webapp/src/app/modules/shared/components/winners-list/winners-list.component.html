@@ -1,17 +1,23 @@
 <div class="winners-container p-3 p-print-0">
-  <!-- Edit controls -->
-  <div class="edit-container mb-3 no-print" *ngIf="canEdit">
-    <button class="btn btn-outline-primary" (click)="onAddWinnerClick()">
-      <i class="bi-trophy-fill me-2"></i>Add new winner
-    </button>
-  </div>
+  <ng-container *ngIf="winners$ | async as winners; else loadingOrError">
+    <!-- Edit controls -->
+    <div class="edit-container mb-3 no-print" *ngIf="canEdit">
+      <button class="btn btn-outline-primary" (click)="onAddWinnerClick()">
+        <i class="bi-trophy-fill me-2"></i>Add new winner
+      </button>
+    </div>
 
-  <!-- Results table -->
-  <ng-container *ngIf="winners$ | async as winners">
+    <!-- Results table -->
     <app-winner-table [values]=" winners" [canEdit]="canEdit" *ngIf="winners.length; else noWinners">
     </app-winner-table>
   </ng-container>
 </div>
+
+<ng-template #loadingOrError>
+  <div class="container mw-sm p-3">
+    <app-loader text="Loading winners..."></app-loader>
+  </div>
+</ng-template>
 
 <ng-template #noWinners>
   <div class="container mw-sm">

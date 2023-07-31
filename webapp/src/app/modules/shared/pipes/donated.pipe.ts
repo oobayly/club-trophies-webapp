@@ -6,13 +6,13 @@ import { Trophy } from "@models";
   pure: true,
 })
 export class DonatedPipe implements PipeTransform {
-  transform(value: Trophy): string {
+  transform(value: Trophy, donorPrefix = "By", donatedPrefix = "In"): string {
     if (value.donor && value.donated) {
-      return `${value.donor} in ${value.donated}`;
-    } else if (value.donated) {
-      return value.donated;
+      return `${donorPrefix} ${value.donor} in ${value.donated}`;
     } else if (value.donor) {
-      return value.donor;
+      return `${donorPrefix} ${value.donor}`;
+    } else if (value.donated) {
+      return `${donatedPrefix} ${value.donated}`;
     }
 
     return "";

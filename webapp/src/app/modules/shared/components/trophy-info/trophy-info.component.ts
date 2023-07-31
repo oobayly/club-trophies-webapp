@@ -21,6 +21,8 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   // Properties
   // ========================
 
+  public readonly boatRef$: Observable<string | undefined>;
+
   public override canEdit$: Observable<boolean | undefined>;
 
   public tabIndex = 0;
@@ -68,6 +70,7 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
       shareReplay(),
     );
     this.trophy$ = this.getTrophyObservable();
+    this.boatRef$ = this.trophy$.pipe(map((trophy) => trophy?.boatRef?.path));
   }
 
   ngOnChanges(changes: SimpleChanges): void {

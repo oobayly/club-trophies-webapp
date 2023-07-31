@@ -1,11 +1,11 @@
+.tab-page {
+  &.break-before {
+    break-before: page;
+  }
+}
+
 @media print {
   .tab-page {
     display: block !important;
-    page-break-after: always;
-  }
-
-  .page-break {
-    display: block !important;
-    page-break-after: always;
   }
 }
