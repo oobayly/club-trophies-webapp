@@ -1,7 +1,7 @@
 <div class="winners-container p-3 p-print-0">
   <ng-container *ngIf="winners$ | async as winners; else loadingOrError">
     <!-- Edit controls -->
-    <div class="edit-container mb-3 no-print" *ngIf="canEdit">
+    <div class="edit-container mb-3 d-print-none" *ngIf="canEdit">
       <button class="btn btn-outline-primary" (click)="onAddWinnerClick()">
         <i class="bi-trophy-fill me-2"></i>Add new winner
       </button>

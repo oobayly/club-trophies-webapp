@@ -1,19 +1,19 @@
 <ng-container *ngIf="sort$ | async as sort">
 
   <!-- Wrapper used for responsiveness -->
-  <div class="table-responsive-lg" *ngIf="results$ | async as results">
+  <div class="table-responsive-lg" *ngIf="results$ | async as results"><!-- -->
 
     <!-- Results table -->
     <table class="table table-striped" *ngIf="results.length">
 
       <!-- Column headers -->
-      <thead>
+      <thead class="sticky-lg-top">
         <tr class="user-select-none">
           <th *ngFor="let col of visibleColumns$ | async" role="button" (click)="onSortHeaderClick(col.field)">
             {{col.title}}
             <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
           </th>
-          <th class="buttons no-print" *ngIf="canEdit"></th>
+          <th class="buttons d-print-none" *ngIf="canEdit"></th>
         </tr>
       </thead>
 
@@ -25,7 +25,7 @@
           </td>
 
           <!-- This is only if a winner is displayed (not a search result), and canEdit -->
-          <td class="buttons no-print" *ngIf="canEdit && item.id">
+          <td class="buttons d-print-none" *ngIf="canEdit && item.id">
             <button class="btn btn-outline-primary btn-sm" (click)="onItemEditClick(item)">
               <i class="bi-pencil-fill"></i>
             </button>

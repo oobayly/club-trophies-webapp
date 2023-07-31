@@ -5,7 +5,7 @@
       <ng-container *ngIf="trophy$ | async as trophy; else loadingOrError">
         <h5>
           {{trophy.name}}
-          <span class="ms-2 no-print" *ngIf=" canEdit$ | async" (click)="onEditTrophyClick(trophy)">
+          <span class="ms-2 d-print-none" *ngIf=" canEdit$ | async" (click)="onEditTrophyClick(trophy)">
             <i class=" bi-pencil-fill" role="button" *ngIf="canEdit$ | async"></i>
           </span>
         </h5>

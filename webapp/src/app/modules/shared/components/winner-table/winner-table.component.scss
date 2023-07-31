@@ -1,15 +1,49 @@
 .table {
+  thead {
+    @media screen {
+      // This does what table-dark does, but only for screen so printing stays the same
+      --bs-table-color: #fff;
+      --bs-table-bg: #212529;
+      --bs-table-border-color: #373b3e;
+      --bs-table-striped-bg: #2c3034;
+      --bs-table-striped-color: #fff;
+      --bs-table-active-bg: #373b3e;
+      --bs-table-active-color: #fff;
+      --bs-table-hover-bg: #323539;
+      --bs-table-hover-color: #fff;
+      color: var(--bs-table-color);
+      border-color: var(--bs-table-border-color);
+    }
+    @media screen and (min-width: 992px) {
+      // background-color: var(--bs-body-bg);
+      top: 55px; // This is the height of the navbar (minus 1px to prevent content appearing above the thead)
+    }
+  }
+
   th {
     white-space: nowrap;
   }
 
-  .buttons {
-    white-space: nowrap;
+  @media screen {
+    td {
+      white-space: nowrap;
+      &:last-child {
+        width: 100%;
+      }
+    }
   }
 }
 
 @media print {
   .table {
     font-size: 75%;
+
+    // This does what table-bordered, but only for printing
+    > :not(caption) > * {
+      border-width: 1px 0;
+      > * {
+        border-width: 0 1px;
+      }
+    }
   }
 }

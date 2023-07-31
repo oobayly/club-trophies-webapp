@@ -11,7 +11,7 @@
   </div>
 
   <ng-container *ngIf="trophyId$ | async as trophyId">
-    <nav class="mb-3 no-print" aria-label="breadcrumb">
+    <nav class="mb-3 d-print-none" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
           <a href="" (click)="onBackClick($event)">Back to All Trophies</a>

@@ -3,9 +3,3 @@
     break-before: page;
   }
 }
-
-@media print {
-  .tab-page {
-    display: block !important;
-  }
-}
