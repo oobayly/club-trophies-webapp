@@ -1,0 +1,9 @@
+.result-container {
+  .club {
+    &:first-child {
+      hr {
+        display: none;
+      }
+    }
+  }
+}

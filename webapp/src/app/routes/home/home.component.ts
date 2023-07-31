@@ -12,6 +12,17 @@ export class HomeComponent {
   constructor(
     private db: DbService,
   ) {
+    // db.createSearch({
+    //   clubId: null,
+    //   boatName: "IACC",
+    //   sail: null,
+    // })
+    db.getSearchResults("Pu4qUwwh68N0KZxRDsrM").subscribe((x) => console.log(x));
+    // db.searchWinners({
+    //   clubId: null,
+    //   boatName: "IACC",
+    //   sail: null,
+    // }).subscribe((x) => console.log(x));
     // const ref = db.collection<Boat>(Collections.Boats);
     // const batch = db.firestore.batch();
 

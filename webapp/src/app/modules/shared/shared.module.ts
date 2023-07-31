@@ -29,6 +29,8 @@ import { ToDatePipe } from "./pipes/to-date.pipe";
 import { AlertComponent } from "./components/alert/alert.component";
 import { TimestampPipe } from "./pipes/timestamp.pipe";
 import { BoatSelectComponent } from "./forms/boat-select/boat-select.component";
+import { SearchResultComponent } from "./components/search-result/search-result.component";
+import { WinnerTableComponent } from "./components/winner-table/winner-table.component";
 
 @NgModule({
   declarations: [
@@ -57,6 +59,8 @@ import { BoatSelectComponent } from "./forms/boat-select/boat-select.component";
     AlertComponent,
     TimestampPipe,
     BoatSelectComponent,
+    SearchResultComponent,
+    WinnerTableComponent,
   ],
   imports: [
     CommonModule,
@@ -75,6 +79,7 @@ import { BoatSelectComponent } from "./forms/boat-select/boat-select.component";
     TrophyInfoComponent,
     TrophiesListComponent,
     WinnerEditorComponent,
+    SearchResultComponent,
     NgBtnDirective,
     TimestampPipe,
     ToDatePipe,

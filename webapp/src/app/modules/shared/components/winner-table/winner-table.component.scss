@@ -1,0 +1,15 @@
+.table {
+  th {
+    white-space: nowrap;
+  }
+
+  .buttons {
+    white-space: nowrap;
+  }
+}
+
+@media print {
+  .table {
+    font-size: 75%;
+  }
+}

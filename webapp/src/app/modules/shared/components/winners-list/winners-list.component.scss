@@ -1,19 +1,5 @@
-.table {
-  th {
-    white-space: nowrap;
-  }
-
-  .buttons {
-    white-space: nowrap;
-  }
-}
-
 @media print {
   .winners-container {
     padding: 0;
-
-    .table {
-      font-size: 75%;
-    }
   }
 }

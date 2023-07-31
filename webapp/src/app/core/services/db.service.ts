@@ -4,7 +4,7 @@ import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument,
 import { Boat, BoatReference, Club, Collections, DocumentRef, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import { Observable, map, firstValueFrom, combineLatest } from "rxjs";
+import { Observable, map, firstValueFrom, combineLatest, switchMap, of, filter } from "rxjs";
 import { DbRecord, toRecord } from "../interfaces/DbRecord";
 
 type TimestampProps = "created" | "modified";
@@ -197,32 +197,40 @@ export class DbService {
     return doc.ref.id;
   }
 
-  public getSearchResults(id: string): Observable<SearchWithResults | undefined> {
+  public getSearchResults(id: string): Observable<SearchWithResults> {
     const doc = this.firestore.collection<Search>(Collections.Searches).doc(id);
 
-    return combineLatest([
-      doc.snapshotChanges(),
-      doc.collection<SearchResultList>(Collections.Results).snapshotChanges(),
-    ]).pipe(
-      map(([search, resultPages]) => {
-        const results = resultPages.reduce((accum, item) => {
+    return doc.snapshotChanges().pipe(
+      map((snapshot) => {
+        // Check here if the search exits and throw so we don't try getting the result pagess
+        if (!snapshot.payload.exists) {
+          throw new Error("Search not found");
+        }
+
+        return snapshot.payload.data();
+      }),
+      // Wait until the clubs property is populated
+      filter((x) => !!x.clubs),
+      // Once we have a populates search, get the pages
+      switchMap((search) => {
+        return combineLatest([
+          of(search),
+          doc.collection<SearchResultList>(Collections.Results).snapshotChanges(),
+        ]);
+      }),
+      // And wait until we have at least one page
+      filter(([_, pages]) => !!pages.length),
+      // And combine into a valid search result
+      map(([search, pages]) => {
+        const results = pages.reduce((accum, item) => {
           accum.push(...item.payload.doc.data().results);
 
           return accum;
         }, [] as SearchResult[]);
 
         return {
-          search: search.payload.data(),
-          results,
-        };
-      }),
-      map(({ search, results }) => {
-        if (!search || !results) {
-          return undefined;
-        }
-
-        return {
           ...search,
+          clubs: search.clubs!, // From the filter, we know the clubs value is valid
           results,
         };
       }),

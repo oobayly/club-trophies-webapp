@@ -28,6 +28,10 @@ const routes: Routes = [
     path: "clubs",
     loadChildren: () => import("./routes/clubs/clubs.module").then((m) => m.ClubsModule),
   },
+  {
+    path: "search",
+    loadChildren: () => import("./routes/search/search.module").then((m) => m.SearchModule),
+  },
 ];
 
 @Injectable()

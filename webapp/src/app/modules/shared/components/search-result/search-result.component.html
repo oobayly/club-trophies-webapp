@@ -1,0 +1,31 @@
+<ng-container *ngIf="results$ | async as results; else loadingOrError">
+  <div class="result-container" *ngIf="hasResults$ | async; else emptySet">
+    <!-- Each club -->
+    <div class="club mb-3" *ngFor="let club of results">
+      <hr>
+      <h5>{{club.name}}</h5>
+
+      <!-- Each trophy -->
+      <div class="trophy mb-3" *ngFor="let trophy of club.trophies">
+        <h6>{{trophy.name}}</h6>
+
+        <!-- Results table -->
+        <app-winner-table [values]="trophy.results"></app-winner-table>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #emptySet>
+  Empty
+</ng-template>
+
+<ng-template #loadingOrError>
+  <div class="" *ngIf="hasError; else loading">
+    Error
+  </div>
+</ng-template>
+
+<ng-template #loading>
+  Loading
+</ng-template>

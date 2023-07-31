@@ -1,0 +1,41 @@
+<ng-container *ngIf="sort$ | async as sort">
+
+  <!-- Wrapper used for responsiveness -->
+  <div class="table-responsive-lg" *ngIf="results$ | async as results">
+
+    <!-- Results table -->
+    <table class="table table-striped" *ngIf="results.length">
+
+      <!-- Column headers -->
+      <thead>
+        <tr class="user-select-none">
+          <th *ngFor="let col of visibleColumns$ | async" role="button" (click)="onSortHeaderClick(col.field)">
+            {{col.title}}
+            <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
+          </th>
+          <th class="buttons no-print" *ngIf="canEdit"></th>
+        </tr>
+      </thead>
+
+      <!-- Results -->
+      <tbody>
+        <tr *ngFor="let item of results">
+          <td *ngFor="let value of item.values">
+            {{value}}
+          </td>
+
+          <!-- This is only if a winner is displayed (not a search result), and canEdit -->
+          <td class="buttons no-print" *ngIf="canEdit && item.id">
+            <button class="btn btn-outline-primary btn-sm" (click)="onItemEditClick(item)">
+              <i class="bi-pencil-fill"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-sm ms-2" (click)="onItemDeleteClick(item)">
+              <i class="bi-trash3-fill"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</ng-container>

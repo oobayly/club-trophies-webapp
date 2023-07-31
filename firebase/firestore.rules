@@ -88,8 +88,9 @@ service cloud.firestore {
     }
 
     match /searches/{searchId} {
-      allow get: if request.auth == null && resource.data.uid == null; // Unauthenticated can only read anonymous searches
-      allow get: if request.auth != null && request.auth.uid == resource.data.uid; // Authenticated can only read their own searches
+      allow get: if true; // Everyone can read so that searches can be shared
+      // allow get: if request.auth == null && resource.data.uid == null; // Unauthenticated can only read anonymous searches
+      // allow get: if request.auth != null && request.auth.uid == resource.data.uid; // Authenticated can only read their own searches
       allow create: if request.resource != null && request.auth == null; // Anonymous can create search
       allow create: if request.resource != null && request.auth != null && request.resource.data.uid == request.auth.uid; // Authenticated must include their uid
 

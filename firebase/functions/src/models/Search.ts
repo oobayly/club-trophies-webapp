@@ -25,6 +25,8 @@ export interface Search {
 }
 
 export interface SearchWithResults extends Search {
+  /** The clubs */
+  clubs: SearchClubInfo[];
   /** The search results. */
   results: SearchResult[];
 }

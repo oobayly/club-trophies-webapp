@@ -1,4 +1,4 @@
-<div class="winners-container p-3 p-print-0" *ngIf="sort$ | async as sort">
+<div class="winners-container p-3 p-print-0">
   <!-- Edit controls -->
   <div class="edit-container mb-3 no-print" *ngIf="canEdit">
     <button class="btn btn-outline-primary" (click)="onAddWinnerClick()">
@@ -7,35 +7,10 @@
   </div>
 
   <!-- Results table -->
-  <div class="table-responsive-lg" *ngIf="winners$ | async as winners">
-    <table class="table table-striped" *ngIf="winners.length; else noWinners">
-      <thead>
-        <tr class="user-select-none">
-          <th *ngFor="let col of visibleColumns$ | async" role="button" (click)="onSortHeaderClick(col.field)">
-            {{col.title}}
-            <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
-          </th>
-          <th class="buttons no-print" *ngIf="canEdit"></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let item of winners">
-          <td *ngFor="let value of item.values">
-            {{value}}
-          </td>
-          <td class="buttons no-print" *ngIf="canEdit">
-            <button class="btn btn-outline-primary btn-sm" (click)="onWinnerEditClick(item)">
-              <i class="bi-pencil-fill"></i>
-            </button>
-            <button class="btn btn-outline-danger btn-sm ms-2" (click)="onWinnerDeleteClick(item)">
-              <i class="bi-trash3-fill"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <ng-container *ngIf="winners$ | async as winners">
+    <app-winner-table [values]=" winners" [canEdit]="canEdit" *ngIf="winners.length; else noWinners">
+    </app-winner-table>
+  </ng-container>
 </div>
 
 <ng-template #noWinners>
