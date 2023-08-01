@@ -67,7 +67,7 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
 
     this.canEdit$ = this.getCanEditObservable(club).pipe(
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
     this.trophy$ = this.getTrophyObservable();
     this.boatRef$ = this.trophy$.pipe(map((trophy) => trophy?.boatRef?.path));
@@ -94,7 +94,7 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
       map((snapshot) => snapshot.payload.data()),
       tap((item) => this.trophyChange.next(item)),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
   }
 

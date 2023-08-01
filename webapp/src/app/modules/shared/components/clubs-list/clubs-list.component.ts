@@ -104,7 +104,7 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
     ]).pipe(
       map(([clubs, uid, isadmin]) => toCanEditRecord(clubs, uid, isadmin)),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
   }
 

@@ -66,7 +66,7 @@ export abstract class ClubBaseComponent implements OnDestroy {
       }),
       map((x) => x?.payload.data()),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
   }
 

@@ -72,7 +72,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
       map((x) => toRecord(x)),
       tap((items) => this.countChange.next(items.length)),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
   }
   // ========================

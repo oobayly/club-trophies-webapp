@@ -137,7 +137,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
         );
       }),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
   }
 

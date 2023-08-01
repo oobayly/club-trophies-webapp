@@ -126,7 +126,7 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
         return items;
       }),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
   }
 
@@ -137,7 +137,7 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
         return Colunms.filter((column) => items.some((item) => !!item.data[column.field]));
       }),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
   }
 

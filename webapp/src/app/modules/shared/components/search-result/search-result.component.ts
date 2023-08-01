@@ -80,7 +80,7 @@ export class SearchResultComponent implements OnChanges, OnDestroy {
         return of(undefined);
       }),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     )
   }
 

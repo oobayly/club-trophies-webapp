@@ -85,7 +85,7 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
       }),
       tap((items) => this.countChange.next(items.length)),
       takeUntil(this.destroyed$),
-      shareReplay(),
+      shareReplay(1),
     );
   }
 
