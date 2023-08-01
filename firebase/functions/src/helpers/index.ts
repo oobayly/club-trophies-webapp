@@ -25,7 +25,7 @@ async function getDownloadURL(object: functions.storage.ObjectMetadata | File): 
     return file.publicUrl();
   }
 
-  let token = `${metadata[DownloadTokenKey]}`.split(/,/)[0];
+  let token = metadata[DownloadTokenKey]?.split(/,/)[0];
 
   if (!token) {
     metadata[DownloadTokenKey] = token = uuid();
@@ -35,7 +35,7 @@ async function getDownloadURL(object: functions.storage.ObjectMetadata | File): 
     });
   }
 
-  return `https://firebasestorage.googleapis.com/v0/b/${file.bucket}/o/${encodeURIComponent(file.name)}?alt=media&token=${token}`;
+  return `https://firebasestorage.googleapis.com/v0/b/${file.bucket.name}/o/${encodeURIComponent(file.name)}?alt=media&token=${token}`;
 }
 
 export {

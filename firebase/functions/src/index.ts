@@ -5,7 +5,9 @@ import { onStorageItemDelete, onStorageItemFinalize } from "./storage";
 import { IsEmulated } from "./helpers";
 import { importer } from "./importer";
 
-admin.initializeApp();
+admin.initializeApp({
+  storageBucket: "club-trophies.appspot.com",
+});
 
 if (IsEmulated) {
   exports.api = api;
