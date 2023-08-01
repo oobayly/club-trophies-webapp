@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
+import { identifyUsingTimestamp } from "@helpers";
 import { SearchResult, Winner } from "@models";
 import { BehaviorSubject, Observable, Subject, combineLatest, map, of, shareReplay, takeUntil } from "rxjs";
 import { DbRecord } from "src/app/core/interfaces/DbRecord";
@@ -29,11 +30,13 @@ const Colunms: Column[] = [
   { field: "club", title: "Club" },
 ];
 
-interface ItemWrapper {
-  data: Winner | SearchResult;
-  values: any[];
-  id?: string;
-}
+type ItemWrapper = { values: any[] } & ({ data: Winner, id: string } | { data: SearchResult, id?: undefined });
+
+// interface ItemWrapper {
+//   data: Winner | SearchResult;
+//   values: any[];
+//   id?: string;
+// }
 
 @Component({
   selector: "app-winner-table",
@@ -136,6 +139,14 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
       takeUntil(this.destroyed$),
       shareReplay(),
     );
+  }
+
+  public identifyWinner(_index: number, item: ItemWrapper): string | ItemWrapper {
+    if (item.id) {
+      return identifyUsingTimestamp(_index, item.data, item.id);
+    }
+
+    return item;
   }
 
   private static sortValues(items: ItemWrapper[], sort: ColumnSort): ItemWrapper[] {

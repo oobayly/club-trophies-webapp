@@ -4,6 +4,9 @@ export interface DbRecord<T = unknown> {
   id: string;
   ref: string;
   data: T;
+  // TODO: Check whether we can access these using a new version of AngularFire  
+  // created?: Date;
+  // modified?: Date;
 }
 
 export interface CanEditDbRecord<T = unknown> extends DbRecord<T> {

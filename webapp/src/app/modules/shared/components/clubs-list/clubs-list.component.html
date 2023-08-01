@@ -1,7 +1,8 @@
 <ng-container *ngIf="clubs$ | async as clubs; else loaderOrError">
   <!-- List of clubs -->
   <ul class="list-group">
-    <a [routerLink]="['/clubs', item.id]" class="list-group-item list-group-item-action" *ngFor="let item of clubs">
+    <a [routerLink]="['/clubs', item.id]" class="list-group-item list-group-item-action"
+      *ngFor="let item of clubs; trackBy: identifyClub">
 
       <div class="d-flex justify-content-between align-items-center" (click)="onItemClick($event, item)">
         <!-- Name -->

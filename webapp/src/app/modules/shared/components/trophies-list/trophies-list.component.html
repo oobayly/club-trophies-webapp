@@ -17,7 +17,7 @@
 <ng-container *ngIf="trophies$ | async as trophies; else loadingOrError">
   <ul class="list-group" *ngIf="trophies.length; else noTrophies">
     <a [routerLink]="['/clubs', clubId, 'trophies', item.id]" fragment="winners"
-      class="list-group-item list-group-item-action" *ngFor="let item of trophies">
+      class="list-group-item list-group-item-action" *ngFor="let item of trophies; trackBy: identifyTrophy">
 
       <div class=" d-flex justify-content-between align-items-center" (click)="onItemClick($event, item)">
         <!-- Name -->

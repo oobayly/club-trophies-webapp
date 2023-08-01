@@ -19,7 +19,7 @@
 
       <!-- Results -->
       <tbody>
-        <tr *ngFor="let item of results">
+        <tr *ngFor="let item of results; trackBy: identifyWinner">
           <td *ngFor="let value of item.values">
             {{value}}
           </td>

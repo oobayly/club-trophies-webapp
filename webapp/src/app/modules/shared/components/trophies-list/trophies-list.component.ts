@@ -8,6 +8,7 @@ import { ModalService } from "src/app/core/services/modal.service";
 import { ClubBaseComponent } from "../club-base-component";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { DbService } from "src/app/core/services/db.service";
+import { identifyUsingTimestamp } from "@helpers";
 
 interface TrophyFilter {
   name: FormControl<string>;
@@ -174,6 +175,8 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
     );
 
   }
+
+  public identifyTrophy = identifyUsingTimestamp;
 
   // ========================
   // Event handlers

@@ -7,6 +7,7 @@ import { Club } from "@models";
 import { distinctUid } from "src/app/core/rxjs/auth";
 import { ModalService } from "src/app/core/services/modal.service";
 import { DbService } from "src/app/core/services/db.service";
+import { identifyUsingTimestamp } from "@helpers";
 
 export type ViewMode = "all" | "mine" | "public";
 
@@ -105,6 +106,8 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
       shareReplay(),
     );
   }
+
+  public identifyClub = identifyUsingTimestamp;
 
   // ========================
   // Event handlers
