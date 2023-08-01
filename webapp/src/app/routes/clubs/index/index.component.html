@@ -1,3 +1,5 @@
 <div class="container mw-md" style="height: 2000px">
-  <app-clubs-list [mode]="mode$ |async"></app-clubs-list>
+  <h4 class="mb-3 text-center">{{title$ | async}}</h4>
+
+  <app-clubs-list [mode]=" mode$ |async"></app-clubs-list>
 </div>

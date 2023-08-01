@@ -5,6 +5,13 @@
 export const environment = {
   production: false,
   emulate: true,
+  emails: [
+    [undefined, "None"],
+    ["admin@nothing.com", "Admin"],
+    ["ldyc@nothing.com", "LDYC"],
+    ["nyyc@nothing.com", "NYYC"],
+    ["nobody@nothing.com", "Nobody"],
+  ],
 };
 
 /*

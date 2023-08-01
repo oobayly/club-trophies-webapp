@@ -4,7 +4,7 @@ import { Query, QueryFn } from "@angular/fire/compat/firestore";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { CanEditDbRecord, DbRecord, toCanEditRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Club } from "@models";
-import { distinctUid } from "src/app/core/rxjs/auth";
+import { distinctUid, isAdmin } from "src/app/core/rxjs/auth";
 import { ModalService } from "src/app/core/services/modal.service";
 import { DbService } from "src/app/core/services/db.service";
 import { identifyUsingTimestamp } from "@helpers";
@@ -100,8 +100,9 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
     return combineLatest([
       clubs$,
       uid$,
+      this.auth.idTokenResult.pipe(isAdmin()),
     ]).pipe(
-      map(([clubs, uid]) => toCanEditRecord(clubs, uid)),
+      map(([clubs, uid, isadmin]) => toCanEditRecord(clubs, uid, isadmin)),
       takeUntil(this.destroyed$),
       shareReplay(),
     );

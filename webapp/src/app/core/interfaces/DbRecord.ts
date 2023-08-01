@@ -14,12 +14,12 @@ export interface CanEditDbRecord<T = unknown> extends DbRecord<T> {
 }
 
 function toCanEditRecord<TRecord extends { admins: string[] }>(
-  values: DbRecord<TRecord>[], uid: string | null | undefined,
+  values: DbRecord<TRecord>[], uid: string | null | undefined, isAdmin?: boolean,
 ): CanEditDbRecord<TRecord>[] {
   return values.map((item) => {
     return {
       ...item,
-      canEdit: !!uid && item.data.admins.includes(uid),
+      canEdit: isAdmin || (!!uid && item.data.admins.includes(uid)),
     };
   });
 }

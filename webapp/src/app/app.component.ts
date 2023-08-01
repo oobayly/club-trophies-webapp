@@ -7,15 +7,6 @@ import { ModalService } from "./core/services/modal.service";
 import { Router } from "@angular/router";
 import { DbService } from "./core/services/db.service";
 
-/** Collection of emulated users. */
-const Emails = [
-  [undefined, "None"],
-  ["admin@nothing.com", "Admin"],
-  ["ldyc@nothing.com", "LDYC"],
-  ["nyyc@nothing.com", "NYYC"],
-  ["nobody@nothing.com", "Nobody"],
-]
-
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -28,7 +19,7 @@ export class AppComponent implements OnDestroy, OnInit {
 
   public email?: string = undefined;
 
-  public readonly emails = environment.production ? undefined : Emails;
+  public readonly emails = (environment as { emails?: string[][] }).emails;
 
   public isNavBarCollapsed = true;
 

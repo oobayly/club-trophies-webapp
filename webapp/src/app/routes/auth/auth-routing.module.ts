@@ -1,23 +1,22 @@
 import { NgModule } from "@angular/core";
 import { AngularFireAuthGuard, redirectLoggedInTo } from "@angular/fire/compat/auth-guard"
 import { RouterModule, Routes } from "@angular/router";
-import { AuthGuard } from "src/app/core/guards/auth.guard";
 import { AuthComponent } from "./auth.component";
-import { ProfileComponent } from "./profile/profile.component";
 import { SignInComponent } from "./sign-in/sign-in.component";
-import { SignOutComponent } from "./sign-out/sign-out.component";
+import { SignOutResolver } from "src/app/core/resolvers/sign-out.resolver";
 
 const routes: Routes = [
   {
     path: "",
     component: AuthComponent,
     children: [
-      {
-        path: "profile",
-        component: ProfileComponent,
-        canActivate: [AuthGuard],
-        title: "My Profile",
-      },
+      // TODO: Implment profile
+      // {
+      //   path: "profile",
+      //   component: ProfileComponent,
+      //   canActivate: [AuthGuard],
+      //   title: "My Profile",
+      // },
       {
         path: "sign-in",
         component: SignInComponent,
@@ -29,8 +28,10 @@ const routes: Routes = [
       },
       {
         path: "sign-out",
-        component: SignOutComponent,
-        title: "Sign Out",
+        component: SignInComponent, // Need a component here even if it's never accessed
+        resolve: {
+          signedOut: SignOutResolver,
+        },
       },
     ],
   },

@@ -14,10 +14,10 @@ export const firebaseUiAuthConfig: firebaseui.auth.Config = {
   signInFlow: "popup",
   signInOptions: [
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
-    {
-      provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-      defaultCountry: "IE",
-      whitelistedCountries: ["GB", "IE"],
-    },
+    // {
+    //   provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+    //   defaultCountry: "IE",
+    //   whitelistedCountries: ["GB", "IE"],
+    // },
   ],
 }

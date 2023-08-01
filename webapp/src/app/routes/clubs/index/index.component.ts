@@ -1,6 +1,8 @@
 import { Component } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
-import { map, Observable } from "rxjs";
+import { map, Observable, tap } from "rxjs";
+import { AppTitle } from "src/app/app-routing.module";
 import { ViewMode } from "src/app/modules/shared/components/clubs-list/clubs-list.component";
 
 @Component({
@@ -11,8 +13,11 @@ import { ViewMode } from "src/app/modules/shared/components/clubs-list/clubs-lis
 export class IndexComponent {
   public readonly mode$ = this.getModeObservable();
 
+  public readonly title$ = this.getTitleObservable();
+
   constructor(
-    private route: ActivatedRoute,
+    private readonly route: ActivatedRoute,
+    private readonly title: Title,
   ) { }
 
   private getModeObservable(): Observable<ViewMode> {
@@ -21,9 +26,28 @@ export class IndexComponent {
         switch (data["mode"]) {
           case "mine":
             return "mine";
+          case "all":
+            return "all";
           default:
             return "public";
         }
+      }),
+    )
+  }
+
+  private getTitleObservable(): Observable<string> {
+    return this.mode$.pipe(
+      map((mode) => {
+        if (mode === "all") {
+          return "All Clubs";
+        } else if (mode === "mine") {
+          return "My Clubs";
+        } else {
+          return "Public Clubs";
+        }
+      }),
+      tap((title) => {
+        this.title.setTitle(`${AppTitle} | ${title}`);
       }),
     )
   }

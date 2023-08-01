@@ -1,6 +1,6 @@
 <ng-container *ngIf="clubs$ | async as clubs; else loaderOrError">
   <!-- List of clubs -->
-  <ul class="list-group">
+  <ul class="list-group" *ngIf="clubs.length; else noClubs">
     <a [routerLink]="['/clubs', item.id]" class="list-group-item list-group-item-action"
       *ngFor="let item of clubs; trackBy: identifyClub">
 
@@ -27,5 +27,13 @@
 <ng-template #loaderOrError>
   <div class="container mw-sm p-3">
     <app-loader text="Loading clubs..."></app-loader>
+  </div>
+</ng-template>
+
+<ng-template #noClubs>
+  <div class="container mw-sm d-print-none">
+    <app-alert>
+      No matching clubs found.
+    </app-alert>
   </div>
 </ng-template>

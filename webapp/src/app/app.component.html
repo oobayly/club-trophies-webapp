@@ -21,6 +21,9 @@
           <a routerLink="/clubs/mine" class="dropdown-item" routerLinkActive="active">
             My Clubs
           </a>
+          <a routerLink="/clubs/all" class="dropdown-item" routerLinkActive="active" *ngIf="isAdmin$ | async">
+            All Clubs
+          </a>
           <ng-container *ngIf="user$ | async">
             <div class="dropdown-divider"></div>
             <span class="dropdown-item" role="button" (click)="onAddClubClick()">
@@ -59,9 +62,10 @@
     <!-- Profile section -->
     <ul class="navbar-nav ms-auto">
       <ng-container *ngIf="user$ | async; else signIn">
-        <li class="nav-item">
+        <!-- TODO: Implment profile -->
+        <!-- <li class="nav-item">
           <a routerLink="/auth/profile" class="nav-link">Profile</a>
-        </li>
+        </li> -->
         <li class="nav-item">
           <a routerLink="/auth/sign-out" class="nav-link">Sign Out</a>
         </li>
