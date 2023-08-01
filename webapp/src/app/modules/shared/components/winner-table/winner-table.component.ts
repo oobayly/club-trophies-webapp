@@ -237,14 +237,14 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    const { clubId, trophyId } = item.data;
+    const { clubId, trophyId } = item.data.parent;
     const ref = this.db.getWinnerDoc(clubId, trophyId, item.id);
 
     await ref.delete();
   }
 
   public async onItemEditClick(item: ItemWrapper): Promise<void> {
-    const { clubId, trophyId } = item.data;
+    const { clubId, trophyId } = item.data.parent;
 
     if (!item.id) {
       return;

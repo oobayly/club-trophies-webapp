@@ -26,7 +26,7 @@ const batchRequests = async (
 const getClubIds = (winners: Winner[]): string[] => {
   return winners
     .reduce((accum, item) => {
-      const { clubId } = item;
+      const { clubId } = item.parent;
 
       if (!accum.includes(clubId)) {
         accum.push(clubId);
@@ -39,9 +39,9 @@ const getClubIds = (winners: Winner[]): string[] => {
 
 const getClubTrophyIds = (clubId: string, winners: Winner[]): string[] => {
   return winners
-    .filter((x) => x.clubId === clubId)
+    .filter((x) => x.parent.clubId === clubId)
     .reduce((accum, item) => {
-      const { trophyId } = item;
+      const { trophyId } = item.parent;
 
       if (!accum.includes(trophyId)) {
         accum.push(trophyId);
@@ -134,7 +134,7 @@ const getWinners = async (search: Search): Promise<Winner[]> => {
     query.where("boatName", "==", search.boatName);
   }
   if (search.clubId) {
-    query.where("clubId", "==", search.clubId);
+    query.where("parent.clubId", "==", search.clubId);
   }
 
   const snapshot = await query.get();
@@ -167,14 +167,14 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
 
   const results = winners
     .reduce((accum, item) => {
-      const { clubId, trophyId } = item;
+      const { clubId, trophyId } = item.parent;
 
       // Only return items that are in the club info list
       const info = clubs.find((x) => x.clubId === clubId);
       const canView = !!info && info.trophies.some((x) => x.trophyId === trophyId);
 
       if (canView) {
-        const { year, sail, helm, crew, owner, name, boatName, club, clubId, trophyId } = item;
+        const { year, sail, helm, crew, owner, name, boatName, club } = item;
 
         accum.push({
           year,
@@ -185,8 +185,7 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
           name,
           boatName,
           club,
-          clubId,
-          trophyId,
+          parent: { clubId, trophyId },
         })
       }
 

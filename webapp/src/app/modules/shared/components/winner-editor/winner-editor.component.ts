@@ -130,8 +130,10 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
     const doc = this.db.getWinnerDoc(this.clubId, this.trophyId, this.winnerId);
     const winner = await this.db.addBoatRef({
       ...this.form.getRawValue(),
-      clubId: this.clubId,
-      trophyId: this.trophyId,
+      parent: {
+        clubId: this.clubId,
+        trophyId: this.trophyId,
+      },
     });
 
     if (isNew) {

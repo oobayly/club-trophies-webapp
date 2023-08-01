@@ -116,7 +116,9 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
     const doc = this.db.getTrophyDoc(this.clubId, this.trophyId);
     const trophy = await this.db.addBoatRef({
       ...this.form.getRawValue(),
-      clubId: this.clubId,
+      parent: {
+        clubId: this.clubId,
+      },
     });
 
     if (isNew) {

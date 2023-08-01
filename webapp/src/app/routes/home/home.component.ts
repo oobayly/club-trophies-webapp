@@ -12,12 +12,14 @@ export class HomeComponent {
   constructor(
     private db: DbService,
   ) {
-    // db.createSearch({
-    //   clubId: null,
-    //   boatName: "IACC",
-    //   sail: null,
-    // })
-    db.getSearchResults("Pu4qUwwh68N0KZxRDsrM").subscribe((x) => console.log(x));
+    // window.setTimeout(() => {
+    //   db.createSearch({
+    //     clubId: "R0a8BjOvIB8i5MP6THj8",
+    //     boatName: "IACC",
+    //     sail: null,
+    //   }).then(console.log);
+    // }, 1000);
+    // db.getSearchResults("Pu4qUwwh68N0KZxRDsrM").subscribe((x) => console.log(x));
     // db.searchWinners({
     //   clubId: null,
     //   boatName: "IACC",

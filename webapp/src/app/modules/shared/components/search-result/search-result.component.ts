@@ -110,7 +110,7 @@ export class SearchResultComponent implements OnChanges, OnDestroy {
 
     return {
       ...trophy,
-      results: results.filter((x) => x.clubId === clubId && x.trophyId === trophyId),
+      results: results.filter((x) => x.parent.clubId === clubId && x.parent.trophyId === trophyId),
     };
   }
 }

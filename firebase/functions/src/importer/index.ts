@@ -95,7 +95,7 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
         boatName,
         boatRef: db.doc(boatRef),
         club: "",
-        clubId: ClubId,
+        parent: { clubId: ClubId, trophyId },
         crew: item.fldCrew,
         helm: item.fldHelm,
         name,
@@ -105,7 +105,6 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
         year: item.fldYear,
         created: new Date(item.fldCreated),
         modified: item.fldModified ? new Date(item.fldModified) : null,
-        trophyId,
       };
 
       // console.log(`  Winner ${index + 1} of ${arr.length} : ${item.fldYear} : ${item.fldHelm}`);
@@ -116,7 +115,59 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
 
 const app = express();
 
-app.get("*", async (req, res) => {
+// app.get("/modify", async (req, res) => {
+//   console.log("foo");
+//   const db = admin.firestore();
+//   const batch = db.batch();
+
+//   const trophies = await db.collectionGroup(Collections.Trophies).get();
+//   const winners = await db.collectionGroup(Collections.Winners).get();
+//   const files = await db.collectionGroup(Collections.Files).get();
+
+//   trophies.docs.forEach((item) => {
+//     const clubId = item.ref.parent.parent!.id;
+//     console.log(item.data());
+
+//     batch.update(item.ref, {
+//       clubId: admin.firestore.FieldValue.delete(),
+//       parent: { clubId },
+//     });
+//   });
+
+//   winners.docs.forEach((item) => {
+//     const clubId = item.ref.parent.parent!.parent.parent!.id;
+//     const trophyId = item.ref.parent.parent!.id;
+//     console.log(item.data());
+
+//     batch.update(item.ref, {
+//       clubId: admin.firestore.FieldValue.delete(),
+//       trophyId: admin.firestore.FieldValue.delete(),
+//       parent: { clubId, trophyId },
+//     });
+//   });
+
+//   files.docs.forEach((item) => {
+//     const clubId = item.ref.parent.parent!.parent.parent!.id;
+//     const trophyId = item.ref.parent.parent!.id;
+//     console.log({
+//       clubId: admin.firestore.FieldValue.delete(),
+//       trophyId: admin.firestore.FieldValue.delete(),
+//       parent: { clubId, trophyId },
+//     });
+
+//     batch.update(item.ref, {
+//       clubId: admin.firestore.FieldValue.delete(),
+//       trophyId: admin.firestore.FieldValue.delete(),
+//       parent: { clubId, trophyId },
+//     });
+//   });
+
+//   await batch.commit();
+
+//   res.status(200).send();
+// });
+
+app.get("import", async (req, res) => {
   await loadBoats();
 
   await loadTrophies();
@@ -126,5 +177,6 @@ app.get("*", async (req, res) => {
 
   res.status(200).send();
 });
+
 
 export const importer = functions.https.onRequest(app);

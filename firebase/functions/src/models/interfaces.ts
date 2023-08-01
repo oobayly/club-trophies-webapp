@@ -8,6 +8,14 @@ export interface HasPublic {
   public: boolean;
 }
 
+export interface HasParent<T> {
+  /** An object that contains the IDs of the parent objects. */
+  parent: T;
+}
+
+export type HasClubParent = HasParent<{ clubId: string }>;
+export type HasTrophyParent = HasParent<{ clubId: string, trophyId: string }>;
+
 interface FbTimestamp {
   toDate: () => Date;
   toMillis: () => number;
@@ -20,14 +28,6 @@ export interface HasTimestamp {
   created: TimestampType;
   /** The timestamp of when the record was last modified. */
   modified: TimestampType | null;
-}
-
-/** These properties are added by the firestore functions */
-export interface HasTrophyParent {
-  /** The ID of the parent club. */
-  clubId: string;
-  /** TheID of the parent trophy.  */
-  trophyId: string;
 }
 
 export interface UploadInfo {

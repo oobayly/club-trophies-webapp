@@ -119,14 +119,16 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
     );
 
     await doc.set({
-      clubId,
-      trophyId,
       contentType: file.type,
       description: "",
       name: file.name,
       ...createdTimestamp(),
       url: null,
       thumb: null,
+      parent: {
+        clubId: clubId,
+        trophyId: trophyId,
+      },
     });
 
     const uploadInfo = await firstValueFrom(snapshot);

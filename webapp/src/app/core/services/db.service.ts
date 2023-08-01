@@ -187,6 +187,8 @@ export class DbService {
   public async createSearch(value: Omit<Search, "uid">): Promise<string> {
     const uid = (await this.auth.currentUser)?.uid || null;
 
+    console.log(uid);
+
     const doc = this.firestore.collection<Search>(Collections.Searches).doc();
 
     await doc.set({
