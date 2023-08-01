@@ -1,4 +1,5 @@
 export enum Collections {
+  Domains = "domains",
   Admins = "admins",
   Boats = "boats",
   Logos = "logos",

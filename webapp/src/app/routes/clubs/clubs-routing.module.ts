@@ -4,6 +4,7 @@ import { AuthGuard, authGuardForRole } from "src/app/core/guards/auth.guard";
 import { IndexComponent } from "./index/index.component";
 import { ViewTrophyComponent } from "./trophies/view-trophy/view-trophy.component";
 import { ViewClubComponent } from "./view-club/view-club.component";
+import { ClubIdResolver } from "src/app/core/resolvers/club-id.resolver";
 
 const routes: Routes = [
   { path: "", pathMatch: "full", redirectTo: "public" },
@@ -66,6 +67,13 @@ const routes: Routes = [
   //     }
   //   },
   // },
+  {
+    path: ":country/:shortName",
+    component: ViewClubComponent,
+    resolve: {
+      clubId: ClubIdResolver,
+    },
+  },
   {
     path: ":clubId",
     children: [

@@ -87,6 +87,10 @@ service cloud.firestore {
       }
     }
 
+    match /domains/{domainId} {
+      allow read: if true;
+    }
+
     match /searches/{searchId} {
       allow get: if true; // Everyone can read so that searches can be shared
       // allow get: if request.auth == null && resource.data.uid == null; // Unauthenticated can only read anonymous searches

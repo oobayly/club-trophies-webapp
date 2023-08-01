@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Club, Trophy } from "@models";
-import { map } from "rxjs";
+import { Observable, combineLatest, map } from "rxjs";
 import { AppTitle } from "src/app/app-routing.module";
 import { DbRecord } from "src/app/core/interfaces/DbRecord";
 
@@ -18,7 +18,7 @@ export class ViewClubComponent {
 
   public canEdit?: boolean;
 
-  public readonly clubId$ = this.route.paramMap.pipe(map((x) => x.get("clubId")));
+  public readonly clubId$ = this.getClubIdObservable();
 
   public readonly trophyId$ = this.route.queryParamMap.pipe(map((x) => x.get("trophyId")));
 
@@ -33,6 +33,21 @@ export class ViewClubComponent {
     private readonly router: Router,
     private readonly title: Title,
   ) { }
+
+  // ========================
+  // Methods
+  // ========================
+
+  private getClubIdObservable(): Observable<string | undefined> {
+    return combineLatest([
+      this.route.paramMap.pipe(map((x) => x.get("clubId"))),
+      this.route.data.pipe(map((x) => x["clubId"])),
+    ]).pipe(
+      map((ids) => {
+        return ids.filter((x) => typeof x === "string")?.[0];
+      }),
+    );
+  }
 
   // ========================
   // Event handlers
