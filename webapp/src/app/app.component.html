@@ -40,6 +40,47 @@
         </div>
       </li>
 
+      <!-- Edit menu, only if we can edit and there is a clubId -->
+      <ng-container *ngIf="canEdit$ | async">
+        <li class="nav-item dropdown" ngbDropdown *ngIf="ids$ | async as ids">
+          <a class="nav-link dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false"
+            ngbDropdownToggle>
+            Edit
+          </a>
+
+          <div class="dropdown-menu" ngbDropdownMenu>
+            <!-- Edit club -->
+            <span class="dropdown-item" role="button">
+              Edit Club
+            </span>
+
+            <div class="dropdown-divider"></div>
+
+            <!-- Add trophy -->
+            <span class="dropdown-item" role="button" *ngIf="!ids.trophyId">
+              Add New Trophy
+            </span>
+
+            <ng-container *ngIf="ids.trophyId">
+              <!-- Edit trophy -->
+              <span class="dropdown-item" role="button">
+                Edit Trophy
+              </span>
+              <div class="dropdown-divider"></div>
+              <!-- Add Winner -->
+              <span class="dropdown-item" role="button">
+                Add Winner
+              </span>
+              <!-- Add Winner -->
+              <span class="dropdown-item" role="button">
+                Add Photo
+              </span>
+            </ng-container>
+          </div>
+        </li>
+
+      </ng-container>
+
       <!-- Development user dropdown -->
       <li class="nav-item dropdown" ngbDropdown *ngIf="emails">
         <a class="nav-link dropdown-toggle" role="button" aria-haspopup="true" ngbDropdownToggle>
