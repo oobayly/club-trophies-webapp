@@ -2,28 +2,39 @@ import express = require("express");
 import * as admin from "firebase-admin";
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
-import { Collections, Trophy, Winner } from "../models";
+import { Boat, Collections, Trophy, Winner } from "../models";
 import { legacyClasses, legacyTrophies, legacyWinners } from "./legacy";
 
-const ClubId = "I0PPhPQPbiqFsE8pmhoI";
+const httpsFunctions = functions.region("europe-west2").https;
+const ClubId = "TbeeXCBRTb6mSJ64i0MT";
 const BoatMap = new Map<number, string>();
 
 const loadBoats = async (): Promise<void> => {
   const db = admin.firestore();
-  const snapshot = await db.collectionGroup(Collections.Boats).get();
-  const boats = snapshot.docs.reduce((accum, item) => {
-    return accum.set(item.data().name, item.ref.path);
-  }, new Map<string, string>());
+  const batch = db.batch();
 
   for (const item of legacyClasses) {
-    const boatRef = boats.get(item.fldName);
+    let doc: firestore.DocumentReference<firestore.DocumentData>;
 
-    if (!boatRef) {
-      throw new Error(`No boat found called '${item.fldName}'`);
+    if (item.clubId) {
+      doc = db.collection(Collections.Clubs).doc(item.clubId).collection(Collections.Boats).doc();
+    } else {
+      doc = db.collection(Collections.Boats).doc();
     }
 
-    BoatMap.set(item.fldClassID, boatRef);
+    const boat: Boat = {
+      archived: false,
+      name: item.fldName,
+      created: new Date(item.fldCreated),
+      modified: null,
+    };
+
+    batch.set(doc, boat);
+
+    BoatMap.set(item.fldClassID, doc.path);
   }
+
+  //await batch.commit();
 }
 
 const loadTrophies = async (): Promise<void> => {
@@ -62,7 +73,7 @@ const loadTrophies = async (): Promise<void> => {
 
     loadWinners(batch, item.fldTrophyID, trophyDoc.id);
 
-    batch.commit();
+    //batch.commit();
   }
 }
 
@@ -129,4 +140,4 @@ app.get("/import", async (_req, res) => {
 });
 
 
-export const importer = functions.https.onRequest(app);
+export const importer = httpsFunctions.onRequest(app);

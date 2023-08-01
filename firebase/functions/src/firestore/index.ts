@@ -6,6 +6,8 @@ import { AdminPath, LogoPath, SearchPath, TrophyFilePath } from "./paths";
 import { IsEmulated } from "../helpers";
 import { search } from "./search";
 
+const firestoreFunctions = functions.region("europe-west2").firestore;
+
 // interface TrophyIds {
 //   type: "created" | "updated" | "deleted";
 //   clubId: string;
@@ -77,10 +79,9 @@ const updateBoatName = (batch: admin.firestore.WriteBatch, boatName: string, doc
   return changes;
 }
 
-/** Ensures that the boat names are kept up-to-date across trophies and winners. */
-export const onBoatNameChange = functions.firestore.document("{path=**}/boats/{boatId}").onUpdate(async (snapshot) => {
-  const boatRef = snapshot.after.ref;
-  const { name: boatName } = snapshot.after.data() as Boat;
+const onUpdateBoatName = async (change: functions.Change<functions.firestore.QueryDocumentSnapshot>): Promise<void> => {
+  const boatRef = change.after.ref;
+  const { name: boatName } = change.after.data() as Boat;
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const firestore = admin.firestore();
@@ -108,9 +109,13 @@ export const onBoatNameChange = functions.firestore.document("{path=**}/boats/{b
   if (changes) {
     await batch.commit();
   }
-});
+}
 
-export const onLogoCreate = functions.firestore.document(LogoPath).onCreate(async (snapshot) => {
+/** Ensures that the boat names are kept up-to-date across trophies and winners. */
+export const onBoatNameChange = firestoreFunctions.document("boats/{boatId}").onUpdate(onUpdateBoatName);
+export const onClubBoatNameChange = firestoreFunctions.document("clubs/{clubId}/boats/{boatId}").onUpdate(onUpdateBoatName);
+
+export const onLogoCreate = firestoreFunctions.document(LogoPath).onCreate(async (snapshot) => {
   const logoId = snapshot.ref.id;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const clubId = snapshot.ref.parent.parent!.id;
@@ -141,7 +146,7 @@ export const onLogoCreate = functions.firestore.document(LogoPath).onCreate(asyn
   } as Partial<ClubLogoRequest>);
 });
 
-export const onClubAdminWrite = functions.firestore.document(AdminPath).onWrite(async (change) => {
+export const onClubAdminWrite = firestoreFunctions.document(AdminPath).onWrite(async (change) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const clubRef = change.after.ref.parent.parent!;
   const isWriting = change.after.exists;
@@ -170,11 +175,11 @@ export const onClubAdminWrite = functions.firestore.document(AdminPath).onWrite(
   });
 });
 
-export const onSearchCreate = functions.firestore.document(SearchPath).onCreate(async (change) => {
+export const onSearchCreate = firestoreFunctions.document(SearchPath).onCreate(async (change) => {
   await search(change);
 });
 
-// export const onTrophyWrite = functions.firestore.document(`${ClubPath}/trophies/{path=**}`).onWrite(async (change) => {
+// export const onTrophyWrite = firestoreFunctions.document(`${ClubPath}/trophies/{path=**}`).onWrite(async (change) => {
 //   const ids = getTrophyIds(change);
 
 //   if (ids.type === "created" || ids.type === "updated") {
@@ -189,7 +194,7 @@ export const onSearchCreate = functions.firestore.document(SearchPath).onCreate(
 //   }
 // });
 
-export const onTrophyFileWrite = functions.firestore.document(TrophyFilePath).onWrite(async (change) => {
+export const onTrophyFileWrite = firestoreFunctions.document(TrophyFilePath).onWrite(async (change) => {
   if (!change.before.exists) {
     // Creating
     const snapshot = change.after;

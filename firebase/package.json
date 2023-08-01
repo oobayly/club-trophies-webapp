@@ -1,6 +1,7 @@
 {
   "scripts": {
     "emulator:run": "firebase emulators:start --import db",
-    "emulator:export": "firebase emulators:export --force db"
+    "emulator:export": "firebase emulators:export --force db",
+    "firebase:deploy": "firebase deploy"
   }
 }

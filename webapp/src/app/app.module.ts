@@ -12,6 +12,7 @@ import { firebaseConfig, firebaseUiAuthConfig } from "src/environments/firebase"
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { HomeComponent } from "./routes/home/home.component";
+import { ServiceWorkerModule } from "@angular/service-worker";
 
 @NgModule({
   declarations: [
@@ -32,6 +33,12 @@ import { HomeComponent } from "./routes/home/home.component";
     FirebaseUIModule.forRoot(firebaseUiAuthConfig),
     // Bootstrap
     NgbModule,
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: "registerWhenStable:30000",
+    }),
   ],
   providers: [
     {

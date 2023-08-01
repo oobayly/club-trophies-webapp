@@ -6,6 +6,7 @@ import * as functions from "firebase-functions";
 import { getDownloadURL } from "../helpers";
 
 const app = express();
+const httpsFunctions = functions.region("europe-west2").https;
 
 app.use(cors({
   origin: "*",
@@ -47,7 +48,7 @@ app.put("/v1/emulated/clubs/:clubId/trophies/:trophyId/files/:fileName", async (
   });
 });
 
-const api = functions.region("europe-west2").https.onRequest(app);
+const api = httpsFunctions.onRequest(app);
 
 export {
   api,

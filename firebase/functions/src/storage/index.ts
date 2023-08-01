@@ -9,6 +9,7 @@ import { v4 as uuid } from "uuid";
 import { Club, Collections, TrophyFile } from "../models";
 import { getDownloadURL } from "../helpers";
 
+const storageFunctions = functions.region("europe-west2").storage;
 const ThumbSize = 300;
 
 interface TrophyFileIds {
@@ -157,7 +158,7 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
   ]);
 }
 
-export const onStorageItemDelete = functions.storage.bucket().object().onDelete(async (object) => {
+export const onStorageItemDelete = storageFunctions.bucket().object().onDelete(async (object) => {
   let clubId: string | undefined;
 
   if ((clubId = isClubLogo(object)) !== undefined) {
@@ -165,7 +166,7 @@ export const onStorageItemDelete = functions.storage.bucket().object().onDelete(
   }
 });
 
-export const onStorageItemFinalize = functions.storage.bucket().object().onFinalize(async (object) => {
+export const onStorageItemFinalize = storageFunctions.bucket().object().onFinalize(async (object) => {
   let clubId: string | undefined;
   let fileIds: TrophyFileIds | undefined;
 

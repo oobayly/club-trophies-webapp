@@ -6,6 +6,7 @@ export interface LegacyHasTimestamp {
 export interface LegacyClass extends LegacyHasTimestamp {
   fldClassID: number;
   fldName: string;
+  clubId?: string;
 }
 
 export interface LegacyTrophy extends LegacyHasTimestamp {
