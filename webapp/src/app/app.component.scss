@@ -1,3 +1,9 @@
+.navbar {
+  // Nomrally this is 1020, so below position sticky, but in this case we have fixed sticky
+  // elements so they don't go above the navbar. This ensures dropmenus appear above the sticky
+  z-index: 1030;
+}
+
 @media print {
   .page-content {
     padding: 0 !important;
