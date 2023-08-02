@@ -21,8 +21,6 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   // Properties
   // ========================
 
-  public readonly boatRef$: Observable<string | undefined>;
-
   public override canEdit$: Observable<boolean | undefined>;
 
   public tabIndex = 0;
@@ -70,7 +68,6 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
       shareReplay(1),
     );
     this.trophy$ = this.getTrophyObservable();
-    this.boatRef$ = this.trophy$.pipe(map((trophy) => trophy?.boatRef?.path));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -102,11 +99,11 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   // Event handlers
   // ========================
 
-  public async onEditTrophyClick(trophy: Trophy): Promise<void> {
+  public async onEditTrophyClick(): Promise<void> {
     if (!this.clubId || !this.trophyId) {
       return;
     }
 
-    await this.modal.showEditTrophy(this.clubId, this.trophyId, trophy);
+    await this.modal.showEditTrophy(this.clubId, this.trophyId);
   }
 }

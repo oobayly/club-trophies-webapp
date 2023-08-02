@@ -159,12 +159,30 @@ export class AppComponent implements OnInit {
   // Event handlers
   // ========================
 
-  public async onAddClubClick(): Promise<void> {
-    const clubId = await this.modal.showAddClub();
+  public async onAddWinnerClick(ids: Ids): Promise<void> {
+    if (!ids.clubId || !ids.trophyId) {
+      return;
+    }
 
-    if (clubId) {
+    await this.modal.showEditWinner(ids.clubId, ids.trophyId);
+  }
+
+  public async onEditClubClick(clubId?: string): Promise<void> {
+    const isNew = !!clubId;
+
+    clubId = await this.modal.showEditClub(clubId);
+
+    if (isNew && clubId) {
       await this.router.navigate(["/clubs", clubId]);
     }
+  }
+
+  public async onEditTrophyClick(ids: Ids): Promise<void> {
+    if (!ids.clubId) {
+      return;
+    }
+
+    await this.modal.showEditTrophy(ids.clubId, ids.trophyId);
   }
 
   public async onEmailClick(email: string | undefined): Promise<void> {

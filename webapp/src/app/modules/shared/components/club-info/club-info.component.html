@@ -27,8 +27,7 @@
           </p>
 
           <!-- If uploading is allowed -->
-          <span class="me-1 edit-button d-print-none" role="button" *ngIf="canEdit$ | async"
-            (click)="onEditClick(club)">
+          <span class="me-1 edit-button d-print-none" role="button" *ngIf="canEdit$ | async" (click)="onEditClick()">
             <i class="bi bi-pencil-fill"></i>
           </span>
         </div>

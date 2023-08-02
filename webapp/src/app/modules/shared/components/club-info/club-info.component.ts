@@ -41,7 +41,7 @@ export class ClubInfoComponent extends ClubBaseComponent {
   constructor(
     auth: AngularFireAuth,
     db: DbService,
-    private readonly modal2: ModalService,
+    private readonly modal: ModalService,
   ) {
     super(auth, db);
     this.club$ = this.getClubObservable().pipe(
@@ -63,11 +63,11 @@ export class ClubInfoComponent extends ClubBaseComponent {
   public onUploadClick(): void {
   }
 
-  public async onEditClick(club: Club): Promise<void> {
+  public async onEditClick(): Promise<void> {
     if (!this.clubId) {
       return;
     }
 
-    await this.modal2.showEditClub(this.clubId, club);
+    await this.modal.showEditClub(this.clubId);
   }
 }

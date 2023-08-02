@@ -190,10 +190,10 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
       return;
     }
 
-    await this.modal.showAddWinner(this.clubId, item.id, item.data.boatRef?.path);
+    await this.modal.showEditWinner(this.clubId, item.id);
   }
 
-  public async onEditTrophyClick(e: Event, item: DbRecord<Trophy>): Promise<void> {
+  public async onEditTrophyClick(e: Event, id: string): Promise<void> {
     e.stopImmediatePropagation();
     e.preventDefault();
 
@@ -201,7 +201,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
       return;
     }
 
-    await this.modal.showEditTrophy(this.clubId, item.id, item.data);
+    await this.modal.showEditTrophy(this.clubId, id);
   }
 
   public onItemClick(e: Event, item: DbRecord<Trophy>): void {

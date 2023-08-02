@@ -29,7 +29,7 @@
             <small class="text-muted">Created: {{item.data.created | timestamp}}</small>
 
             <div class="edit-buttons d-print-none" *ngIf="canEdit">
-              <button class="btn btn-outline-primary btn-sm me-3" (click)="onEditFileClick(item)">
+              <button class="btn btn-outline-primary btn-sm me-3" (click)="onEditFileClick(item.id)">
                 <i class="bi-pencil-fill"></i>
               </button>
               <button class="btn btn-outline-danger btn-sm" (click)="onDeleteFileClick(item)">

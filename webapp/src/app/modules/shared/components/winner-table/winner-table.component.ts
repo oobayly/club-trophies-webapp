@@ -250,6 +250,6 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    await this.modal.showEditWinner(clubId, trophyId, item.id, item.data as Winner);
+    await this.modal.showEditWinner(clubId, trophyId, item.id);
   }
 }

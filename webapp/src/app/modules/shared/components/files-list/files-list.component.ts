@@ -210,12 +210,12 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
     await this.uploadFiles(files);
   }
 
-  public async onEditFileClick(item: DbRecord<TrophyFile>): Promise<void> {
+  public async onEditFileClick(id: string): Promise<void> {
     if (!this.clubId || !this.trophyId) {
       return;
     }
 
-    await this.modal.showEditTrophyFile(this.clubId, this.trophyId, item.id, item.data);
+    await this.modal.showEditTrophyFile(this.clubId, this.trophyId, id);
   }
 
   public async onFileChange(e: Event): Promise<void> {

@@ -5,7 +5,7 @@
       <ng-container *ngIf="trophy$ | async as trophy; else loadingOrError">
         <h5>
           {{trophy.name}}
-          <span class="ms-2 d-print-none" *ngIf=" canEdit$ | async" (click)="onEditTrophyClick(trophy)">
+          <span class="ms-2 d-print-none" *ngIf="canEdit$ | async" (click)="onEditTrophyClick()">
             <i class=" bi-pencil-fill" role="button" *ngIf="canEdit$ | async"></i>
           </span>
         </h5>
@@ -54,7 +54,7 @@
 
   <!-- Winners -->
   <app-tab-page name=" Winners" icon="bi-trophy-fill">
-    <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [boatRef]="boatRef$ | async" [canEdit]="canEdit$ | async"
+    <app-winners-list [clubId]="clubId" [trophyId]="trophyId" [canEdit]="canEdit$ | async"
       (countChange)="winners = $event">
     </app-winners-list>
   </app-tab-page>

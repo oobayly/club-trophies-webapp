@@ -26,7 +26,7 @@
           </a>
           <ng-container *ngIf="user$ | async">
             <div class="dropdown-divider"></div>
-            <span class="dropdown-item" role="button" (click)="onAddClubClick()">
+            <span class="dropdown-item" role="button" (click)="onEditClubClick()">
               Add New Club
             </span>
           </ng-container>
@@ -50,31 +50,31 @@
 
           <div class="dropdown-menu" ngbDropdownMenu>
             <!-- Edit club -->
-            <span class="dropdown-item" role="button">
+            <span class="dropdown-item" role="button" (click)="onEditClubClick(ids.clubId)">
               Edit Club
             </span>
 
             <div class="dropdown-divider"></div>
 
             <!-- Add trophy -->
-            <span class="dropdown-item" role="button" *ngIf="!ids.trophyId">
+            <span class="dropdown-item" role="button" *ngIf="!ids.trophyId" (click)="onEditTrophyClick(ids)">
               Add New Trophy
             </span>
 
             <ng-container *ngIf="ids.trophyId">
               <!-- Edit trophy -->
-              <span class="dropdown-item" role="button">
+              <span class="dropdown-item" role="button" (click)="onEditTrophyClick(ids)">
                 Edit Trophy
               </span>
               <div class="dropdown-divider"></div>
               <!-- Add Winner -->
-              <span class="dropdown-item" role="button">
+              <span class="dropdown-item" role="button" (click)="onAddWinnerClick(ids)">
                 Add Winner
               </span>
-              <!-- Add Winner -->
-              <span class="dropdown-item" role="button">
+              <!-- TODO: Add Photo -->
+              <!-- <span class="dropdown-item" role="button" (click)="onAddFileClick(ids)">
                 Add Photo
-              </span>
+              </span> -->
             </ng-container>
           </div>
         </li>

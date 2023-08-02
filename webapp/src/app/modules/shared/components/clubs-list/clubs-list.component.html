@@ -15,7 +15,7 @@
 
         <!-- Buttons -->
         <div class="btn-group btn-group-sm" *ngIf="item.canEdit">
-          <button type="button" class="btn btn-outline-primary" (click)="onEditClubClick($event, item)">
+          <button type="button" class="btn btn-outline-primary" (click)="onEditClubClick($event, item.id)">
             <i class=" bi-pencil-fill"></i>
           </button>
         </div>

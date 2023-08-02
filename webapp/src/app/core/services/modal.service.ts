@@ -12,6 +12,7 @@ import { AlertButton, AlertModalComponent } from "src/app/modules/shared/modals/
 import { EditFileModalComponent } from "src/app/modules/shared/modals/edit-file-modal/edit-file-modal.component";
 import { EditWinnerModalComponent } from "src/app/modules/shared/modals/edit-winner-modal/edit-winner-modal.component";
 import { getIconForColor } from "@helpers/angular";
+import { DbService } from "./db.service";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
@@ -40,6 +41,7 @@ type ConstraintOf<T extends BaseModalComponent<unknown>> = T extends BaseModalCo
 })
 export class ModalService {
   constructor(
+    private readonly db: DbService,
     readonly router: Router,
     public readonly ngbModal: NgbModal,
   ) {
@@ -83,38 +85,26 @@ export class ModalService {
     }
   }
 
-  public showAddClub(): Promise<string | undefined> {
-    return this.showModal(EditClubModalComponent);
-  }
+  public async showEditClub(clubId?: string): Promise<string | undefined> {
+    let club: Club | undefined;
+    if (clubId) {
+      club = (await this.db.getClubDoc(clubId).ref.get()).data();
+    }
 
-  public showAddTrophy(clubId: string): Promise<string | undefined> {
-    return this.showModal(EditTrophyModalComponent, {
-      configure: (component) => {
-        component.clubId = clubId;
-      },
-    });
-  }
-
-  public showAddWinner(clubId: string, trophyId: string, boatRef?: string): Promise<string | undefined> {
-    return this.showModal(EditWinnerModalComponent, {
-      configure: (component) => {
-        component.clubId = clubId;
-        component.trophyId = trophyId;
-        component.boatRef = boatRef;
-      },
-    });
-  }
-
-  public showEditClub(clubId: string, club: Club): Promise<string | undefined> {
     return this.showModal(EditClubModalComponent, {
       configure: (component) => {
-        component.club = club;
         component.clubId = clubId;
+        component.club = club;
       },
     });
   }
 
-  public showEditTrophy(clubId: string, trophyId: string, trophy: Trophy): Promise<string | undefined> {
+  public async showEditTrophy(clubId: string, trophyId?: string): Promise<string | undefined> {
+    let trophy: Trophy | undefined;
+    if (trophyId) {
+      trophy = (await this.db.getTrophyDoc(clubId, trophyId).ref.get()).data();
+    }
+
     return this.showModal(EditTrophyModalComponent, {
       configure: (component) => {
         component.clubId = clubId;
@@ -124,7 +114,13 @@ export class ModalService {
     });
   }
 
-  public showEditTrophyFile(clubId: string, trophyId: string, fileId: string, file: TrophyFile): Promise<string | undefined> {
+  public async showEditTrophyFile(clubId: string, trophyId: string, fileId: string): Promise<string | undefined> {
+    const file = (await this.db.getFileDoc(clubId, trophyId, fileId).ref.get()).data();
+
+    if (!file) {
+      throw new Error("File not found.");
+    }
+
     return this.showModal(EditFileModalComponent, {
       configure: (component) => {
         component.clubId = clubId;
@@ -135,9 +131,21 @@ export class ModalService {
     });
   }
 
-  public showEditWinner(clubId: string, trophyId: string, winnerId: string, winner: Winner): Promise<string | undefined> {
+  public async showEditWinner(clubId: string, trophyId: string, winnerId?: string): Promise<string | undefined> {
+    let winner: Winner | undefined;
+    let boatRef: string | undefined;
+
+    if (winnerId) {
+      winner = (await this.db.getWinnerDoc(clubId, trophyId, winnerId).ref.get()).data();
+    } else {
+      const trophy = (await this.db.getTrophyDoc(clubId, trophyId).ref.get()).data();
+
+      boatRef = trophy?.boatRef?.path;
+    }
+
     return this.showModal(EditWinnerModalComponent, {
       configure: (component) => {
+        component.boatRef = boatRef;
         component.clubId = clubId;
         component.trophyId = trophyId;
         component.winnerId = winnerId;

@@ -15,9 +15,9 @@ export class EditWinnerModalComponent extends BaseModalComponent<string> {
 
   public trophyId!: string;
 
-  public winner!: Winner;
+  public winner?: Winner;
 
-  public winnerId!: string;
+  public winnerId?: string;
 
   constructor(
     activeModal: NgbActiveModal,

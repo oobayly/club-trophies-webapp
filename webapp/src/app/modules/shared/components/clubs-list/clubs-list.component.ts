@@ -114,11 +114,11 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
   // Event handlers
   // ========================
 
-  public async onEditClubClick(e: Event, record: DbRecord<Club>): Promise<void> {
+  public async onEditClubClick(e: Event, id: string): Promise<void> {
     e.preventDefault();
     e.stopPropagation();
 
-    await this.modal.showEditClub(record.id, record.data);
+    await this.modal.showEditClub(id);
   }
 
   public onItemClick(e: Event, item: DbRecord<Club>): void {
