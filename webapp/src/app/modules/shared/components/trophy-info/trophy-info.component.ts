@@ -4,7 +4,6 @@ import { Club, Trophy } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { TrophyBaseComponent } from "../trophy-base-component";
-import { ModalService } from "src/app/core/services/modal.service";
 import { DbService } from "src/app/core/services/db.service";
 
 export type TabType = "winners" | "info" | "photos";
@@ -55,7 +54,6 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   constructor(
     auth: AngularFireAuth,
     db: DbService,
-    private readonly modal: ModalService,
   ) {
     super(auth, db);
 
@@ -98,12 +96,4 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   // ========================
   // Event handlers
   // ========================
-
-  public async onEditTrophyClick(): Promise<void> {
-    if (!this.clubId || !this.trophyId) {
-      return;
-    }
-
-    await this.modal.showEditTrophy(this.clubId, this.trophyId);
-  }
 }

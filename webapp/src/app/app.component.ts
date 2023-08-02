@@ -159,6 +159,12 @@ export class AppComponent implements OnInit {
   // Event handlers
   // ========================
 
+  public async onAddFileClick(ids: Ids): Promise<void> {
+    if (!ids.clubId || !ids.trophyId) {
+      return;
+    }
+  }
+
   public async onAddWinnerClick(ids: Ids): Promise<void> {
     if (!ids.clubId || !ids.trophyId) {
       return;
@@ -195,6 +201,12 @@ export class AppComponent implements OnInit {
 
     } else {
       await this.auth.signOut();
+    }
+  }
+
+  public async onUpdateLogoClick(clubId: string | undefined): Promise<void> {
+    if (!clubId) {
+      return;
     }
   }
 }

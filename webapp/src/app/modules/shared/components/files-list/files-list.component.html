@@ -3,15 +3,9 @@
 
   <ng-container *ngIf="photos$ | async as photos; else loadingOrError">
 
-    <div class="edit-container pb-3 d-print-none" *ngIf="canEdit">
-      <div class="file-upload">
-        <label for="file-list-upload" class="btn btn-outline-primary">
-          <i class="bi-camera-fill pe-2"></i>Upload Photos
-        </label>
-
-        <input #fileUpload class="form-control" type="file" id="file-list-upload" multiple
-          accept="image/png, image/jpeg, image/gif" (change)="onFileChange($event)">
-      </div>
+    <div class="d-none">
+      <input #fileUpload class="form-control" type="file" id="{{fileId}}-file" multiple
+        accept="image/png, image/jpeg, image/gif" (change)="onFileChange($event)">
     </div>
 
     <div class="row g-4 justify-content-center" *ngIf="photos.length; else noFiles">
@@ -54,10 +48,11 @@
 <ng-template #noFiles>
   <div class="container mw-sm d-print-none">
     <!-- CTA for uploading when there are no photos -->
-    <app-alert icon="bi-camera-fill" *ngIf="canEdit; else noFilesPublic" role="button" (click)="triggerUpload($event)">
-      Drag photos on to the page,<br>
-      or use the button above to upload photos.
-    </app-alert>
+    <label class="d-block" for="{{fileId}}-file">
+      <app-alert icon="bi-camera-fill" *ngIf="canEdit; else noFilesPublic" role="button">
+        You can add photos by clicking here, or dragging files onto the page.
+      </app-alert>
+    </label>
   </div>
 </ng-template>
 

@@ -1,5 +1,5 @@
 <ng-container *ngIf="clubId$ | async as clubId">
-  <div class="container mw-sm">
+  <div class="mx-auto mw-sm">
     <app-club-info [clubId]="clubId" (clubChange)="onClubChange($event)" (canEditChange)="canEdit = $event">
     </app-club-info>
   </div>

@@ -3,12 +3,7 @@
   <app-tab-page name="Trophy Information" icon="bi-info-circle-fill">
     <div class="">
       <ng-container *ngIf="trophy$ | async as trophy; else loadingOrError">
-        <h5>
-          {{trophy.name}}
-          <span class="ms-2 d-print-none" *ngIf="canEdit$ | async" (click)="onEditTrophyClick()">
-            <i class=" bi-pencil-fill" role="button" *ngIf="canEdit$ | async"></i>
-          </span>
-        </h5>
+        <h5>{{trophy.name}}</h5>
 
         <table class="trophy-info-table">
           <tbody>

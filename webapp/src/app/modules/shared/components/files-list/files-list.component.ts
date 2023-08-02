@@ -7,7 +7,7 @@ import { Collections, TrophyFile } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
 import { environment } from "src/environments/environment";
-import { compareTimestamps, createdTimestamp } from "src/app/core/helpers";
+import { compareTimestamps, createdTimestamp, uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
 @Component({
@@ -23,6 +23,8 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
   public readonly canEdit$ = new BehaviorSubject<boolean | undefined>(undefined);
 
   public readonly files$: Observable<DbRecord<TrophyFile>[]>;
+
+  public readonly fileId = uuid();
 
   public readonly photos$: Observable<DbRecord<TrophyFile>[]>;
 

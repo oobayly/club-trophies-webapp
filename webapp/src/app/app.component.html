@@ -54,6 +54,11 @@
               Edit Club
             </span>
 
+            <!-- Update Logo -->
+            <span class="dropdown-item" role="button" (click)="onUpdateLogoClick(ids.clubId)">
+              Update Burgee
+            </span>
+
             <div class="dropdown-divider"></div>
 
             <!-- Add trophy -->
@@ -71,10 +76,9 @@
               <span class="dropdown-item" role="button" (click)="onAddWinnerClick(ids)">
                 Add Winner
               </span>
-              <!-- TODO: Add Photo -->
-              <!-- <span class="dropdown-item" role="button" (click)="onAddFileClick(ids)">
+              <span class="dropdown-item" role="button" (click)="onAddFileClick(ids)">
                 Add Photo
-              </span> -->
+              </span>
             </ng-container>
           </div>
         </li>
