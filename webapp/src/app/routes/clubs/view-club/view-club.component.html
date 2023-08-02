@@ -5,13 +5,13 @@
   </div>
 
   <!-- Hide this so we don't have to refetch the list -->
-  <div [ngClass]="{'d-none': trophyId$ | async}">
+  <div class="my-3" [ngClass]="{'d-none': trophyId$ | async}">
     <app-trophies-list [clubId]="clubId" [canEdit]="canEdit" (trophyClick)="onTrophyClick($event)">
     </app-trophies-list>
   </div>
 
   <ng-container *ngIf="trophyId$ | async as trophyId">
-    <nav class="mb-3 d-print-none" aria-label="breadcrumb">
+    <nav class="my-3 d-print-none" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
           <a href="" (click)="onBackClick($event)">Back to All Trophies</a>

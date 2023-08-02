@@ -26,12 +26,14 @@
 
           <!-- This is only if a winner is displayed (not a search result), and canEdit -->
           <td class="buttons d-print-none" *ngIf="canEdit && item.id">
-            <button class="btn btn-outline-primary btn-sm" (click)="onItemEditClick(item)">
-              <i class="bi-pencil-fill"></i>
-            </button>
-            <button class="btn btn-outline-danger btn-sm ms-2" (click)="onItemDeleteClick(item)">
-              <i class="bi-trash3-fill"></i>
-            </button>
+            <div class="btn-group-responsive-md  btn-group-sm">
+              <button class="btn btn-outline-primary" (click)="onItemEditClick(item)">
+                <i class="bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-outline-danger" (click)="onItemDeleteClick(item)">
+                <i class="bi-trash3-fill"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

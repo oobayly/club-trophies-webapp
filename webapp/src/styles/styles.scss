@@ -1,9 +1,11 @@
 @import "firebaseui/dist/firebaseui.css";
+@import "flag-icons/css/flag-icons.min.css";
 
 @import "bootstrap-utilities"; // Needs to be done before boostrap is loaded
 @import "bootstrap/scss/bootstrap";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
+@import "flags";
 @import "forms";
 @import "layout";
 @import "text";

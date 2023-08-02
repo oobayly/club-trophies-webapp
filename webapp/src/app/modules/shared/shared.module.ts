@@ -32,6 +32,7 @@ import { BoatSelectComponent } from "./forms/boat-select/boat-select.component";
 import { SearchResultComponent } from "./components/search-result/search-result.component";
 import { WinnerTableComponent } from "./components/winner-table/winner-table.component";
 import { LoaderComponent } from "./components/loader/loader.component";
+import { FlagPipe } from "./pipes/flag.pipe";
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { LoaderComponent } from "./components/loader/loader.component";
     SearchResultComponent,
     WinnerTableComponent,
     LoaderComponent,
+    FlagPipe,
   ],
   imports: [
     CommonModule,

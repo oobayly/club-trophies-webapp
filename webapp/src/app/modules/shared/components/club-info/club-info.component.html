@@ -1,37 +1,27 @@
-<ng-container *ngIf="club$ | async as club">
-  <div class="card mb-3 club-card">
-    <div class="row g-0">
-      <!-- Logo -->
-      <div class="col-md-4 logo-container">
-        <img [src]="club.logo" *ngIf="club.logo; else genericLogo" class="img-fluid rounded-start" alt="Club Logo">
+<div class="club-info d-flex flex-row justify-content-center align-items-center" *ngIf="club$ | async as club">
+  <!-- Logo -->
+  <div class="logo-container">
+    <img [src]="club.logo" *ngIf="club.logo; else genericLogo" class="" alt="Club Logo">
 
-        <!-- Fallback logo-->
-        <ng-template #genericLogo>
-          <img src="/assets/generic-burgee.svg" class="img-fluid rounded-start generic-logo" alt="Club Logo">
-        </ng-template>
+    <!-- Fallback logo-->
+    <ng-template #genericLogo>
+      <img src="/assets/generic-burgee.svg" class="generic-logo" alt="Club Logo">
+    </ng-template>
+  </div>
 
-        <!-- TODO: If uploading is allowed -->
-        <!-- <span class="me-1 upload-button d-print-none" role="button" *ngIf="canEdit$ | async" (click)="onUploadClick()">
-          <i class="bi bi-camera-fill"></i>
-        </span> -->
-      </div>
-
-      <!-- Body -->
-      <div class="col-md-8 body-container">
-        <div class="card-body">
-          <h5 class="card-title">{{club.name}}</h5>
-          <p class="card-text text-muted">
-            <small class="d-flex justify-content-between">
-              <span>{{club.shortName}}, {{club.country}}</span>
-            </small>
-          </p>
-
-          <!-- If uploading is allowed -->
-          <span class="me-1 edit-button d-print-none" role="button" *ngIf="canEdit$ | async" (click)="onEditClick()">
-            <i class="bi bi-pencil-fill"></i>
+  <!-- -->
+  <div class="info-container d-flex flex-column ms-3">
+    <h5 class="">{{club.name}}</h5>
+    <div class="">
+      <small class="d-flex justify-content-between">
+        <span>{{club.shortName}}</span>
+        <span>
+          {{club.country}}
+          <span class="ps-2" *ngIf="club.country | flag as flag">
+            <span class="fi {{flag}}"></span>
           </span>
-        </div>
-      </div>
+        </span>
+      </small>
     </div>
   </div>
-</ng-container>
+</div>

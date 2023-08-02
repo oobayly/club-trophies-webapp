@@ -6,20 +6,15 @@
 @import "bootstrap/scss/helpers";
 @import "bootstrap/scss/utilities/api";
 
-$utilities: map-merge(
-  $utilities,
-  (
-    "max-width": (
-      property: max-width,
-      class: mw,
-      values: (
-        xs: 540px,
-        sm: 540px,
-        md: 720px,
-        lg: 960px,
-        xl: 1140px,
-        xxl: 1320px,
+$utilities: map-merge($utilities,
+    ("max-width": (property: max-width,
+        class: mw,
+        values: (xs: 540px,
+          sm: 540px,
+          md: 720px,
+          lg: 960px,
+          xl: 1140px,
+          xxl: 1320px,
+        ),
       ),
-    ),
-  )
-);
+    ));

@@ -16,7 +16,7 @@ export class ClubInfoComponent extends ClubBaseComponent {
   // Properties
   // ========================
 
-  public readonly canEdit$: Observable<boolean>;
+  public override canEdit$: Observable<boolean | undefined>;
 
   public readonly club$: Observable<Club | undefined>;
 
@@ -44,12 +44,13 @@ export class ClubInfoComponent extends ClubBaseComponent {
     private readonly modal: ModalService,
   ) {
     super(auth, db);
+
     this.club$ = this.getClubObservable().pipe(
       tap((club) => this.clubChange.next(club)),
     );
-    this.canEdit$ = this.getCanEditObservable(this.club$).pipe(
-      tap((canEdit) => this.canEditChange.next(canEdit)),
-    );
+    this.canEdit$ = this.getCanEditObservable(this.club$);
+
+    this.subscriptions.push(this.canEdit$.subscribe((canEdit) => this.canEditChange.next(!!canEdit)));
   }
 
   // ========================

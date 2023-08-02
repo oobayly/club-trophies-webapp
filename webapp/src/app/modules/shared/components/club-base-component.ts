@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestoreDocument } from "@angular/fire/compat/firestore";
 import { Club } from "@models";
-import { BehaviorSubject, Observable, Subject, combineLatest, distinctUntilChanged, map, of, shareReplay, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, distinctUntilChanged, map, of, shareReplay, switchMap, takeUntil } from "rxjs";
 import { isAdmin } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
 
@@ -15,6 +15,8 @@ export abstract class ClubBaseComponent implements OnDestroy {
   public readonly clubId$ = new BehaviorSubject<string | undefined>(undefined);
 
   protected readonly destroyed$ = new Subject<void>();
+
+  protected readonly subscriptions: (Subscription | undefined)[] = [];
 
   @Input()
   public set clubId(value: string | null | undefined) {
@@ -31,6 +33,7 @@ export abstract class ClubBaseComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.subscriptions.forEach((s) => s?.unsubscribe());
     this.destroyed$.next();
   }
 

@@ -1,46 +1,7 @@
-.club-card {
-  max-width: 600px;
-
-  .edit-button {
-    position: absolute;
-    right: 0;
-    top: 0;
-    font-size: 1.5em;
-    opacity: 0.5;
-  }
-
+.club-info {
   .logo-container {
-    position: relative;
-
-    .generic-logo {
-      filter: grayscale(1) opacity(0.25);
-    }
-
-    .upload-button {
-      @extend .edit-button;
-    }
-  }
-
-  .body-container {
-    position: relative;
-
-    .edit-button {
-      @extend .edit-button;
-    }
-  }
-}
-
-@media print {
-  .card {
-    .row {
-      .col-md-4 {
-        flex: 0 0 auto;
-        width: 33.33333333%;
-      }
-      .col-md-8 {
-        flex: 0 0 auto;
-        width: 66.66666667%;
-      }
+    img {
+      height: 3rem;
     }
   }
 }
