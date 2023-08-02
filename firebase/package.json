@@ -2,6 +2,7 @@
   "scripts": {
     "emulator:run": "firebase emulators:start --import db",
     "emulator:export": "firebase emulators:export --force db",
-    "firebase:deploy": "firebase deploy"
+    "firebase:deploy:all": "firebase deploy",
+    "firebase:deploy:hosting": "firebase deploy --only hosting"
   }
 }
