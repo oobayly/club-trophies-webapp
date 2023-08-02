@@ -2,9 +2,13 @@
   border-color: var(--bs-blue);
 
   &.dragging {
-    margin: -3px;
+    --drag-margin: .5rem;
+    --drag-border-width: 3px;
+
+    margin: calc(0px - var(--drag-margin) - var(--drag-border-width));
+    border: var(--drag-border-width) solid var(--bs-blue);
+    padding: var(--drag-margin);
     border-radius: 10px;
-    border: 3px solid var(--bs-blue);
     border-style: dashed;
   }
 
@@ -30,6 +34,7 @@
 
     @media screen and (max-width: 576px) {
       width: 252px;
+
       .card-img-top {
         width: 250px;
         height: 250px;
@@ -42,6 +47,7 @@
   .file-container {
     .card {
       width: 252px;
+
       .card-img-top {
         width: 250px;
         height: 250px;

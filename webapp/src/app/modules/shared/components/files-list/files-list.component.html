@@ -1,4 +1,4 @@
-<div #fileDrop class="file-container p-3 p-print-0" (dragenter)="onDragEnter($event)" (dragover)="onDragEnter($event)"
+<div #fileDrop class="file-container" (dragenter)="onDragEnter($event)" (dragover)="onDragEnter($event)"
   (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
 
   <ng-container *ngIf="photos$ | async as photos; else loadingOrError">

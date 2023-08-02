@@ -1,4 +1,4 @@
-<div class="winners-container p-3 p-print-0">
+<div class="winners-container">
   <ng-container *ngIf="winners$ | async as winners; else loadingOrError">
     <!-- Results table -->
     <app-winner-table [values]=" winners" [canEdit]="canEdit" *ngIf="winners.length; else noWinners">
