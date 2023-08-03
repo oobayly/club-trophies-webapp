@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { HttpClient, HttpEvent, HttpEventType } from "@angular/common/http";
 import { createdTimestamp, uuid } from "@helpers";
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, finalize, first, interval, last, map, of, startWith, switchMap, take, tap } from "rxjs";
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, finalize, first, interval, last, map, mergeMap, of, startWith, switchMap, take, tap } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
 import { ImageCroppedEvent, ImageCropperComponent } from "ngx-image-cropper";
+import { resizeImageFiles } from "@helpers/image-resize";
 
 export type UploadMode = "logo" | "trophy-file";
 
@@ -110,12 +111,12 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     return this.queue$.pipe(
       filterNotNull(),
       first(), // Only take the first as this queue will update as the progress changes
-      switchMap((items) => {
+      mergeMap((items) => {
         // From the initials queue, create a list of uploads to run in parallet        
         const requests = items.map((x) => this.getQueueItemObservable(x));
 
         return combineLatest(requests);
-      }),
+      }, 2),
     ).subscribe({
       next: (items) => {
         const ids = items
@@ -312,7 +313,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.files = [new File([e.blob], "Logo.png", {
+    this.files = [new File([e.blob], "logo.png", {
       type: "image/png",
     })];
   }
@@ -335,7 +336,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.files = Array.from(files);
+    this.files = await resizeImageFiles(Array.from(files), { maxSize: 1000, quality: 85 })
   }
 
   public onUploadClick(): void {

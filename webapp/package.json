@@ -28,6 +28,7 @@
     "@popperjs/core": "^2.10.2",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.5",
+    "exif-rotate-js": "^1.4.0",
     "firebase": "^9.8.3",
     "firebaseui": "^6.0.1",
     "firebaseui-angular": "^6.1.2",
