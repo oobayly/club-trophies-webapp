@@ -128,13 +128,19 @@ const getSearchClubInfo = async (uid: string | null, winners: Winner[]): Promise
 }
 
 const getWinners = async (search: Search): Promise<Winner[]> => {
-  const query = admin.firestore().collectionGroup(Collections.Winners) as unknown as admin.firestore.Query<Winner>;
+  let query = admin.firestore().collectionGroup(Collections.Winners) as unknown as admin.firestore.Query<Winner>;
 
   if (search.boatName) {
-    query.where("boatName", "==", search.boatName);
+    query = query.where("boatName", "==", search.boatName);
   }
   if (search.clubId) {
-    query.where("parent.clubId", "==", search.clubId);
+    query = query.where("parent.clubId", "==", search.clubId);
+  }
+  if (search.trophyId) {
+    query = query.where("parent.trophyId", "==", search.trophyId);
+  }
+  if (search.sail) {
+    query = query.where("sail", "==", search.sail);
   }
 
   const snapshot = await query.get();
