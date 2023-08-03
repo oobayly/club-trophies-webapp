@@ -119,9 +119,8 @@ export const onLogoCreate = firestoreFunctions.document(LogoPath).onCreate(async
   const logoId = snapshot.ref.id;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const clubId = snapshot.ref.parent.parent!.id;
-  const file = admin.storage().bucket().file(`${Collections.Clubs}/${clubId}/logo.png`);
+  const file = admin.storage().bucket().file(`${Collections.Clubs}/${clubId}/logos/${logoId}.png`);
   const headers = {
-    "x-goog-meta-uploadid": logoId,
   };
   let uploadUrl: string;
 
@@ -154,10 +153,13 @@ export const onClubWrite = firestoreFunctions.document(ClubPath).onWrite(async (
     const newLogo = change.after.data()?.logo;
 
     if (oldLogo && !newLogo) {
-      // Only if the logo has been removed
-      const file = admin.storage().bucket().file(`${change.after.ref.path}/logo.png`);
 
-      await file.delete({ ignoreNotFound: true });
+      const resp = await admin.storage().bucket().getFiles({
+        prefix: change.after.ref.parent.path,
+      });
+
+      // There should only be two storage object per file, so it's safe to delete all the items in parallel
+      await Promise.all(resp[0].map((item) => item.delete()));
     }
   }
 });

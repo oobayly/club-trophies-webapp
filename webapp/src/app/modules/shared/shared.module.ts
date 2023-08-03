@@ -35,6 +35,7 @@ import { LoaderComponent } from "./components/loader/loader.component";
 import { FlagPipe } from "./pipes/flag.pipe";
 import { FileUploadModalComponent } from "./modals/file-upload-modal/file-upload-modal.component";
 import { FileUploadComponent } from "./components/file-upload/file-upload.component";
+import { ImageCropperModule } from "ngx-image-cropper";
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import { FileUploadComponent } from "./components/file-upload/file-upload.compon
     ReactiveFormsModule,
     NgbCarouselModule,
     NgbModalModule,
+    ImageCropperModule,
   ],
   exports: [
     AlertComponent,

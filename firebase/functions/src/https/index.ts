@@ -18,10 +18,10 @@ app.use(bodyParser.raw({
   limit: "10mb",
 }));
 
-app.put("/v1/emulated/clubs/:clubId/logo.png", async (req, res) => {
-  const { clubId } = req.params;
+app.put("/v1/emulated/clubs/:clubId/logos/:logoId.png", async (req, res) => {
+  const { clubId, logoId } = req.params;
   const contentType = req.headers["content-type"];
-  const file = admin.storage().bucket("club-trophies.appspot.com").file(`clubs/${clubId}/logo.png`);
+  const file = admin.storage().bucket("club-trophies.appspot.com").file(`clubs/${clubId}/logos/${logoId}.png`);
   const content = (req as unknown as { rawBody: Buffer }).rawBody;
 
   await file.save(content, {

@@ -21,6 +21,11 @@ interface TrophyFileIds {
   extension: string;
 }
 
+interface LogoFileIds {
+  clubId: string;
+  logoId: string;
+}
+
 const createThumb = async (object: functions.storage.ObjectMetadata): Promise<string | undefined> => {
   if (!object.name || !object.contentType) {
     return undefined;
@@ -74,10 +79,19 @@ const createThumb = async (object: functions.storage.ObjectMetadata): Promise<st
 }
 
 /** Tests if the specified object is a club logo. */
-const isClubLogo = (object: functions.storage.ObjectMetadata): string | undefined => {
-  const match = object.name?.match(/clubs\/([A-Za-z0-9]+)\/logo\.png/);
+const isClubLogo = (object: functions.storage.ObjectMetadata): LogoFileIds | undefined => {
+  const match = object.name?.match(/clubs\/([A-Za-z0-9]+)\/logos\/([A-Za-z0-9]+)\.png/);
 
-  return match?.[1];
+  if (match) {
+    const [, clubId, logoId] = match;
+
+    return {
+      clubId,
+      logoId,
+    };
+  }
+
+  return undefined;
 }
 
 /** Tests if the specified object is a trophy photo. */
@@ -99,28 +113,32 @@ const isTrophyFile = (object: functions.storage.ObjectMetadata): TrophyFileIds |
   return undefined;
 }
 
-const updateClubLogo = async (clubId: string, object: functions.storage.ObjectMetadata): Promise<void> => {
-  if (!object) {
-    return;
-  }
-
+const updateClubLogo = async (ids: LogoFileIds, object: functions.storage.ObjectMetadata): Promise<void> => {
+  const { clubId, logoId } = ids;
+  functions.logger.debug(clubId, logoId);
   const db = admin.firestore();
   const batch = db.batch();
   const clubRef = db.collection(Collections.Clubs).doc(clubId);
-  const id = object.metadata?.uploadid as string;
-  const logo = await getDownloadURL(object)
+  const logo = await getDownloadURL(object);
+  const logoFiles = await admin.storage().bucket().getFiles({
+    prefix: `${clubRef.path}/logos`,
+  });
+  const deletePromises = logoFiles[0]
+    .filter((x) => !x.name.includes(logoId)) // All logos except the one just created
+    .map((x) => x.delete())
+    ;
 
   // Remove the logo request document as referenced by the x-goog-meta-id header
-  if (id) {
-    batch.delete(clubRef.collection(Collections.Logos).doc(id));
-  }
-
+  batch.delete(clubRef.collection(Collections.Logos).doc(logoId));
   batch.update(clubRef, {
     modified: admin.firestore.FieldValue.serverTimestamp(),
     logo,
   } as Partial<Club>);
 
-  await batch.commit();
+  await Promise.all([
+    batch.commit(),
+    ...deletePromises,
+  ]);
 }
 
 const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.ObjectMetadata): Promise<void> => {
@@ -158,11 +176,11 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
 // });
 
 export const onStorageItemFinalize = storageFunctions.bucket().object().onFinalize(async (object) => {
-  let clubId: string | undefined;
+  let clubIds: LogoFileIds | undefined;
   let fileIds: TrophyFileIds | undefined;
 
-  if ((clubId = isClubLogo(object)) !== undefined) {
-    await updateClubLogo(clubId, object);
+  if ((clubIds = isClubLogo(object)) !== undefined) {
+    await updateClubLogo(clubIds, object);
   } else if ((fileIds = isTrophyFile(object)) !== undefined) {
     if (!fileIds.thumb) {
       await updateTrophyFile(fileIds, object);

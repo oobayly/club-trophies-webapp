@@ -1,0 +1,9 @@
+.cropper-container {
+  --cropper-overlay-color: #888;
+}
+
+.progress {
+  .progress-bar {
+    width: calc(var(--progress) * 1%);
+  }
+}

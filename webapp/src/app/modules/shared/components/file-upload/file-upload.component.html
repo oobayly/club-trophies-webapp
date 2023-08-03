@@ -1,29 +1,59 @@
-<pre *ngIf="queue$ | async as queue; else showUpload">
-  {{queue$ | async | json}}
-</pre>
+<div class="mb-3" *ngIf="queue$ | async as queue; else showUpload">
+  <h5 class="text-center">
+    Uploading {{queue.length | i18nPlural:filesPlural}}...
+  </h5>
+  <ng-cotnainer [ngTemplateOutlet]="fileRow"
+    [ngTemplateOutletContext]="{name: item.file.name, size: item.file.size, progress: item.progress, showProgress: true}"
+    *ngFor="let item of queue">
+  </ng-cotnainer>
+</div>
 
 <ng-template #showUpload>
   <!-- Logo upload uses cropper -->
-  <ng-container *ngIf="mode === 'logo'">
-    <div class="">
+  <div class="mb-3" *ngIf="mode === 'logo'">
+    <div class="text-center">
       <input type="file" id="{{formId}}-logo" class="d-none" accept="image/png, image/jpeg, image/gif"
         (change)="onLogoFileChange($event)">
 
-      <label for="{{formId}}-logo">Upload</label>
+      <label class="btn btn-outline-primary" for="{{formId}}-logo">
+        <i class="bi-upload me-2"></i>
+        Select a Burgee File
+      </label>
     </div>
 
-    <div class="" *ngIf="logoFile">
-
+    <div class="cropper-container mt-3" *ngIf="logoFile">
+      <image-cropper #imageCropper [imageFile]="logoFile" [aspectRatio]="1.5" [resizeToWidth]="300"
+        [onlyScaleDown]="false" backgroundColor="#fff" (imageCropped)="onImageCropped($event)">
+      </image-cropper>
     </div>
-  </ng-container>
+  </div>
 
   <!-- Trophy files just has a file picker -->
   <ng-container *ngIf="mode === 'trophy-file'">
-    <div class="">
-      <input type="file" id="{{formId}}-logo" class="d-none" multiple accept="image/png, image/jpeg, image/gif"
-        (change)="onTrophyFileChange($event)">
+    <div class="mb-3">
+      <div class="text-center">
+        <input type="file" id="{{formId}}-trophy-files" class="d-none" multiple
+          accept="image/png, image/jpeg, image/gif" (change)="onTrophyFileChange($event)">
 
-      <label for="{{formId}}-trophy-files">Upload</label>
+        <label class="btn btn-outline-primary" for="{{formId}}-trophy-files">
+          <i class="bi-upload me-2"></i>
+          Select Photos to upload
+        </label>
+      </div>
+
+      <div class="file-list-container mt-3" *ngIf="files?.length">
+        <ng-cotnainer [ngTemplateOutlet]="fileRow" [ngTemplateOutletContext]="{name: file.name, size: file.size}"
+          *ngFor="let file of files!">
+        </ng-cotnainer>
+
+        <!-- <div class="row justify-content-between" *ngFor="let file of files!">
+          <span class="col-auto">
+            <i class="bi-image me-2"></i>
+            {{file.name}}
+          </span>
+          <span class="col-auto">{{file.size / 1000000 | number:'1.0-1'}} Mb</span>
+        </div> -->
+      </div>
     </div>
   </ng-container>
 </ng-template>
@@ -34,7 +64,21 @@
     [disabled]="!files?.length || (isUploading$ | async)">Upload</button>
 </div>
 
-<!-- File select -->
-<ng-template #fileSelect>
+<ng-template #fileRow let-name="name" let-size="size" let-progress="progress" let-showProgress="showProgress">
+  <div class="row my-2 justify-content-between">
+    <span class="col-auto">
+      <i class="bi-image me-2"></i>
+      {{name}}
+    </span>
+    <span class="col-auto">{{size / 1000000 | number:'1.0-1'}} Mb</span>
 
+    <div class="col-12" *ngIf="showProgress">
+      <div class="progress">
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+          [ngStyle]="{'--progress': progress}">
+          {{progress}} %
+        </div>
+      </div>
+    </div>
+  </div>
 </ng-template>

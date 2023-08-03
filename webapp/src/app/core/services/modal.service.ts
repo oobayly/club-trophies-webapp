@@ -267,7 +267,7 @@ export class ModalService {
         component.clubId = clubId;
         component.trophyId = trophyId;
         component.mode = trophyId ? "trophy-file" : "logo";
-        component.files = files;
+        component.files = files ? Array.from(files) : undefined;
       },
     });
   }

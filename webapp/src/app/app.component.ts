@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { combineLatest, filter, map, Observable, of, shareReplay, startWith, switchMap, tap } from "rxjs";
+import { combineLatest, filter, first, map, merge, mergeMap, Observable, of, shareReplay, startWith, Subscription, switchMap, tap } from "rxjs";
 import { isAdmin } from "./core/rxjs/auth";
 import { environment } from "src/environments/environment";
 import { ModalService } from "./core/services/modal.service";
@@ -8,6 +8,7 @@ import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router } from "@
 import { DbService } from "./core/services/db.service";
 import { Club } from "@models";
 import { filterNotNull } from "./core/rxjs";
+import { SwUpdate, VersionReadyEvent } from "@angular/service-worker";
 
 interface Ids {
   clubId: string | undefined;
@@ -58,7 +59,9 @@ export class AppComponent implements OnInit {
     private readonly modal: ModalService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
+    private readonly swUpdate: SwUpdate,
   ) {
+    this.getUpdateSubscription();
   }
 
   ngOnInit(): void {
@@ -127,7 +130,6 @@ export class AppComponent implements OnInit {
     );
   }
 
-
   private getMyClubsObservable(): Observable<SimpleClub[]> {
     return this.auth.user.pipe(
       switchMap((user) => {
@@ -153,6 +155,25 @@ export class AppComponent implements OnInit {
       }),
       shareReplay(1),
     );
+  }
+
+  private getUpdateSubscription(): Subscription {
+    return this.swUpdate.versionUpdates.pipe(
+      filter((x): x is VersionReadyEvent => x.type === "VERSION_READY"),
+      first(),
+      mergeMap(() => {
+        return this.modal.showAlert({
+          buttons: "yes-no",
+          icon: "question",
+          title: "New update available",
+          message: "",
+        });
+      }),
+    ).subscribe((response) => {
+      if (response) {
+        document.location.reload();
+      }
+    });
   }
 
   // ========================

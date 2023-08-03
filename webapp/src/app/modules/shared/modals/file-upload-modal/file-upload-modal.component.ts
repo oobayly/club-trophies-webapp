@@ -11,7 +11,7 @@ import { UploadMode } from "../../components/file-upload/file-upload.component";
 export class FileUploadModalComponent extends BaseModalComponent<string | string[]> {
   public clubId!: string;
 
-  public files?: FileList | File[];
+  public files?: File[];
 
   public mode: UploadMode = "trophy-file";
 

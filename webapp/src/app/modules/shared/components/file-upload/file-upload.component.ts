@@ -1,16 +1,15 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { HttpClient, HttpEvent, HttpEventType } from "@angular/common/http";
 import { createdTimestamp, uuid } from "@helpers";
 import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, finalize, first, interval, last, map, of, startWith, switchMap, take, tap } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
+import { ImageCroppedEvent, ImageCropperComponent } from "ngx-image-cropper";
 
 export type UploadMode = "logo" | "trophy-file";
 
-type FileLike = File | Blob;
-
 interface QueueItem {
-  file: FileLike;
+  file: File;
   index: number;
   progress: number;
   started?: boolean;
@@ -39,6 +38,8 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
 
   public readonly isUploading$ = this.queue$.pipe(map((x) => !!x?.length));
 
+  public readonly filesPlural = { "=1": "1 file", "other": "# files" };
+
   private readonly subscriptions: Subscription[] = [];
 
   public logoFile?: File;
@@ -51,7 +52,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   public clubId!: string;
 
   @Input()
-  public files?: FileList | File[];
+  public files?: File[];
 
   @Input()
   public mode: UploadMode = "trophy-file";
@@ -68,6 +69,13 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
 
   @Output()
   public readonly uploaded = new EventEmitter<string | string[]>();
+
+  // ========================
+  // View children
+  // ========================
+
+  @ViewChild("imageCropper")
+  public imageCropper?: ImageCropperComponent;
 
   // ========================
   // Lifecycle
@@ -148,7 +156,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
           response = of(undefined);
         } else {
           if (this.mode === "logo") {
-            response = this.getLogoFileObservale(item);
+            response = this.getLogoFileObservable(item);
           } else if (this.mode === "trophy-file") {
             response = this.getTrophyFileObservable(item);
           } else {
@@ -168,7 +176,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     );
   }
 
-  private getLogoFileObservale(item: QueueItem): Observable<string> {
+  private getLogoFileObservable(item: QueueItem): Observable<string> {
     const { clubId } = this;
 
     const doc = this.db.getClubLogoDoc(clubId);
@@ -181,6 +189,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
 
     doc.set({
       ...createdTimestamp(),
+      expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
     }).then();
 
     return snapshot.pipe(
@@ -244,6 +253,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     return this.httpClient.put(url, item.file, {
       headers,
       reportProgress: true,
+      observe: "events",
     }).pipe(
       tap((x) => {
         const event = x as HttpEvent<unknown>;
@@ -295,6 +305,18 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     this.cancelled.next();
   }
 
+  public onImageCropped(e: ImageCroppedEvent): void {
+    if (!e.blob) {
+      this.files = undefined;
+
+      return;
+    }
+
+    this.files = [new File([e.blob], "Logo.png", {
+      type: "image/png",
+    })];
+  }
+
   public onLogoFileChange(e: Event): void {
     const files = (e.target as HTMLInputElement)?.files;
 
@@ -302,6 +324,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       return;
     }
 
+    this.files = Array.from(files);
     this.logoFile = files[0];
   }
 
@@ -312,8 +335,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.files = files;
-    this.startUpload();
+    this.files = Array.from(files);
   }
 
   public onUploadClick(): void {
