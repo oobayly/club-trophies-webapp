@@ -65,6 +65,7 @@ const loadTrophies = async (): Promise<void> => {
       boatRef: db.doc(boatRef),
       boatName,
       parent: { clubId: ClubId },
+      eventId: null,
     };
 
     console.log(`Trophy ${i + 1} of ${legacyTrophies.length} : ${item.fldName}`);
