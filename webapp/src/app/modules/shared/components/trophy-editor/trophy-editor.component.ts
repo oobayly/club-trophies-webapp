@@ -119,6 +119,7 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
       parent: {
         clubId: this.clubId,
       },
+      eventId: null,
     });
 
     if (isNew) {

@@ -24,4 +24,9 @@ export interface ClubAdmin extends HasTimestamp {
   uid: string;
 }
 
+export interface ClubEvent extends HasTimestamp {
+  /** The name of the event. */
+  name: string;
+}
+
 export type ClubLogoRequest = HasExpires & HasTimestamp & HasUploadInfo;

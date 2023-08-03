@@ -10,6 +10,8 @@ export interface Trophy extends HasClubParent, HasPublic, HasTimestamp, BoatRefe
   donated: string;
   /** The name of the donor. */
   donor: string;
+  /** The ID event in which the tophy is presented. */
+  eventId: string | null;
   /** The name of the trophy. */
   name: string;
   /** The page number in the historic book. */
