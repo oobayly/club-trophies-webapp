@@ -171,6 +171,7 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
   const clubs = await getSearchClubInfo(search.uid, winners);
   const expireAfter = new Date(Date.now() + 86400000); // Expire after 1 day
 
+  const resultFields: (keyof SearchResult)[] = ["year", "sail", "helm", "crew", "owner", "name", "boatName", "club"];
   const results = winners
     .reduce((accum, item) => {
       const { clubId, trophyId } = item.parent;
@@ -180,23 +181,24 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
       const canView = !!info && info.trophies.some((x) => x.trophyId === trophyId);
 
       if (canView) {
-        const { year, sail, helm, crew, owner, name, boatName, club } = item;
-
-        accum.push({
-          year,
-          sail,
-          helm,
-          crew,
-          owner,
-          name,
-          boatName,
-          club,
+        const result: SearchResult = {
           parent: { clubId, trophyId },
+        } as SearchResult;
+
+        resultFields.forEach((f) => {
+          if (item[f]) {
+            // Ignore type safety here
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (result as unknown as any)[f] = item[f];
+          }
         })
+
+        accum.push(result);
       }
 
       return accum;
     }, [] as SearchResult[])
+    ;
 
   // Batch up all our writes as there may be multiple pages
   const batch = doc.ref.firestore.batch();
