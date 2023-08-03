@@ -149,6 +149,7 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
 
   const updateInfo = {
     ...fileInfo,
+    expiresAfter: admin.firestore.FieldValue.delete(), // Ensure that thre request isn't expired
     uploadInfo: admin.firestore.FieldValue.delete(),
   };
 

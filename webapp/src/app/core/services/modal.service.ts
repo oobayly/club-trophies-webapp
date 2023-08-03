@@ -13,6 +13,7 @@ import { EditFileModalComponent } from "src/app/modules/shared/modals/edit-file-
 import { EditWinnerModalComponent } from "src/app/modules/shared/modals/edit-winner-modal/edit-winner-modal.component";
 import { getIconForColor } from "@helpers/angular";
 import { DbService } from "./db.service";
+import { FileUploadModalComponent } from "src/app/modules/shared/modals/file-upload-modal/file-upload-modal.component";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
@@ -251,5 +252,23 @@ export class ModalService {
     });
 
     return resp || false;
+  }
+
+  /** Show the modal for uploading a club logo. */
+  public async showFileUpload(clubId: string): Promise<string>;
+  /** Show the modal for uploading trophy files. */
+  public async showFileUpload(clubId: string, trophyId: string, files?: FileList | File[]): Promise<string[]>;
+  public async showFileUpload(clubId: string, trophyId?: string, files?: FileList | File[]): Promise<string[] | string | undefined> {
+    return await this.showModal(FileUploadModalComponent, {
+      options: {
+
+      },
+      configure: (component) => {
+        component.clubId = clubId;
+        component.trophyId = trophyId;
+        component.mode = trophyId ? "trophy-file" : "logo";
+        component.files = files;
+      },
+    });
   }
 }

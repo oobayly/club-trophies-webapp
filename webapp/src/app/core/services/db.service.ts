@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChangeAction, QueryFn } from "@angular/fire/compat/firestore";
-import { Boat, BoatReference, Club, Collections, DocumentRef, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
+import { Boat, BoatReference, Club, ClubLogoRequest, Collections, DocumentRef, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { Observable, map, firstValueFrom, combineLatest, switchMap, of, filter } from "rxjs";
@@ -123,6 +123,10 @@ export class DbService {
   public getClubDoc(clubId?: string | null): AngularFirestoreDocument<Club> {
     return this.getClubsCollection().doc(clubId || undefined);
   };
+
+  public getClubLogoDoc(clubId: string): AngularFirestoreDocument<ClubLogoRequest> {
+    return this.getClubDoc(clubId).collection<ClubLogoRequest>(Collections.Logos).doc();
+  }
 
   public async addClub(club: Omit<Club, "admins" | TimestampProps>, admins?: string[]): Promise<string> {
     if (!admins?.length) {

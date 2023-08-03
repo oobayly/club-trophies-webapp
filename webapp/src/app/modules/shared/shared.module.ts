@@ -33,6 +33,8 @@ import { SearchResultComponent } from "./components/search-result/search-result.
 import { WinnerTableComponent } from "./components/winner-table/winner-table.component";
 import { LoaderComponent } from "./components/loader/loader.component";
 import { FlagPipe } from "./pipes/flag.pipe";
+import { FileUploadModalComponent } from "./modals/file-upload-modal/file-upload-modal.component";
+import { FileUploadComponent } from "./components/file-upload/file-upload.component";
 
 @NgModule({
   declarations: [
@@ -65,6 +67,8 @@ import { FlagPipe } from "./pipes/flag.pipe";
     WinnerTableComponent,
     LoaderComponent,
     FlagPipe,
+    FileUploadModalComponent,
+    FileUploadComponent,
   ],
   imports: [
     CommonModule,

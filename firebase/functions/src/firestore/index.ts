@@ -140,8 +140,10 @@ export const onLogoCreate = firestoreFunctions.document(LogoPath).onCreate(async
   }
 
   await snapshot.ref.update({
-    url: uploadUrl,
-    headers,
+    uploadInfo: {
+      url: uploadUrl,
+      headers,
+    },
     modified: admin.firestore.FieldValue.serverTimestamp(),
   } as Partial<ClubLogoRequest>);
 });

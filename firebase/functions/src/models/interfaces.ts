@@ -3,6 +3,11 @@ export interface DocumentRef {
   path: string;
 }
 
+export interface HasExpires {
+  /** Indicates the TTL for when the value should expire. */
+  expireAfter?: TimestampType;
+}
+
 export interface HasPublic {
   /** A flag indicating whether the record is public. */
   public: boolean;
@@ -15,6 +20,11 @@ export interface HasParent<T> {
 
 export type HasClubParent = HasParent<{ clubId: string }>;
 export type HasTrophyParent = HasParent<{ clubId: string, trophyId: string }>;
+
+export interface HasUploadInfo {
+  /** The upload information. */
+  uploadInfo?: UploadInfo;
+}
 
 interface FbTimestamp {
   toDate: () => Date;

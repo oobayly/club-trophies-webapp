@@ -1,13 +1,12 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { TrophyBaseComponent } from "../trophy-base-component";
-import { BehaviorSubject, Observable, first, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
+import { BehaviorSubject, Observable, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Collections, TrophyFile } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
-import { environment } from "src/environments/environment";
-import { compareTimestamps, createdTimestamp, uuid } from "src/app/core/helpers";
+import { compareTimestamps, uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
 @Component({
@@ -46,7 +45,7 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
   private readonly fileDrop?: ElementRef<HTMLElement>;
 
   @ViewChild("fileUpload")
-  private readonly fileUpload?: ElementRef<HTMLElement>;
+  private readonly fileUpload?: ElementRef<HTMLInputElement>;
 
   // ========================
   // Lifecycle
@@ -106,49 +105,11 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
       return;
     }
 
-    for (let i = 0; i < files.length; i++) {
-      await this.uploadFile(clubId, trophyId, files[i]);
+    await this.modal.showFileUpload(clubId, trophyId, files);
+
+    if (this.fileUpload?.nativeElement) {
+      this.fileUpload.nativeElement.value = "";
     }
-  }
-
-  private async uploadFile(clubId: string, trophyId: string, file: File): Promise<string> {
-    // Listen for the document we're going to create, and get it once the upload data is present
-    const doc = this.db.getFileDoc(clubId, trophyId);
-    const snapshot = doc.snapshotChanges().pipe(
-      map((item) => item.payload.data()?.uploadInfo),
-      filterNotNull(),
-      first(),
-    );
-
-    await doc.set({
-      contentType: file.type,
-      description: "",
-      name: file.name,
-      ...createdTimestamp(),
-      url: null,
-      thumb: null,
-      parent: {
-        clubId: clubId,
-        trophyId: trophyId,
-      },
-    });
-
-    const uploadInfo = await firstValueFrom(snapshot);
-    const { url, headers } = uploadInfo;
-
-    try {
-      await fetch(url, {
-        method: "PUT",
-        headers: headers,
-        body: file,
-      });
-    } catch {
-      if (!environment.emulate) {
-        await doc.delete();
-      }
-    }
-
-    return doc.ref.id;
   }
 
   // ========================

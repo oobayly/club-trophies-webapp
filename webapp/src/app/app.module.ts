@@ -13,6 +13,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { HomeComponent } from "./routes/home/home.component";
 import { ServiceWorkerModule } from "@angular/service-worker";
+import { HttpClientModule } from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { ServiceWorkerModule } from "@angular/service-worker";
     // Angular
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     // Firebase

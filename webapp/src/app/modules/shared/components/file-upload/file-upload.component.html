@@ -1,0 +1,40 @@
+<pre *ngIf="queue$ | async as queue; else showUpload">
+  {{queue$ | async | json}}
+</pre>
+
+<ng-template #showUpload>
+  <!-- Logo upload uses cropper -->
+  <ng-container *ngIf="mode === 'logo'">
+    <div class="">
+      <input type="file" id="{{formId}}-logo" class="d-none" accept="image/png, image/jpeg, image/gif"
+        (change)="onLogoFileChange($event)">
+
+      <label for="{{formId}}-logo">Upload</label>
+    </div>
+
+    <div class="" *ngIf="logoFile">
+
+    </div>
+  </ng-container>
+
+  <!-- Trophy files just has a file picker -->
+  <ng-container *ngIf="mode === 'trophy-file'">
+    <div class="">
+      <input type="file" id="{{formId}}-logo" class="d-none" multiple accept="image/png, image/jpeg, image/gif"
+        (change)="onTrophyFileChange($event)">
+
+      <label for="{{formId}}-trophy-files">Upload</label>
+    </div>
+  </ng-container>
+</ng-template>
+
+<div class="button-grid">
+  <button type="button" class="btn btn-outline-danger" (click)="onCancelClick()">Cancel</button>
+  <button type="submit" class="btn btn-primary" (click)="onUploadClick()"
+    [disabled]="!files?.length || (isUploading$ | async)">Upload</button>
+</div>
+
+<!-- File select -->
+<ng-template #fileSelect>
+
+</ng-template>

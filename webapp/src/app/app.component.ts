@@ -163,6 +163,8 @@ export class AppComponent implements OnInit {
     if (!ids.clubId || !ids.trophyId) {
       return;
     }
+
+    await this.modal.showFileUpload(ids.clubId, ids.trophyId);
   }
 
   public async onAddWinnerClick(ids: Ids): Promise<void> {
@@ -208,5 +210,7 @@ export class AppComponent implements OnInit {
     if (!clubId) {
       return;
     }
+
+    await this.modal.showFileUpload(clubId);
   }
 }
