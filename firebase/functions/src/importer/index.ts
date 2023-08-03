@@ -3,10 +3,9 @@ import * as admin from "firebase-admin";
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
 import { Boat, Collections, Trophy, Winner } from "../models";
-import { legacyClasses, legacyTrophies, legacyWinners } from "./legacy";
+import { ClubId, legacyClasses, legacyTrophies, legacyWinners } from "./legacy";
 
 const httpsFunctions = functions.region("europe-west2").https;
-const ClubId = "TbeeXCBRTb6mSJ64i0MT";
 const BoatMap = new Map<number, string>();
 
 const loadBoats = async (): Promise<void> => {
@@ -34,7 +33,7 @@ const loadBoats = async (): Promise<void> => {
     BoatMap.set(item.fldClassID, doc.path);
   }
 
-  //await batch.commit();
+  await batch.commit();
 }
 
 const loadTrophies = async (): Promise<void> => {
@@ -74,7 +73,7 @@ const loadTrophies = async (): Promise<void> => {
 
     loadWinners(batch, item.fldTrophyID, trophyDoc.id);
 
-    //batch.commit();
+    batch.commit();
   }
 }
 
@@ -126,6 +125,32 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
 const app = express();
 
 app.get("/modify", async (_req, res) => {
+  // Remove empty data from the winners
+  const db = admin.firestore();
+  const trophies = await db.collectionGroup(Collections.Trophies).get();
+
+  for (let i = 0; i < trophies.size; i++) {
+    const doc = trophies.docs[i];
+    const { clubId } = doc.data().parent;
+    const batch = db.batch();
+
+    const winners = await db.collection(Collections.Clubs).doc(clubId).collection(Collections.Trophies).doc(doc.id).collection(Collections.Winners).get();
+
+    winners.forEach((x) => {
+      const data = x.data();
+
+      Object.keys(data).forEach((k) => {
+        if (!data[k]) {
+          data[k] = admin.firestore.FieldValue.delete();
+        }
+      });
+
+      batch.update(x.ref, data);
+    });
+
+    await batch.commit();
+  }
+
   res.status(200).send();
 });
 

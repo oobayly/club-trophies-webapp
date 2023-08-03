@@ -206,6 +206,7 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
   batch.update(doc.ref, {
     expireAfter,
     clubs,
+    count: winners.length,
   });
 
   batchSearchResults(batch, doc.ref, results);
