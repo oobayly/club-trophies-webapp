@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
-import { onBoatNameChange, onLogoCreate, onClubAdminWrite, onTrophyFileWrite, onSearchCreate, onClubBoatNameChange } from "./firestore";
+import { onBoatNameChange, onLogoCreate, onClubAdminWrite, onTrophyFileWrite, onSearchCreate, onClubBoatNameChange, onClubWrite } from "./firestore";
 import { api } from "./https";
-import { onStorageItemDelete, onStorageItemFinalize } from "./storage";
+import { onStorageItemFinalize } from "./storage";
 import { IsEmulated } from "./helpers";
 import { importer } from "./importer";
 
@@ -15,11 +15,12 @@ if (IsEmulated) {
 }
 
 exports.onBoatNameChange = onBoatNameChange;
+exports.onClubWrite = onClubWrite;
 exports.onClubBoatNameChange = onClubBoatNameChange;
 exports.onClubAdminWrite = onClubAdminWrite;
 exports.onLogoCreate = onLogoCreate;
 exports.onTrophyFileWrite = onTrophyFileWrite;
 exports.onSearchCreate = onSearchCreate;
 
-exports.onStorageItemDelete = onStorageItemDelete;
+// exports.onStorageItemDelete = onStorageItemDelete;
 exports.onStorageItemFinalize = onStorageItemFinalize;

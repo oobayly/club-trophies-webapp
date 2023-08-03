@@ -9,6 +9,7 @@ import { v4 as uuid } from "uuid";
 import { Club, Collections, TrophyFile } from "../models";
 import { getDownloadURL } from "../helpers";
 
+
 const storageFunctions = functions.region("europe-west2").storage;
 const ThumbSize = 300;
 
@@ -98,34 +99,28 @@ const isTrophyFile = (object: functions.storage.ObjectMetadata): TrophyFileIds |
   return undefined;
 }
 
-const updateClubLogo = async (clubId: string, object: functions.storage.ObjectMetadata | undefined): Promise<void> => {
-  const clubRef = admin.firestore()
-    .collection(Collections.Clubs)
-    .doc(clubId)
-    ;
-  let logo: string | admin.firestore.FieldValue;
-
-  if (object) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const file = admin.storage().bucket(object.bucket).file(object.name!);
-    const id = file.metadata.id as string;
-
-    logo = file.publicUrl();
-
-    // Remove the logo request document as referenced by the x-goog-meta-id header
-    if (id) {
-      await clubRef.collection(Collections.Logos).doc(id).delete({
-        exists: false,
-      });
-    }
-  } else {
-    logo = admin.firestore.FieldValue.delete();
+const updateClubLogo = async (clubId: string, object: functions.storage.ObjectMetadata): Promise<void> => {
+  if (!object) {
+    return;
   }
 
-  await clubRef.update({
+  const db = admin.firestore();
+  const batch = db.batch();
+  const clubRef = db.collection(Collections.Clubs).doc(clubId);
+  const id = object.metadata?.uploadid as string;
+  const logo = await getDownloadURL(object)
+
+  // Remove the logo request document as referenced by the x-goog-meta-id header
+  if (id) {
+    batch.delete(clubRef.collection(Collections.Logos).doc(id));
+  }
+
+  batch.update(clubRef, {
     modified: admin.firestore.FieldValue.serverTimestamp(),
     logo,
   } as Partial<Club>);
+
+  await batch.commit();
 }
 
 const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.ObjectMetadata): Promise<void> => {
@@ -159,13 +154,8 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
   ]);
 }
 
-export const onStorageItemDelete = storageFunctions.bucket().object().onDelete(async (object) => {
-  let clubId: string | undefined;
-
-  if ((clubId = isClubLogo(object)) !== undefined) {
-    await updateClubLogo(clubId, undefined);
-  }
-});
+// export const onStorageItemDelete = storageFunctions.bucket().object().onDelete(async (object) => {
+// });
 
 export const onStorageItemFinalize = storageFunctions.bucket().object().onFinalize(async (object) => {
   let clubId: string | undefined;

@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as path from "path";
 import { Boat, BoatReference, Club, ClubAdmin, ClubLogoRequest, Collections, TrophyFile, UploadInfo } from "../models";
-import { AdminPath, LogoPath, SearchPath, TrophyFilePath } from "./paths";
+import { AdminPath, ClubPath, LogoPath, SearchPath, TrophyFilePath } from "./paths";
 import { IsEmulated } from "../helpers";
 import { search } from "./search";
 
@@ -121,7 +121,7 @@ export const onLogoCreate = firestoreFunctions.document(LogoPath).onCreate(async
   const clubId = snapshot.ref.parent.parent!.id;
   const file = admin.storage().bucket().file(`${Collections.Clubs}/${clubId}/logo.png`);
   const headers = {
-    "x-goog-meta-id": logoId,
+    "x-goog-meta-uploadid": logoId,
   };
   let uploadUrl: string;
 
@@ -146,6 +146,20 @@ export const onLogoCreate = firestoreFunctions.document(LogoPath).onCreate(async
     },
     modified: admin.firestore.FieldValue.serverTimestamp(),
   } as Partial<ClubLogoRequest>);
+});
+
+export const onClubWrite = firestoreFunctions.document(ClubPath).onWrite(async (change) => {
+  if (change.before.exists && change.after.exists) {
+    const oldLogo = change.before.data()?.logo;
+    const newLogo = change.after.data()?.logo;
+
+    if (oldLogo && !newLogo) {
+      // Only if the logo has been removed
+      const file = admin.storage().bucket().file(`${change.after.ref.path}/logo.png`);
+
+      await file.delete({ ignoreNotFound: true });
+    }
+  }
 });
 
 export const onClubAdminWrite = firestoreFunctions.document(AdminPath).onWrite(async (change) => {

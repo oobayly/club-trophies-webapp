@@ -1,4 +1,4 @@
-import { HasPublic, HasTimestamp, HasUploadInfo } from "./interfaces";
+import { HasExpires, HasPublic, HasTimestamp, HasUploadInfo } from "./interfaces";
 
 export interface Club extends HasPublic, HasTimestamp {
   /** The list of uids that have admin access. */
@@ -24,4 +24,4 @@ export interface ClubAdmin extends HasTimestamp {
   uid: string;
 }
 
-export type ClubLogoRequest = HasTimestamp & HasUploadInfo;
+export type ClubLogoRequest = HasExpires & HasTimestamp & HasUploadInfo;
