@@ -164,9 +164,9 @@ export class AppComponent implements OnInit {
       mergeMap(() => {
         return this.modal.showAlert({
           buttons: "yes-no",
-          icon: "question",
+          icon: "info",
           title: "New update available",
-          message: "",
+          message: "Do you want to reload the app now?",
         });
       }),
     ).subscribe((response) => {
