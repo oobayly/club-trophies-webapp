@@ -9,4 +9,4 @@ export const TrophyFilePath = `${ClubPath}/${Collections.Trophies}/{trophyId}/${
 export const WinnerPath = `${TrophiesPath}/${Collections.Winners}/{winnerId}`;
 
 export const SearchPath = `${Collections.Searches}/{searchId}`;
-export const SearchResultsPath = `${SearchPath}/${Collections.Results}/{resultId}`;
+export const SearchResultsPath = `${SearchPath}/${Collections.SearchResults}/{resultId}`;

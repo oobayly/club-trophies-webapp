@@ -1,4 +1,4 @@
-import { HasExpires, TimestampType } from "./interfaces";
+import { HasExpires } from "./interfaces";
 import { Winner } from "./Winner";
 
 export interface SearchClubInfo {
@@ -32,9 +32,7 @@ export interface SearchWithResults extends Search, HasExpires {
 
 export type SearchResult = Omit<Winner, "notes" | "created" | "modified" | "boatRef">
 
-export interface SearchResultList {
+export interface SearchResultList extends HasExpires {
   page: number;
-  /** Indicates the TTL for when the value should expire. */
-  expireAfter: TimestampType;
   results: SearchResult[];
 }

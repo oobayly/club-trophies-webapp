@@ -148,7 +148,7 @@ const batchSearchResults = (batch: admin.firestore.WriteBatch, parent: admin.fir
   // Group into batches, to avoid the 1MB document limit
   let page = 0;
   do {
-    const ref = parent.collection(Collections.Results).doc();
+    const ref = parent.collection(Collections.SearchResults).doc();
     const list: SearchResultList = {
       page: page++,
       expireAfter: new Date(Date.now() + 86400000), // Expire after 1 day

@@ -221,7 +221,7 @@ export class DbService {
       switchMap((search) => {
         return combineLatest([
           of(search),
-          doc.collection<SearchResultList>(Collections.Results).snapshotChanges(),
+          doc.collection<SearchResultList>(Collections.SearchResults).snapshotChanges(),
         ]);
       }),
       // And wait until we have at least one page

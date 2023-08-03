@@ -13,7 +13,7 @@ async function getDownloadURL(object: functions.storage.ObjectMetadata | File): 
   let file: File;
 
   if (object instanceof File) {
-    metadata = (await object.getMetadata())[0];
+    metadata = (await object.getMetadata())[0].metadata || {};
     file = object;
   } else {
     metadata = object.metadata || {};
