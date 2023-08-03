@@ -1,6 +1,6 @@
 <app-tab-container [(tabIndex)]="tabIndex">
   <!-- Info-->
-  <app-tab-page name="Trophy Information" icon="bi-info-circle-fill">
+  <app-tab-page name="Trophy information" icon="bi-info-circle-fill">
     <div class="">
       <ng-container *ngIf="trophy$ | async as trophy; else loadingOrError">
         <h5>{{trophy.name}}</h5>
@@ -27,13 +27,13 @@
 
             <!-- Current class -->
             <tr>
-              <td>Current Class</td>
+              <td>Current class</td>
               <td>{{trophy.boatName}}</td>
             </tr>
 
             <!-- Archive page -->
             <tr *ngIf="trophy.page as page">
-              <td>Archive Page</td>
+              <td>Archive page</td>
               <td>{{page}}</td>
             </tr>
           </tbody>

@@ -15,13 +15,13 @@ const routes: Routes = [
       //   path: "profile",
       //   component: ProfileComponent,
       //   canActivate: [AuthGuard],
-      //   title: "My Profile",
+      //   title: "My pofile",
       // },
       {
         path: "sign-in",
         component: SignInComponent,
         canActivate: [AngularFireAuthGuard],
-        title: "Sign In",
+        title: "Sign in",
         data: {
           authGuardPipe: () => redirectLoggedInTo("/auth/profile"),
         },

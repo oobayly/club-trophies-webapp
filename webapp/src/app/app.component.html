@@ -16,18 +16,18 @@
         </a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <a routerLink="/clubs/public" class="dropdown-item" routerLinkActive="active">
-            Public Clubs
+            Public clubs
           </a>
           <a routerLink="/clubs/mine" class="dropdown-item" routerLinkActive="active">
-            My Clubs
+            My clubs
           </a>
           <a routerLink="/clubs/all" class="dropdown-item" routerLinkActive="active" *ngIf="isAdmin$ | async">
-            All Clubs
+            All clubs
           </a>
           <ng-container *ngIf="user$ | async">
             <div class="dropdown-divider"></div>
             <span class="dropdown-item" role="button" (click)="onEditClubClick()">
-              Add New Club
+              Add new club
             </span>
           </ng-container>
           <ng-container *ngIf="myClubs$ | async as mine">
@@ -51,33 +51,33 @@
           <div class="dropdown-menu" ngbDropdownMenu>
             <!-- Edit club -->
             <span class="dropdown-item" role="button" (click)="onEditClubClick(ids.clubId)">
-              Edit Club
+              Edit club
             </span>
 
             <!-- Update Logo -->
             <span class="dropdown-item" role="button" (click)="onUpdateLogoClick(ids.clubId)">
-              Update Burgee
+              Update burgee
             </span>
 
             <div class="dropdown-divider"></div>
 
             <!-- Add trophy -->
             <span class="dropdown-item" role="button" *ngIf="!ids.trophyId" (click)="onEditTrophyClick(ids)">
-              Add New Trophy
+              Add new trophy
             </span>
 
             <ng-container *ngIf="ids.trophyId">
               <!-- Edit trophy -->
               <span class="dropdown-item" role="button" (click)="onEditTrophyClick(ids)">
-                Edit Trophy
+                Edit trophy
               </span>
               <div class="dropdown-divider"></div>
               <!-- Add Winner -->
               <span class="dropdown-item" role="button" (click)="onAddWinnerClick(ids)">
-                Add Winner
+                Add winner
               </span>
               <span class="dropdown-item" role="button" (click)="onAddFileClick(ids)">
-                Add Photo
+                Add photo
               </span>
             </ng-container>
           </div>
@@ -112,13 +112,13 @@
           <a routerLink="/auth/profile" class="nav-link">Profile</a>
         </li> -->
         <li class="nav-item">
-          <a routerLink="/auth/sign-out" class="nav-link">Sign Out</a>
+          <a routerLink="/auth/sign-out" class="nav-link">Sign out</a>
         </li>
       </ng-container>
 
       <ng-template #signIn>
         <li class="nav-item">
-          <a routerLink="/auth/sign-in" class="nav-link">Sign In</a>
+          <a routerLink="/auth/sign-in" class="nav-link">Sign in</a>
         </li>
       </ng-template>
     </ul>

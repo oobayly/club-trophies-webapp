@@ -11,7 +11,7 @@ const routes: Routes = [
   {
     path: "public",
     component: IndexComponent,
-    title: "Public Clubs",
+    title: "Public clubs",
     data: {
       mode: "public",
     },
@@ -19,7 +19,7 @@ const routes: Routes = [
   {
     path: "mine",
     component: IndexComponent,
-    title: "My Clubs",
+    title: "My clubs",
     canActivate: [AuthGuard],
     data: {
       mode: "mine",
@@ -28,7 +28,7 @@ const routes: Routes = [
   {
     path: "all",
     component: IndexComponent,
-    title: "All Clubs",
+    title: "All clubs",
     canActivate: [AuthGuard],
     data: {
       ...authGuardForRole("admin"),

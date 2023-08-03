@@ -1,7 +1,7 @@
 <form class="" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
   <!-- Trophy name -->
   <div class="mb-3">
-    <label class="form-label" for="{{formId}}-name">Trophy Name</label>
+    <label class="form-label" for="{{formId}}-name">Trophy name</label>
     <input type="text" class="form-control" id="{{formId}}-name" placeholder="eg: Centenary Cup" formControlName="name"
       required maxlength="128">
     <div class="invalid-feedback">Please provide a valid trophy name.</div>
@@ -10,14 +10,14 @@
   <div class="row">
     <!-- Donor -->
     <div class="col-8 mb-3">
-      <label class="form-label" for="{{formId}}-donor">Donor Name</label>
+      <label class="form-label" for="{{formId}}-donor">Donated by</label>
       <input type="text" class="form-control" id="{{formId}}-donor" placeholder="eg: Col Quinlan"
         formControlName="donor" maxlength="128">
     </div>
 
     <!-- Year of donation -->
     <div class="col-4 mb-3">
-      <label class="form-label" for="{{formId}}-donated">Donor Year</label>
+      <label class="form-label" for="{{formId}}-donated">Year donated</label>
       <input type="text" class="form-control" id="{{formId}}-donated" placeholder="eg: 1982" formControlName="donated"
         maxlength="16">
     </div>
@@ -48,7 +48,7 @@
 
     <!-- Archive page -->
     <div class="col-4 mb-3">
-      <label class="form-label" for="{{formId}}-page">Archive Page</label>
+      <label class="form-label" for="{{formId}}-page">Archive page</label>
       <input type="text" class="form-control" id="{{formId}}-page" placeholder="eg. Page #" formControlName="page"
         maxlength="10">
     </div>

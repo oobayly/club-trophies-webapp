@@ -17,7 +17,7 @@
 
       <label class="btn btn-outline-primary" for="{{formId}}-logo">
         <i class="bi-upload me-2"></i>
-        Select a Burgee File
+        Select a burgee file
       </label>
     </div>
 
@@ -37,7 +37,7 @@
 
         <label class="btn btn-outline-primary" for="{{formId}}-trophy-files">
           <i class="bi-upload me-2"></i>
-          Select Photos to upload
+          Select photos to upload
         </label>
       </div>
 
@@ -45,14 +45,6 @@
         <ng-cotnainer [ngTemplateOutlet]="fileRow" [ngTemplateOutletContext]="{name: file.name, size: file.size}"
           *ngFor="let file of files!">
         </ng-cotnainer>
-
-        <!-- <div class="row justify-content-between" *ngFor="let file of files!">
-          <span class="col-auto">
-            <i class="bi-image me-2"></i>
-            {{file.name}}
-          </span>
-          <span class="col-auto">{{file.size / 1000000 | number:'1.0-1'}} Mb</span>
-        </div> -->
       </div>
     </div>
   </ng-container>

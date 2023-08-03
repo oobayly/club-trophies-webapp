@@ -1,7 +1,7 @@
 <form class="" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
   <!-- Club name -->
   <div class="mb-3">
-    <label class="form-label" for="{{formId}}-name">Club Name</label>
+    <label class="form-label" for="{{formId}}-name">Club name</label>
     <input type="text" class="form-control" id="{{formId}}-name" placeholder="eg: Lough Derg Yacht Club"
       formControlName="name" required maxlength="64">
     <div class="invalid-feedback">Please provide a valid club name.</div>
@@ -10,7 +10,7 @@
   <div class="row">
     <!-- Short name -->
     <div class="col mb-3">
-      <label class="form-label" for="{{formId}}-shortName">Short Name</label>
+      <label class="form-label" for="{{formId}}-shortName">Short name</label>
       <input type="text" class="form-control" id="{{formId}}-shortName" placeholder="eg: LDYC"
         formControlName="shortName" maxlength="16">
     </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { combineLatest, filter, first, map, merge, mergeMap, Observable, of, shareReplay, startWith, Subscription, switchMap, tap } from "rxjs";
+import { combineLatest, filter, first, map, mergeMap, Observable, of, shareReplay, startWith, Subscription, switchMap, tap } from "rxjs";
 import { isAdmin } from "./core/rxjs/auth";
 import { environment } from "src/environments/environment";
 import { ModalService } from "./core/services/modal.service";
