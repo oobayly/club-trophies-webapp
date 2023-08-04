@@ -224,7 +224,6 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
 let ts: number | undefined;
 
 function benchmark(title: string, ...args: any[]): void {
-  const start = ts;
   const now = Date.now();
 
   if (ts === undefined) {
