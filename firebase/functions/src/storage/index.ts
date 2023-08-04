@@ -1,14 +1,13 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as fs from "fs/promises";
-import * as mkdirp from "mkdirp";
+import { mkdirp } from "mkdirp";
 import * as os from "os";
 import * as path from "path";
 import { spawn } from "child-process-promise";
 import { v4 as uuid } from "uuid";
 import { Club, Collections, TrophyFile } from "../models";
-import { getDownloadURL } from "../helpers";
-
+import { getDownloadURL } from "firebase-admin/storage";
 
 const storageFunctions = functions.region("europe-west2").storage;
 const ThumbSize = 300;
@@ -115,11 +114,11 @@ const isTrophyFile = (object: functions.storage.ObjectMetadata): TrophyFileIds |
 
 const updateClubLogo = async (ids: LogoFileIds, object: functions.storage.ObjectMetadata): Promise<void> => {
   const { clubId, logoId } = ids;
-  functions.logger.debug(clubId, logoId);
   const db = admin.firestore();
   const batch = db.batch();
   const clubRef = db.collection(Collections.Clubs).doc(clubId);
-  const logo = await getDownloadURL(object);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const logo = await getDownloadURL(admin.storage().bucket(object.bucket).file(object.name!));
   const logoFiles = await admin.storage().bucket().getFiles({
     prefix: `${clubRef.path}/logos`,
   });

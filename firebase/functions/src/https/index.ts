@@ -2,8 +2,8 @@ import * as cors from "cors";
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as admin from "firebase-admin";
+import { getDownloadURL } from "firebase-admin/storage";
 import * as functions from "firebase-functions";
-import { getDownloadURL } from "../helpers";
 
 const app = express();
 const httpsFunctions = functions.region("europe-west2").https;
