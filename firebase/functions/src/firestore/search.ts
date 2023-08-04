@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { logger } from "firebase-functions";
 import { Club, Collections, Search, SearchClubInfo, SearchResult, SearchResultList, SearchTrophyInfo, Trophy, Winner } from "../models"
 
 
@@ -166,9 +167,13 @@ const batchSearchResults = (batch: admin.firestore.WriteBatch, parent: admin.fir
 }
 
 export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<void> => {
+  benchmark("");
   const winners = await getWinners(doc.data() as Search);
+  benchmark("getWinners()", winners.length);
   const search = doc.data() as Search;
+  benchmark("doc.data() as Search", search);
   const clubs = await getSearchClubInfo(search.uid, winners);
+  benchmark("getSearchClubInfo", clubs.length);
   const expireAfter = new Date(Date.now() + 86400000); // Expire after 1 day
 
   const resultFields: (keyof SearchResult)[] = ["year", "sail", "helm", "crew", "owner", "name", "boatName", "club"];
@@ -199,6 +204,7 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
       return accum;
     }, [] as SearchResult[])
     ;
+  benchmark("Compiling results", results.length);
 
   // Batch up all our writes as there may be multiple pages
   const batch = doc.ref.firestore.batch();
@@ -208,8 +214,25 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
     clubs,
     count: winners.length,
   });
-
+  benchmark("Add search to batch");
   batchSearchResults(batch, doc.ref, results);
-
+  benchmark("Add results to batch");
   await batch.commit();
+  benchmark("batch.commit()");
+}
+
+let ts: number | undefined;
+
+function benchmark(title: string, ...args: any[]): void {
+  const start = ts;
+  const now = Date.now();
+
+  if (ts === undefined) {
+    logger.debug("Starting benchmark");
+  } else {
+    const interval = now - ts;
+    logger.debug(`Ran ${title} in ${interval}ms`, args);
+  }
+
+  ts = Date.now();
 }
