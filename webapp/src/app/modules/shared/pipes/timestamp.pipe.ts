@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { TimestampType } from "@models";
+import { TimestampLike } from "@models";
 
 @Pipe({
   name: "timestamp",
@@ -7,9 +7,9 @@ import { TimestampType } from "@models";
 })
 export class TimestampPipe implements PipeTransform {
 
-  transform(value: TimestampType | null | undefined, includeTime?: boolean): string;
-  transform(value: TimestampType | null | undefined, format?: Intl.DateTimeFormatOptions): string;
-  transform(value: TimestampType | null | undefined, format?: boolean | Intl.DateTimeFormatOptions): string {
+  transform(value: TimestampLike | null | undefined, includeTime?: boolean): string;
+  transform(value: TimestampLike | null | undefined, format?: Intl.DateTimeFormatOptions): string;
+  transform(value: TimestampLike | null | undefined, format?: boolean | Intl.DateTimeFormatOptions): string {
     if (value && "toDate" in value) {
       if (!format) {
         format = false;

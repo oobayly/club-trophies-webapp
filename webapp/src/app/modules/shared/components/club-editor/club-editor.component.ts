@@ -103,7 +103,6 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
 
       await doc.set({
         ...club,
-        logo: null,
         admins: [uid],
         ...createdTimestamp(),
       });

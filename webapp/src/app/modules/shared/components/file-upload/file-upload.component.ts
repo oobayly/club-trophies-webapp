@@ -231,7 +231,6 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
 
     doc.set({
       contentType: item.file.type,
-      description: "",
       name: "name" in item.file ? item.file.name : uuid(),
       ...createdTimestamp(),
       url: null,

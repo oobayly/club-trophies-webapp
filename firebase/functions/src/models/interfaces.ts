@@ -1,11 +1,11 @@
-export interface DocumentRef {
+export interface DocumentRefLike {
   id: string;
   path: string;
 }
 
 export interface HasExpires {
   /** Indicates the TTL for when the value should expire. */
-  expireAfter?: TimestampType;
+  expireAfter?: TimestampLike;
 }
 
 export interface HasPublic {
@@ -31,13 +31,13 @@ interface FbTimestamp {
   toMillis: () => number;
 }
 
-export type TimestampType = FbTimestamp | object;
+export type TimestampLike = FbTimestamp | object;
 
 export interface HasTimestamp {
   /** The timestamp of when the record was created. */
-  created: TimestampType;
+  created: TimestampLike;
   /** The timestamp of when the record was last modified. */
-  modified: TimestampType | null;
+  modified: TimestampLike | null;
 }
 
 export interface UploadInfo {

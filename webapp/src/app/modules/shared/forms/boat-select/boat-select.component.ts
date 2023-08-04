@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
 import { AbstractControl, ControlValueAccessor, FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from "@angular/forms";
 import { uuid } from "@helpers";
-import { Boat, BoatReference } from "@models";
-import { Observable, BehaviorSubject, Subject, Subscription, switchMap, combineLatest, distinctUntilChanged, of, map, firstValueFrom } from "rxjs";
+import { Boat } from "@models";
+import { Observable, BehaviorSubject, Subject, Subscription, switchMap, combineLatest, distinctUntilChanged, of, map } from "rxjs";
 import { DbRecord } from "src/app/core/interfaces/DbRecord";
 import { DbService } from "src/app/core/services/db.service";
 
@@ -120,22 +120,6 @@ export class BoatSelectComponent implements OnChanges, OnDestroy, ControlValueAc
         return { all, mine, others };
       }),
     );
-  }
-
-  public async getBoatName(ref: string): Promise<BoatReference> {
-    const resp = await firstValueFrom(this.boats$);
-    const fn = <T extends DbRecord>(x: T, _index: number, _arr: T[]): boolean => x.ref === ref;
-
-    const found = (
-      resp.all.find(fn)
-      || resp.mine.find(fn)
-      || resp.others.find(fn)
-    );
-
-    return {
-      boatName: found?.data.name || null,
-      boatRef: found ? this.db.firestore.doc(found.ref).ref : null,
-    };
   }
 
   // ========================

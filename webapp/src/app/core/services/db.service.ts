@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChangeAction, QueryFn } from "@angular/fire/compat/firestore";
-import { Boat, BoatReference, Club, ClubLogoRequest, Collections, DocumentRef, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
+import { Boat, BoatReference, Club, ClubLogoRequest, Collections, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { Observable, map, firstValueFrom, combineLatest, switchMap, of, filter } from "rxjs";
@@ -91,25 +91,23 @@ export class DbService {
     );
   }
 
-  public async addBoatRef<T extends { boatRef: string | null }>(value: T): Promise<T & BoatReference> {
-    const { boatRef: refString } = value;
-    let boatName: string | null = null;
-    let boatRef: DocumentRef | null = null;
+  /** Add the boat reference properties to the current object, returning a new object */
+  public async withBoatRef<T extends { boatRef?: string | null }>(value: T): Promise<Omit<T, "boatRef"> & BoatReference> {
+    const { boatRef: refString, ...result } = value;
 
     if (refString) {
       const snapshot = await firstValueFrom(this.firestore.doc<Boat>(refString).get());
 
       if (snapshot.exists) {
-        boatName = snapshot.data()!.name;
-        boatRef = snapshot.ref;
+        return {
+          ...result,
+          boatName: snapshot.data()!.name,
+          boatRef: snapshot.ref,
+        }
       }
     }
 
-    return {
-      ...value,
-      boatName,
-      boatRef,
-    };
+    return result;
   }
 
   // ========================
@@ -189,7 +187,7 @@ export class DbService {
   // ========================
 
   public async createSearch(value: Omit<Search, "uid">): Promise<string> {
-    const uid = (await this.auth.currentUser)?.uid || null;
+    const uid = (await this.auth.currentUser)?.uid;
 
     console.log(uid);
 

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { TimestampType } from "@models";
+import { TimestampLike } from "@models";
 
 @Pipe({
   name: "toDate",
@@ -7,7 +7,7 @@ import { TimestampType } from "@models";
 })
 export class ToDatePipe implements PipeTransform {
 
-  transform(value: TimestampType): Date | undefined {
+  transform(value: TimestampLike): Date | undefined {
     if (typeof value === "number") {
       return new Date(value);
     } else if ("toDate" in value) {

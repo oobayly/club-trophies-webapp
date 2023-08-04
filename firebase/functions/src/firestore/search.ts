@@ -53,7 +53,7 @@ const getClubTrophyIds = (clubId: string, winners: Winner[]): string[] => {
     ;
 }
 
-const getClubs = async (uid: string | null, clubIds: string[]): Promise<SearchClubInfo[]> => {
+const getClubs = async (uid: string | undefined, clubIds: string[]): Promise<SearchClubInfo[]> => {
   const list: SearchClubInfo[] = [];
 
   const snapshots = await batchRequests(
@@ -114,7 +114,7 @@ const getClubTrophies = async (info: SearchClubInfo, winners: Winner[]): Promise
   return list.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-const getSearchClubInfo = async (uid: string | null, winners: Winner[]): Promise<SearchClubInfo[]> => {
+const getSearchClubInfo = async (uid: string | undefined, winners: Winner[]): Promise<SearchClubInfo[]> => {
   const clubIds = getClubIds(winners);
   const list = await getClubs(uid, clubIds);
 

@@ -1,4 +1,4 @@
-import { DocumentRef, HasTimestamp } from "./interfaces";
+import { DocumentRefLike, HasTimestamp } from "./interfaces";
 
 export interface Boat extends HasTimestamp {
   /** A flag indicating whether the boat has been archived. */
@@ -9,7 +9,7 @@ export interface Boat extends HasTimestamp {
 
 export interface BoatReference {
   /** The ID of the current boat for which the record is associated. */
-  boatRef: DocumentRef | null;
+  boatRef?: DocumentRefLike;
   /** The name of the current boat for which the record is associated. */
-  boatName: string | null;
+  boatName?: string;
 }

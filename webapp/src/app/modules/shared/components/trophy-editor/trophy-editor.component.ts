@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { BehaviorSubject, Subject, Subscription } from "rxjs";
-import { Trophy } from "@models"
+import { Trophy, removeEmptyStrings } from "@models"
 import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
@@ -114,13 +114,16 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
   public async saveTrophy(): Promise<string> {
     const isNew = !this.trophyId;
     const doc = this.db.getTrophyDoc(this.clubId, this.trophyId);
-    const trophy = await this.db.addBoatRef({
-      ...this.form.getRawValue(),
+    const trophy = await this.db.withBoatRef({
+      ...this.form.value,
+      name: this.form.value.name!, // Name is a required property
+      public: !!this.form.value.public,
       parent: {
         clubId: this.clubId,
       },
-      eventId: null,
     });
+
+    removeEmptyStrings(trophy, ["conditions", "details", "donated", "donor", "page"]);
 
     if (isNew) {
       await this.db.addRecord(doc, trophy);

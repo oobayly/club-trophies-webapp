@@ -2,7 +2,7 @@ import express = require("express");
 import * as admin from "firebase-admin";
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
-import { Boat, Collections, Trophy, Winner } from "../models";
+import { Boat, Collections, Trophy, Winner, removeEmptyStrings } from "../models";
 import { ClubId, legacyClasses, legacyTrophies, legacyWinners } from "./legacy";
 
 const httpsFunctions = functions.region("europe-west2").https;
@@ -64,8 +64,9 @@ const loadTrophies = async (): Promise<void> => {
       boatRef: db.doc(boatRef),
       boatName,
       parent: { clubId: ClubId },
-      eventId: null,
     };
+
+    removeEmptyStrings(trophy, ["conditions", "details", "donated", "donor", "name", "page"]);
 
     console.log(`Trophy ${i + 1} of ${legacyTrophies.length} : ${item.fldName}`);
 
@@ -116,6 +117,8 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
         created: new Date(item.fldCreated),
         modified: item.fldModified ? new Date(item.fldModified) : null,
       };
+
+      removeEmptyStrings(winner, ["club", "crew", "helm", "name", "notes", "owner", "sail"]);
 
       batch.set(winnerDoc, winner);
     });

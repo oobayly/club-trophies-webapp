@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { HasTimestamp, TimestampType } from "@models";
+import { HasTimestamp, TimestampLike } from "@models";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { DbRecord } from "../interfaces/DbRecord";
@@ -12,7 +12,7 @@ export const truthy = (value: any): boolean => {
   return !!value;
 }
 
-export const compareTimestamps = (a: TimestampType | null, b: TimestampType | null): number => {
+export const compareTimestamps = (a: TimestampLike | null, b: TimestampLike | null): number => {
   if (a === null) {
     return -1;
   } else if (b === null) {

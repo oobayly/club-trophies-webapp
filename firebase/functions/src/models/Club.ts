@@ -4,7 +4,7 @@ export interface Club extends HasPublic, HasTimestamp {
   /** The list of uids that have admin access. */
   admins: string[];
   /** The URL to the club logo image. */
-  logo: string | null;
+  logo?: string;
   /** The 3-character ISO 3166 country code for the location of the club. */
   country: string;
   /** The full name of the club. */

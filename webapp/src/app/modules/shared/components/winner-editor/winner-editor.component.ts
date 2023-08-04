@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subject, BehaviorSubject, Subscription } from "rxjs";
-import { Winner } from "@models";
+import { Winner, removeEmptyStrings } from "@models";
 import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
@@ -128,13 +128,16 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
   public async saveWinner(): Promise<string> {
     const isNew = !this.winnerId;
     const doc = this.db.getWinnerDoc(this.clubId, this.trophyId, this.winnerId);
-    const winner = await this.db.addBoatRef({
-      ...this.form.getRawValue(),
+    const winner = await this.db.withBoatRef({
+      ...this.form.value,
+      year: this.form.value.year!, // This is required
       parent: {
         clubId: this.clubId,
         trophyId: this.trophyId,
       },
     });
+
+    removeEmptyStrings(winner, ["club", "crew", "helm", "name", "notes", "owner", "sail"]);
 
     if (isNew) {
       await this.db.addRecord(doc, winner);
