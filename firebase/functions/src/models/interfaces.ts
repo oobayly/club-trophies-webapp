@@ -37,7 +37,7 @@ export interface HasTimestamp {
   /** The timestamp of when the record was created. */
   created: TimestampLike;
   /** The timestamp of when the record was last modified. */
-  modified: TimestampLike | null;
+  modified?: TimestampLike;
 }
 
 export interface UploadInfo {

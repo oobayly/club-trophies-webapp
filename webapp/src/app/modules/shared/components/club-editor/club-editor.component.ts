@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { Club } from "@models";
 import { getCountries } from "src/app/core/helpers/i18n";
-import { createdTimestamp, modifiedTimestamp, uuid } from "src/app/core/helpers";
+import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 
 interface ClubFormData {
@@ -94,26 +94,19 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
   }
 
   private async saveClub(): Promise<string> {
-    const isNew = !this.clubId;
-    const doc = this.db.getClubDoc(this.clubId || undefined);
     const club = this.form.getRawValue();
 
-    if (isNew) {
-      const uid = (await this.auth.currentUser)!.uid;
+    if (this.clubId) {
+      const docRef = this.db.getClubDoc(this.clubId);
 
-      await doc.set({
-        ...club,
-        admins: [uid],
-        ...createdTimestamp(),
-      });
+      await this.db.updateRecord(docRef, club);
+
+      return docRef.ref.id;
     } else {
-      await doc.update({
+      return await this.db.addClub({
         ...club,
-        ...modifiedTimestamp(),
       });
     }
-
-    return doc.ref.id;
   }
 
   // ========================

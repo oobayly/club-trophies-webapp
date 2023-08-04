@@ -25,8 +25,11 @@ const loadBoats = async (): Promise<void> => {
       archived: false,
       name: item.fldName,
       created: new Date(item.fldCreated),
-      modified: null,
     };
+
+    if (item.fldModified) {
+      boat.modified = new Date(item.fldModified);
+    }
 
     batch.set(doc, boat);
 
@@ -60,11 +63,14 @@ const loadTrophies = async (): Promise<void> => {
       page: item.fldRedBookPage ? `${item.fldRedBookPage}` : "",
       public: true,
       created: new Date(item.fldCreated),
-      modified: item.fldModified ? new Date(item.fldModified) : null,
       boatRef: db.doc(boatRef),
       boatName,
       parent: { clubId: ClubId },
     };
+
+    if (item.fldModified) {
+      trophy.modified = new Date(item.fldModified);
+    }
 
     removeEmptyStrings(trophy, ["conditions", "details", "donated", "donor", "name", "page"]);
 
@@ -115,8 +121,11 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
         owner: item.fldOwner,
         year: item.fldYear,
         created: new Date(item.fldCreated),
-        modified: item.fldModified ? new Date(item.fldModified) : null,
       };
+
+      if (item.fldModified) {
+        winner.modified = new Date(item.fldModified);
+      }
 
       removeEmptyStrings(winner, ["club", "crew", "helm", "name", "notes", "owner", "sail"]);
 

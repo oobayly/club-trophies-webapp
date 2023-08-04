@@ -34,7 +34,6 @@ export class DbService {
     await doc.set({
       ...value,
       created: firebase.firestore.Timestamp.now(),
-      modified: null,
     } as T);
 
     return doc.ref.id;
@@ -188,23 +187,20 @@ export class DbService {
 
   public async createSearch(value: Omit<Search, "uid">): Promise<string> {
     const uid = (await this.auth.currentUser)?.uid;
+    const docRef = this.firestore.collection<Search>(Collections.Searches).doc();
 
-    console.log(uid);
-
-    const doc = this.firestore.collection<Search>(Collections.Searches).doc();
-
-    await doc.set({
+    await docRef.set({
       ...value,
       uid,
     });
 
-    return doc.ref.id;
+    return docRef.ref.id;
   }
 
   public getSearchResults(id: string): Observable<SearchWithResults> {
-    const doc = this.firestore.collection<Search>(Collections.Searches).doc(id);
+    const docRef = this.firestore.collection<Search>(Collections.Searches).doc(id);
 
-    return doc.snapshotChanges().pipe(
+    return docRef.snapshotChanges().pipe(
       map((snapshot) => {
         // Check here if the search exits and throw so we don't try getting the result pagess
         if (!snapshot.payload.exists) {
@@ -219,7 +215,7 @@ export class DbService {
       switchMap((search) => {
         return combineLatest([
           of(search),
-          doc.collection<SearchResultList>(Collections.SearchResults).snapshotChanges(),
+          docRef.collection<SearchResultList>(Collections.SearchResults).snapshotChanges(),
         ]);
       }),
       // And wait until we have at least one page

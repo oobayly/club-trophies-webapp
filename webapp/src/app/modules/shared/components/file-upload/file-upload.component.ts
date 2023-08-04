@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { HttpClient, HttpEvent, HttpEventType } from "@angular/common/http";
-import { createdTimestamp, uuid } from "@helpers";
+import { uuid } from "@helpers";
 import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, finalize, first, interval, last, map, mergeMap, of, startWith, switchMap, take, tap } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
@@ -180,16 +180,15 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   private getLogoFileObservable(item: QueueItem): Observable<string> {
     const { clubId } = this;
 
-    const doc = this.db.getClubLogoDoc(clubId);
-    const fileId = doc.ref.id;
-    const snapshot = doc.snapshotChanges().pipe(
+    const docRef = this.db.getClubLogoDoc(clubId);
+    const fileId = docRef.ref.id;
+    const snapshot = docRef.snapshotChanges().pipe(
       map((item) => item.payload.data()?.uploadInfo),
       filterNotNull(),
       first(),
     );
 
-    doc.set({
-      ...createdTimestamp(),
+    this.db.addRecord(docRef, {
       expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
     }).then();
 
@@ -221,18 +220,17 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       throw new Error("Cannot upload trophy file without trophyId");
     }
 
-    const doc = this.db.getFileDoc(clubId, trophyId);
-    const fileId = doc.ref.id;
-    const snapshot = doc.snapshotChanges().pipe(
+    const docRef = this.db.getFileDoc(clubId, trophyId);
+    const fileId = docRef.ref.id;
+    const snapshot = docRef.snapshotChanges().pipe(
       map((item) => item.payload.data()?.uploadInfo),
       filterNotNull(),
       first(),
     );
 
-    doc.set({
+    this.db.addRecord(docRef, {
       contentType: item.file.type,
       name: "name" in item.file ? item.file.name : uuid(),
-      ...createdTimestamp(),
       url: null,
       thumb: null,
       parent: {

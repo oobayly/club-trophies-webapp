@@ -26,13 +26,6 @@ export const compareTimestamps = (a: TimestampLike | null, b: TimestampLike | nu
   return 0;
 }
 
-export const createdTimestamp = (): HasTimestamp => {
-  return {
-    created: firebase.firestore.FieldValue.serverTimestamp(),
-    modified: null,
-  };
-}
-
 function identifyUsingTimestamp(_index: number, item: DbRecord<HasTimestamp>): string;
 function identifyUsingTimestamp(_index: number, item: HasTimestamp, id?: string): string
 function identifyUsingTimestamp(_index: number, item: DbRecord<HasTimestamp> | HasTimestamp, id?: string): string {
@@ -48,10 +41,6 @@ function identifyUsingTimestamp(_index: number, item: DbRecord<HasTimestamp> | H
   const millis = "toMillis" in timestamp ? timestamp.toMillis() : 0; // ms is good enough resolution to identify if the record has changed
 
   return `${id}${millis}`;
-}
-
-export const modifiedTimestamp = (): Pick<HasTimestamp, "modified"> => {
-  return { modified: firebase.firestore.FieldValue.serverTimestamp() };
 }
 
 export const uuid = (): string => v4();
