@@ -1,7 +1,5 @@
 import { v4 } from "uuid";
 import { HasTimestamp, TimestampLike } from "@models";
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
 import { DbRecord } from "../interfaces/DbRecord";
 
 export const truthy = (value: any): boolean => {
