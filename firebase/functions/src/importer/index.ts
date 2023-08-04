@@ -121,7 +121,7 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
     });
 }
 
-// http://127.0.0.1:5001/club-trophies/us-central1/importer
+// http://127.0.0.1:5001/club-trophies/europe-west2/importer
 const app = express();
 
 app.get("/modify", async (_req, res) => {
