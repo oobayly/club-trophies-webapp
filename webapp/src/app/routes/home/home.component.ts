@@ -9,7 +9,7 @@ import { DbService } from "src/app/core/services/db.service";
 export class HomeComponent {
 
   constructor(
-    private db: DbService,
+    private readonly db: DbService,
   ) {
     // window.setTimeout(() => {
     //   db.createSearch({

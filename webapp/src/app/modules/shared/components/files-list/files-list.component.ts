@@ -1,13 +1,14 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { TrophyBaseComponent } from "../trophy-base-component";
 import { BehaviorSubject, Observable, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Collections, TrophyFile } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
 import { compareTimestamps, uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
+import { Auth } from "@angular/fire/auth";
+import { collection, collectionSnapshots, deleteDoc } from "@angular/fire/firestore";
 
 @Component({
   selector: "app-files-list",
@@ -52,7 +53,7 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
   // ========================
 
   constructor(
-    auth: AngularFireAuth,
+    auth: Auth,
     db: DbService,
     private readonly modal: ModalService,
   ) {
@@ -75,11 +76,11 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
   // ========================
 
   private getFilesObservable(): Observable<DbRecord<TrophyFile>[]> {
-    return this.getTrophyRefObservalble().pipe(
+    return this.getTrophyRefObservable().pipe(
       filterNotNull(),
-      switchMap((ref) => ref.collection<TrophyFile>(Collections.Files).snapshotChanges()),
+      switchMap((ref) => collectionSnapshots(collection(ref, Collections.Files))), //  ref.collection<TrophyFile>(Collections.Files).snapshotChanges()),
       map((snapshot) => {
-        return toRecord(snapshot)
+        return (toRecord(snapshot) as DbRecord<TrophyFile>[]) // No f!$@ing generics
           .filter((x) => x.data.url && !x.data.uploadInfo) // We don't want to see any interim uploads
           .sort((a, b) => compareTimestamps(a.data.created, b.data.created))
           ;
@@ -123,9 +124,10 @@ export class FilesListComponent extends TrophyBaseComponent implements OnChanges
       return;
     }
 
-    const ref = (await firstValueFrom(this.getTrophyRefObservalble()))?.collection<TrophyFile>(Collections.Files).doc(item.id);
+    const { clubId, trophyId } = item.data.parent;
+    const docRef = this.db.getFileDoc(clubId, trophyId, item.id);
 
-    await ref?.delete();
+    await deleteDoc(docRef);
   }
 
   public onDragEnter(e: DragEvent): void {

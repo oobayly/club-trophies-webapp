@@ -1,13 +1,41 @@
 import { Injectable } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChangeAction, QueryFn } from "@angular/fire/compat/firestore";
+import { Auth } from "@angular/fire/auth";
+import { CollectionReference, DocumentReference, DocumentSnapshot, Firestore, Query, UpdateData, addDoc, collection, collectionGroup, collectionSnapshots, docSnapshots, getDoc, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
 import { Boat, BoatReference, Club, ClubLogoRequest, Collections, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
-import { Observable, map, firstValueFrom, combineLatest, switchMap, of, filter } from "rxjs";
+import { Observable, map, combineLatest, switchMap, of, filter } from "rxjs";
 import { DbRecord, toRecord } from "../interfaces/DbRecord";
+import { doc } from "firebase/firestore";
 
 type TimestampProps = "created" | "modified";
+
+export function typedCollection<T>(firstore: Firestore, path: string[]): CollectionReference<T>;
+export function typedCollection<T>(firstore: Firestore, path: string, ...pathSegments: string[]): CollectionReference<T>;
+export function typedCollection<T>(firstore: Firestore, path: string | string[], ...pathSegments: string[]): CollectionReference<T> {
+  if (Array.isArray(path)) {
+    pathSegments = path.slice(1);
+    path = path[0];
+  }
+
+  return collection(firstore, path, ...pathSegments) as CollectionReference<T>;
+}
+
+const getClubsPath = (): string[] => [Collections.Clubs];
+
+const getLogosPath = (clubId: string): string[] => [...getClubsPath(), clubId, Collections.Logos];
+
+const getBoatsPath = (clubId?: string): string[] => {
+  if (clubId) {
+    return [...getClubsPath(), clubId, Collections.Boats];
+  } else {
+    return [Collections.Boats];
+  }
+}
+
+const getTrophiesPath = (clubId: string): string[] => [...getClubsPath(), clubId, Collections.Trophies];
+
+const getTrophyFilesPath = (clubid: string, trophyId: string): string[] => [...getTrophiesPath(clubid), trophyId, Collections.Files];
+
+const getWinnersPath = (clubid: string, trophyId: string): string[] => [...getTrophiesPath(clubid), trophyId, Collections.Winners];
 
 @Injectable({
   providedIn: "root",
@@ -22,30 +50,30 @@ export class DbService {
   // ========================
 
   constructor(
-    public readonly auth: AngularFireAuth,
-    public readonly firestore: AngularFirestore,
+    public readonly auth: Auth,
+    public readonly firestore: Firestore,
   ) { }
 
   // ========================
   // Methods
   // ========================
 
-  public async addRecord<T extends HasTimestamp>(doc: AngularFirestoreDocument<T>, value: Omit<T, TimestampProps>): Promise<string> {
-    await doc.set({
+  public async addRecord<T extends HasTimestamp>(collection: CollectionReference<T>, value: Omit<T, TimestampProps>): Promise<DocumentReference<T>> {
+    const docRef = await addDoc(collection, {
       ...value,
-      created: firebase.firestore.Timestamp.now(),
+      created: serverTimestamp(),
     } as T);
 
-    return doc.ref.id;
+    return docRef;
   }
 
-  public async updateRecord<T extends HasTimestamp>(doc: AngularFirestoreDocument<T>, value: Partial<Omit<T, TimestampProps>>): Promise<string> {
-    await doc.update({
+  public async updateRecord<T extends HasTimestamp>(doc: DocumentReference<T>, value: Partial<Omit<T, TimestampProps>>): Promise<string> {
+    await updateDoc(doc, {
       ...value,
-      modified: firebase.firestore.Timestamp.now(),
-    } as T);
+      modified: serverTimestamp(),
+    } as UpdateData<T>);
 
-    return doc.ref.id;
+    return doc.id;
   }
 
   // ========================
@@ -53,40 +81,18 @@ export class DbService {
   // ========================
 
   public getAllBoats(): Observable<DbRecord<Boat>[]> {
-    return this.firestore.collectionGroup<Boat>(Collections.Boats)
-      .snapshotChanges()
-      .pipe(
-        map((snapshot) => {
-          return toRecord(snapshot)
-            .sort((a, b) => a.data.name.localeCompare(b.data.name))
-            ;
-        }),
-      );
+    const query = collectionGroup(this.firestore, Collections.Boats) as Query<Boat>;
+
+    return collectionSnapshots(query).pipe(
+      map((x) => toRecord(x)),
+    );
   }
 
   public getBoats(clubId?: string): Observable<DbRecord<Boat>[]> {
-    let resp$: Observable<DocumentChangeAction<Boat>[]>;
+    const query = typedCollection<Boat>(this.firestore, getBoatsPath(clubId));
 
-    if (!clubId) {
-      // All boats
-      resp$ = this.firestore
-        .collection<Boat>(Collections.Boats)
-        .snapshotChanges()
-    } else {
-      // For the specified club
-      resp$ = this.firestore
-        .collection(Collections.Clubs).doc(clubId)
-        .collection<Boat>(Collections.Boats)
-        .snapshotChanges()
-        ;
-    }
-
-    return resp$.pipe(
-      map((snapshot) => {
-        return toRecord(snapshot)
-          .sort((a, b) => a.data.name.localeCompare(b.data.name))
-          ;
-      }),
+    return collectionSnapshots(query).pipe(
+      map((x) => toRecord(x).sort((a, b) => a.data.name.localeCompare(b.data.name))),
     );
   }
 
@@ -95,9 +101,9 @@ export class DbService {
     const { boatRef: refString, ...result } = value;
 
     if (refString) {
-      const snapshot = await firstValueFrom(this.firestore.doc<Boat>(refString).get());
+      const snapshot = (await getDoc(doc(this.firestore, refString))) as DocumentSnapshot<Boat>;
 
-      if (snapshot.exists) {
+      if (snapshot.exists()) {
         return {
           ...result,
           boatName: snapshot.data()!.name,
@@ -113,117 +119,116 @@ export class DbService {
   // Clubs
   // ========================
 
-  public getClubsCollection(queryFn?: QueryFn): AngularFirestoreCollection<Club> {
-    return this.firestore.collection<Club>(Collections.Clubs, queryFn);
+  public getClubsCollection(): CollectionReference<Club> {
+    return typedCollection<Club>(this.firestore, getClubsPath());
   }
 
-  public getClubDoc(clubId?: string | null): AngularFirestoreDocument<Club> {
-    return this.getClubsCollection().doc(clubId || undefined);
+  public getClubDoc(clubId: string): DocumentReference<Club> {
+    return doc(this.getClubsCollection(), clubId);
   };
 
-  public getClubLogoDoc(clubId: string): AngularFirestoreDocument<ClubLogoRequest> {
-    return this.getClubDoc(clubId).collection<ClubLogoRequest>(Collections.Logos).doc();
+  public getClubLogosCollection(clubId: string): CollectionReference<ClubLogoRequest> {
+    return typedCollection<Club>(this.firestore, getLogosPath(clubId));
   }
 
-  public async addClub(club: Omit<Club, "admins" | TimestampProps>, admins?: string[]): Promise<string> {
-    if (!admins?.length) {
-      const uid = (await this.auth.currentUser)?.uid;
+  public async addClub(club: Omit<Club, "admins" | TimestampProps>): Promise<string> {
+    const uid = this.auth.currentUser?.uid;
 
-      if (!uid) {
-        throw "Not signed in.";
-      }
-
-      admins = [uid];
+    if (!uid) {
+      throw "Not signed in.";
     }
 
-    return await this.addRecord(
-      this.getClubDoc(),
+    const docRef = await this.addRecord(
+      this.getClubsCollection(),
       {
         ...club,
-        admins,
+        admins: [uid],
       },
-    )
+    );
+
+    return docRef.id;
   }
 
   // ========================
   // Trophies
   // ========================
 
-  public getTrophyCollection(clubId: string, queryFn?: QueryFn): AngularFirestoreCollection<Trophy> {
-    return this.getClubDoc(clubId).collection<Trophy>(Collections.Trophies, queryFn);
+  public getTrophyCollection(clubId: string): CollectionReference<Trophy> {
+    return typedCollection(this.firestore, getTrophiesPath(clubId));
   }
 
-  public getTrophyDoc(clubId: string, trophyId?: string | null): AngularFirestoreDocument<Trophy> {
-    return this.getTrophyCollection(clubId).doc(trophyId || undefined);
+  public getTrophyDoc(clubId: string, trophyId?: string): DocumentReference<Trophy> {
+    return doc(this.getTrophyCollection(clubId), trophyId);
   };
 
   // ========================
   // Files
   // ========================
 
-  public getFilesCollection(clubId: string, trophyId: string, queryFn?: QueryFn): AngularFirestoreCollection<TrophyFile> {
-    return this.getTrophyDoc(clubId, trophyId).collection<TrophyFile>(Collections.Files, queryFn);
+  public getFilesCollection(clubId: string, trophyId: string): CollectionReference<TrophyFile> {
+    return typedCollection(this.firestore, getTrophyFilesPath(clubId, trophyId));
   }
 
-  public getFileDoc(clubId: string, trophyId: string, fileId?: string | null): AngularFirestoreDocument<TrophyFile> {
-    return this.getFilesCollection(clubId, trophyId).doc(fileId || undefined);
+  public getFileDoc(clubId: string, trophyId: string, fileId?: string): DocumentReference<TrophyFile> {
+    return doc(this.getFilesCollection(clubId, trophyId), fileId);
   };
 
   // ========================
   // Winners
   // ========================
 
-  public getWinnersCollection(clubId: string, trophyId: string, queryFn?: QueryFn): AngularFirestoreCollection<Winner> {
-    return this.getTrophyDoc(clubId, trophyId).collection<Winner>(Collections.Winners, queryFn);
+  public getWinnersCollection(clubId: string, trophyId: string): CollectionReference<Winner> {
+    return typedCollection(this.firestore, getWinnersPath(clubId, trophyId));
   }
 
-  public getWinnerDoc(clubId: string, trophyId: string, winnerId?: string | null): AngularFirestoreDocument<Winner> {
-    return this.getWinnersCollection(clubId, trophyId).doc(winnerId || undefined);
+  public getWinnerDoc(clubId: string, trophyId: string, winnerId?: string): DocumentReference<Winner> {
+    return doc(this.getWinnersCollection(clubId, trophyId), winnerId);
   };
 
   // ========================
   // Searching
   // ========================
 
-  public async createSearch(value: Omit<Search, "uid">): Promise<string> {
-    const uid = (await this.auth.currentUser)?.uid;
-    const docRef = this.firestore.collection<Search>(Collections.Searches).doc();
+  public getSearchDocument(searchId?: string): DocumentReference<Search> {
+    const coll = typedCollection<Search>(this.firestore, Collections.Searches);
 
-    await docRef.set({
+    return doc(coll, searchId);
+  }
+
+  public async createSearch(value: Omit<Search, "uid">): Promise<string> {
+    const uid = this.auth.currentUser?.uid;
+    const docRef = this.getSearchDocument();
+
+    await setDoc(docRef, {
       ...value,
-      uid,
+      ...uid ? { uid } : undefined,
     });
 
-    return docRef.ref.id;
+    return docRef.id;
   }
 
   public getSearchResults(id: string): Observable<SearchWithResults> {
-    const docRef = this.firestore.collection<Search>(Collections.Searches).doc(id);
+    const docRef = this.getSearchDocument(id);
 
-    return docRef.snapshotChanges().pipe(
-      map((snapshot) => {
-        // Check here if the search exits and throw so we don't try getting the result pagess
-        if (!snapshot.payload.exists) {
-          throw new Error("Search not found");
-        }
-
-        return snapshot.payload.data();
-      }),
+    return docSnapshots(docRef).pipe(
+      map((x) => x.data()),
       // Wait until the clubs property is populated
-      filter((x) => !!x.clubs),
+      filter((x): x is Search => !!x?.clubs),
       // Once we have a populates search, get the pages
       switchMap((search) => {
+        const resultsColl = collection(docRef, Collections.SearchResults) as CollectionReference<SearchResultList>;
+
         return combineLatest([
           of(search),
-          docRef.collection<SearchResultList>(Collections.SearchResults).snapshotChanges(),
-        ]);
+          collectionSnapshots(resultsColl),
+        ])
       }),
       // And wait until we have at least one page
       filter(([_, pages]) => !!pages.length),
       // And combine into a valid search result
       map(([search, pages]) => {
         const results = pages.reduce((accum, item) => {
-          accum.push(...item.payload.doc.data().results);
+          accum.push(...item.data().results);
 
           return accum;
         }, [] as SearchResult[]);

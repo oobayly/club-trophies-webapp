@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { Auth, authState, signInWithEmailAndPassword, signOut } from "@angular/fire/auth";
 import { combineLatest, filter, first, map, mergeMap, Observable, of, shareReplay, startWith, Subscription, switchMap, tap } from "rxjs";
-import { isAdmin } from "./core/rxjs/auth";
+import { idToken, isAdmin } from "./core/rxjs/auth";
 import { environment } from "src/environments/environment";
 import { ModalService } from "./core/services/modal.service";
 import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router } from "@angular/router";
@@ -9,6 +9,7 @@ import { DbService } from "./core/services/db.service";
 import { Club } from "@models";
 import { filterNotNull } from "./core/rxjs";
 import { SwUpdate, VersionReadyEvent } from "@angular/service-worker";
+import { collectionSnapshots, query, where } from "@angular/fire/firestore";
 
 interface Ids {
   clubId: string | undefined;
@@ -39,9 +40,9 @@ export class AppComponent implements OnInit {
   // Derived Observables
   // ========================
 
-  public readonly user$ = this.auth.user;
+  public readonly user$ = authState(this.auth);
 
-  public readonly isAdmin$ = this.auth.idTokenResult.pipe(isAdmin());
+  public readonly isAdmin$ = this.user$.pipe(idToken(), isAdmin());
 
   public readonly ids$ = this.getIdsObservable();
 
@@ -54,7 +55,7 @@ export class AppComponent implements OnInit {
   // ========================
 
   constructor(
-    private readonly auth: AngularFireAuth,
+    private readonly auth: Auth,
     private readonly db: DbService,
     private readonly modal: ModalService,
     private readonly route: ActivatedRoute,
@@ -66,7 +67,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (!environment.production) {
-      this.auth.user.pipe(
+      this.user$.pipe(
         map((u) => u?.email),
       ).subscribe((email) => this.email = email || undefined);
     }
@@ -131,21 +132,21 @@ export class AppComponent implements OnInit {
   }
 
   private getMyClubsObservable(): Observable<SimpleClub[]> {
-    return this.auth.user.pipe(
+    return this.user$.pipe(
       switchMap((user) => {
         if (!user) {
           return of([]);
         }
 
-        return this.db.getClubsCollection((ref) => ref.where("admins", "array-contains", user.uid)).snapshotChanges();
+        return collectionSnapshots(query(this.db.getClubsCollection(), where("admins", "array-contains", user.uid)));
       }),
       map((items) => {
         return items
           .map((item) => {
-            const { admins, name } = item.payload.doc.data();
+            const { admins, name } = item.data();
 
             return {
-              id: item.payload.doc.id,
+              id: item.id,
               name,
               admins,
             };
@@ -216,14 +217,12 @@ export class AppComponent implements OnInit {
 
   public async onEmailClick(email: string | undefined): Promise<void> {
     if (email) {
-      const current = await this.auth.currentUser;
-
-      if (email !== current?.email) {
-        await this.auth.signInWithEmailAndPassword(email, "Password");
+      if (email !== this.auth.currentUser?.email) {
+        await signInWithEmailAndPassword(this.auth, email, "Password");
       }
 
     } else {
-      await this.auth.signOut();
+      await signOut(this.auth);
     }
   }
 

@@ -1,8 +1,9 @@
-import { distinctUntilChanged, map, OperatorFunction } from "rxjs";
+import { distinctUntilChanged, map, mergeMap, of, OperatorFunction } from "rxjs";
 import { getRoles, isInRole, isAdmin } from "../helpers/auth";
+import { getIdTokenResult, IdTokenResult, User } from "@angular/fire/auth";
 
-type OptionalIdTokenResult = firebase.default.auth.IdTokenResult | null | undefined;
-type OptionalUser = firebase.default.User | null | undefined;
+type OptionalIdTokenResult = IdTokenResult | null | undefined;
+type OptionalUser = User | null | undefined;
 
 const distinctToken = (p: OptionalIdTokenResult, c: OptionalIdTokenResult): boolean => p?.issuedAtTime === c?.issuedAtTime;
 
@@ -21,6 +22,14 @@ const getRolesFn = (): OperatorFunction<OptionalIdTokenResult, string[]> => {
       distinctUntilChanged(distinctToken),
       map(getRoles),
     );
+  };
+}
+
+const idTokenFn = (): OperatorFunction<OptionalUser, OptionalIdTokenResult> => {
+  return (source) => {
+    return source.pipe(
+      mergeMap((user) => user ? getIdTokenResult(user) : of(undefined)),
+    )
   };
 }
 
@@ -45,6 +54,7 @@ const isInRoleFn = (...roles: string[]): OperatorFunction<OptionalIdTokenResult,
 export {
   distinctUidFn as distinctUid,
   getRolesFn as getRoles,
+  idTokenFn as idToken,
   isAdminFn as isAdmin,
   isInRoleFn as isInRole,
 }

@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { HttpClient, HttpEvent, HttpEventType } from "@angular/common/http";
 import { uuid } from "@helpers";
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, finalize, first, interval, last, map, mergeMap, of, startWith, switchMap, take, tap } from "rxjs";
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, filter, finalize, first, from, interval, last, map, mergeMap, of, startWith, switchMap, take, tap } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
 import { ImageCroppedEvent, ImageCropperComponent } from "ngx-image-cropper";
 import { resizeImageFiles } from "@helpers/image-resize";
+import { docSnapshots } from "@angular/fire/firestore";
 
 export type UploadMode = "logo" | "trophy-file";
 
@@ -180,21 +181,23 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   private getLogoFileObservable(item: QueueItem): Observable<string> {
     const { clubId } = this;
 
-    const docRef = this.db.getClubLogoDoc(clubId);
-    const fileId = docRef.ref.id;
-    const snapshot = docRef.snapshotChanges().pipe(
-      map((item) => item.payload.data()?.uploadInfo),
-      filterNotNull(),
+
+    const docRef$ = from(this.db.addRecord(
+      this.db.getClubLogosCollection(clubId),
+      {
+        expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
+      },
+    ));
+
+    return docRef$.pipe(
+      switchMap((docRef) => combineLatest([docSnapshots(docRef), of(docRef.id)])),
+      map(([item, logoId]) => {
+        return { info: item.data()?.uploadInfo, logoId };
+      }),
+      filter((x) => !!x.info),
       first(),
-    );
-
-    this.db.addRecord(docRef, {
-      expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
-    }).then();
-
-    return snapshot.pipe(
-      switchMap((info) => {
-        return this.getUploadObservable(item, info.url, info.headers, fileId);
+      switchMap((x) => {
+        return this.getUploadObservable(item, x.info!.url, x.info!.headers, x.logoId);
       }),
     );
   }
@@ -220,29 +223,28 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       throw new Error("Cannot upload trophy file without trophyId");
     }
 
-    const docRef = this.db.getFileDoc(clubId, trophyId);
-    const fileId = docRef.ref.id;
-    const snapshot = docRef.snapshotChanges().pipe(
-      map((item) => item.payload.data()?.uploadInfo),
-      filterNotNull(),
-      first(),
-    );
-
-    this.db.addRecord(docRef, {
-      contentType: item.file.type,
-      name: "name" in item.file ? item.file.name : uuid(),
-      url: null,
-      thumb: null,
-      parent: {
-        clubId,
-        trophyId,
+    const docRef$ = from(this.db.addRecord(
+      this.db.getFilesCollection(clubId, trophyId),
+      {
+        contentType: item.file.type,
+        name: "name" in item.file ? item.file.name : uuid(),
+        parent: {
+          clubId,
+          trophyId,
+        },
+        expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
       },
-      expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
-    }).then();
+    ));
 
-    return snapshot.pipe(
-      switchMap((info) => {
-        return this.getUploadObservable(item, info.url, info.headers, fileId);
+    return docRef$.pipe(
+      switchMap((docRef) => combineLatest([docSnapshots(docRef), of(docRef.id)])),
+      map(([item, fileId]) => {
+        return { info: item.data()?.uploadInfo, fileId };
+      }),
+      filter((x) => !!x.info),
+      first(),
+      switchMap((x) => {
+        return this.getUploadObservable(item, x.info!.url, x.info!.headers, x.fileId);
       }),
     );
   }

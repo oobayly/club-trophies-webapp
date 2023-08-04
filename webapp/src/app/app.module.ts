@@ -1,8 +1,8 @@
 import { NgModule } from "@angular/core";
-import { AngularFireModule } from "@angular/fire/compat"
-import { AngularFireAuthModule, USE_EMULATOR as USE_AUTH_EMULATOR } from "@angular/fire/compat/auth";
-import { AngularFirestoreModule, USE_EMULATOR as USE_FIRESTORE_EMULATOR } from "@angular/fire/compat/firestore";
-import { AngularFireStorageModule, USE_EMULATOR as USE_STORAGE_EMULATOR } from "@angular/fire/compat/storage";
+import { initializeApp, provideFirebaseApp } from "@angular/fire/app"
+import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
+import { connectFirestoreEmulator, getFirestore, provideFirestore } from "@angular/fire/firestore";
+import { connectStorageEmulator, getStorage, provideStorage } from "@angular/fire/storage";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -28,10 +28,34 @@ import { HttpClientModule } from "@angular/common/http";
     FormsModule,
     ReactiveFormsModule,
     // Firebase
-    AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireAuthModule,
-    AngularFirestoreModule,
-    AngularFireStorageModule,
+    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideAuth(() => {
+      const auth = getAuth();
+
+      if (environment.emulate) {
+        connectAuthEmulator(auth, "http://localhost:9099");
+      }
+
+      return auth;
+    }),
+    provideFirestore(() => {
+      const db = getFirestore();
+
+      if (environment.emulate) {
+        connectFirestoreEmulator(db, "localhost", 8080);
+      }
+
+      return db;
+    }),
+    provideStorage(() => {
+      const storage = getStorage();
+
+      if (environment.emulate) {
+        connectStorageEmulator(storage, "localhost", 9199);
+      }
+
+      return storage;
+    }),
     FirebaseUIModule.forRoot(firebaseUiAuthConfig),
     // Bootstrap
     NgbModule,
@@ -42,13 +66,7 @@ import { HttpClientModule } from "@angular/common/http";
       registrationStrategy: "registerWhenStable:30000",
     }),
   ],
-  providers: [
-    {
-      provide: USE_AUTH_EMULATOR, useValue: environment.emulate ? ["http://localhost:9099"] : undefined,
-    },
-    { provide: USE_FIRESTORE_EMULATOR, useValue: environment.emulate ? ["localhost", 8080] : undefined },
-    { provide: USE_STORAGE_EMULATOR, useValue: environment.emulate ? ["localhost", 9199] : undefined },
-  ],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { Auth } from "@angular/fire/auth";
 import {
   Router, Resolve,
   RouterStateSnapshot,
@@ -12,7 +12,7 @@ import { Observable, map, mergeMap, of } from "rxjs";
 })
 export class SignOutResolver implements Resolve<true> {
   constructor(
-    private readonly auth: AngularFireAuth,
+    private readonly auth: Auth,
     private readonly router: Router,
   ) { }
 

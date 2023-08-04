@@ -3,9 +3,10 @@ import { Collections, Winner } from "@models";
 import { BehaviorSubject, Observable, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { TrophyBaseComponent } from "../trophy-base-component";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { DbService } from "src/app/core/services/db.service";
 import { filterNotNull } from "src/app/core/rxjs";
+import { QueryDocumentSnapshot, collection, collectionSnapshots } from "@angular/fire/firestore";
+import { Auth } from "@angular/fire/auth";
 
 @Component({
   selector: "app-winners-list",
@@ -40,7 +41,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // ========================
 
   constructor(
-    auth: AngularFireAuth,
+    auth: Auth,
     db: DbService,
   ) {
     super(auth, db);
@@ -59,10 +60,10 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // ========================
 
   private getWinnersObservable(): Observable<DbRecord<Winner>[]> {
-    return this.getTrophyRefObservalble().pipe(
+    return this.getTrophyRefObservable().pipe(
       filterNotNull(),
-      switchMap((ref) => ref.collection<Winner>(Collections.Winners).snapshotChanges()),
-      map((x) => toRecord(x)),
+      switchMap((ref) => collectionSnapshots(collection(ref, Collections.Winners))),
+      map((x) => toRecord(x) as DbRecord<Winner>[]), // Because angular fire doesn't do generics anymore
       tap((items) => this.countChange.next(items.length)),
       takeUntil(this.destroyed$),
       shareReplay(1),

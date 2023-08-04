@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { Auth, authState } from "@angular/fire/auth";
 import { ActivatedRoute, Router } from "@angular/router";
 import { first, mergeMap } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
@@ -13,13 +13,13 @@ export class SignInComponent implements OnInit, OnDestroy {
   private readonly redirectTo = this.route.snapshot.queryParamMap.get("redirectTo") || "/clubs";
 
   constructor(
-    private readonly auth: AngularFireAuth,
+    private readonly auth: Auth,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
   ) { }
 
   ngOnInit(): void {
-    this.auth.user.pipe(
+    authState(this.auth).pipe(
       filterNotNull(),
       first(),
       mergeMap(() => {

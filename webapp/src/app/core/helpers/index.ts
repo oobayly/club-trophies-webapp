@@ -36,7 +36,7 @@ function identifyUsingTimestamp(_index: number, item: DbRecord<HasTimestamp> | H
   }
 
   const timestamp = ts.modified || ts.created;
-  const millis = "toMillis" in timestamp ? timestamp.toMillis() : 0; // ms is good enough resolution to identify if the record has changed
+  const millis = timestamp && "toMillis" in timestamp ? timestamp.toMillis() : 0; // ms is good enough resolution to identify if the record has changed
 
   return `${id}${millis}`;
 }

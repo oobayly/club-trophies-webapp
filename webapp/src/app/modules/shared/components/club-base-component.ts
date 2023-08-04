@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { AngularFirestoreDocument } from "@angular/fire/compat/firestore";
+import { Auth, authState } from "@angular/fire/auth";
+import { DocumentReference, docSnapshots } from "@angular/fire/firestore";
 import { Club } from "@models";
 import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, distinctUntilChanged, map, of, shareReplay, switchMap, takeUntil } from "rxjs";
-import { isAdmin } from "src/app/core/rxjs";
+import { idToken, isAdmin } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
 
 @Component({
@@ -27,7 +27,7 @@ export abstract class ClubBaseComponent implements OnDestroy {
   }
 
   constructor(
-    protected readonly auth: AngularFireAuth,
+    protected readonly auth: Auth,
     protected readonly db: DbService,
   ) {
   }
@@ -37,11 +37,13 @@ export abstract class ClubBaseComponent implements OnDestroy {
     this.destroyed$.next();
   }
 
-  protected getCanEditObservable(club: Observable<Club | undefined>): Observable<boolean> {
+  protected getCanEditObservable(club$: Observable<Club | undefined>): Observable<boolean> {
+    const user$ = authState(this.auth);
+
     return combineLatest([
-      club,
-      this.auth.user,
-      this.auth.idTokenResult.pipe(isAdmin()),
+      club$,
+      user$,
+      user$.pipe(idToken(), isAdmin()),
     ]).pipe(
       map(([club, user, isAdmin]) => {
         if (!club || !user) {
@@ -65,15 +67,15 @@ export abstract class ClubBaseComponent implements OnDestroy {
           return of(undefined);
         }
 
-        return this.db.getClubDoc(clubId).snapshotChanges();
+        return docSnapshots(this.db.getClubDoc(clubId));
       }),
-      map((x) => x?.payload.data()),
+      map((x) => x?.data()),
       takeUntil(this.destroyed$),
       shareReplay(1),
     );
   }
 
-  protected getClubRefObservable(): Observable<AngularFirestoreDocument<Club> | undefined> {
+  protected getClubRefObservable(): Observable<DocumentReference<Club> | undefined> {
     return this.clubId$.pipe(
       distinctUntilChanged(),
       map((clubId) => {

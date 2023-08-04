@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { Query, QueryFn } from "@angular/fire/compat/firestore";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
 import { CanEditDbRecord, DbRecord, toCanEditRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { Club } from "@models";
-import { distinctUid, isAdmin } from "src/app/core/rxjs/auth";
+import { distinctUid, idToken, isAdmin } from "src/app/core/rxjs/auth";
 import { ModalService } from "src/app/core/services/modal.service";
 import { DbService } from "src/app/core/services/db.service";
 import { identifyUsingTimestamp } from "@helpers";
+import { Auth, authState } from "@angular/fire/auth";
+import { Query, collectionSnapshots, query, where } from "@angular/fire/firestore";
 
 export type ViewMode = "all" | "mine" | "public";
 
@@ -46,7 +46,7 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
   // ========================
 
   constructor(
-    private readonly auth: AngularFireAuth,
+    private readonly auth: Auth,
     private readonly db: DbService,
     private readonly modal: ModalService,
   ) {
@@ -68,25 +68,27 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
   // ========================
 
   private getClubsObservable(): Observable<CanEditDbRecord<Club>[]> {
-    const uid$ = this.auth.user.pipe(distinctUid());
+    const user$ = authState(this.auth);
+    const uid$ = user$.pipe(distinctUid());
     const clubs$ = combineLatest([
       uid$,
       this.mode$.pipe(distinctUntilChanged()),
     ]).pipe(
       switchMap(([uid, mode]) => {
-        let query: QueryFn;
+        const collRef = this.db.getClubsCollection();
+        let q: Query<Club>;
 
         if (mode === "all" && uid) {
-          query = (ref): Query => ref;
+          q = collRef;
         } else if (mode === "mine" && uid) {
-          query = (ref): Query => ref.where("admins", "array-contains", uid);
+          q = query(collRef, where("admins", "array-contains", uid));
         } else if (mode === "public") {
-          query = (ref): Query => ref.where("public", "==", true);
+          q = query(collRef, where("public", "==", true));
         } else {
           return of(undefined);
         }
 
-        return this.db.getClubsCollection(query).snapshotChanges().pipe(
+        return collectionSnapshots(q).pipe(
           catchError((err) => {
             console.log("Got an error: " + err.code);
 
@@ -100,9 +102,9 @@ export class ClubsListComponent implements OnChanges, OnDestroy {
     return combineLatest([
       clubs$,
       uid$,
-      this.auth.idTokenResult.pipe(isAdmin()),
+      user$.pipe(idToken(), isAdmin()),
     ]).pipe(
-      map(([clubs, uid, isadmin]) => toCanEditRecord(clubs, uid, isadmin)),
+      map(([clubs, uid, isAdmin]) => toCanEditRecord(clubs, uid, isAdmin)),
       takeUntil(this.destroyed$),
       shareReplay(1),
     );

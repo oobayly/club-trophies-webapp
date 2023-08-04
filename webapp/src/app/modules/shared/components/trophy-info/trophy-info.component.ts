@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { Observable, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { Club, Trophy } from "@models";
 import { filterNotNull } from "src/app/core/rxjs";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { TrophyBaseComponent } from "../trophy-base-component";
 import { DbService } from "src/app/core/services/db.service";
+import { docSnapshots } from "@angular/fire/firestore";
+import { Auth } from "@angular/fire/auth";
 
 export type TabType = "winners" | "info" | "photos";
 
@@ -52,7 +53,7 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   // ========================
 
   constructor(
-    auth: AngularFireAuth,
+    auth: Auth,
     db: DbService,
   ) {
     super(auth, db);
@@ -83,10 +84,10 @@ export class TrophyInfoComponent extends TrophyBaseComponent implements OnChange
   // ========================
 
   private getTrophyObservable(): Observable<Trophy | undefined> {
-    return this.getTrophyRefObservalble().pipe(
+    return this.getTrophyRefObservable().pipe(
       filterNotNull(),
-      switchMap((ref) => ref.snapshotChanges()),
-      map((snapshot) => snapshot.payload.data()),
+      switchMap((ref) => docSnapshots(ref)),
+      map((snapshot) => snapshot.data()),
       tap((item) => this.trophyChange.next(item)),
       takeUntil(this.destroyed$),
       shareReplay(1),

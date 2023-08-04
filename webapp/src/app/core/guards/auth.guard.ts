@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
-import { firstValueFrom } from "rxjs";
 import { isInRole } from "../helpers/auth";
+import { Auth, authState, getIdTokenResult } from "@angular/fire/auth";
+import { firstValueFrom } from "rxjs";
 
 export interface AuthGuardData {
   requiredRoles: string[];
@@ -19,7 +19,7 @@ export const authGuardForRole = (...roles: string[]): AuthGuardData => {
 })
 export class AuthGuard implements CanActivate {
   constructor(
-    private auth: AngularFireAuth,
+    private auth: Auth,
     private router: Router,
   ) { }
 
@@ -28,7 +28,8 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Promise<boolean | UrlTree> {
     const { url } = state;
     const requiredRoles = route.data["requiredRoles"] as string[] || [];
-    const token = await firstValueFrom(this.auth.idTokenResult);
+    const user = await firstValueFrom(authState(this.auth));
+    const token = user ? await getIdTokenResult(user) : undefined;
 
     if (!token) {
       return this.router.createUrlTree(["/auth", "sign-in"], {

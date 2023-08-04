@@ -94,14 +94,14 @@ export class TrophyFileEditorComponent implements OnChanges, OnDestroy {
   }
 
   public async saveFile(): Promise<string> {
-    const doc = this.db.getFileDoc(this.clubId, this.trophyId, this.fileId);
+    const docRef = this.db.getFileDoc(this.clubId, this.trophyId, this.fileId);
 
     await this.db.updateRecord(
-      doc,
+      docRef,
       this.form.getRawValue(),
     );
 
-    return doc.ref.id;
+    return docRef.id;
   }
   // ========================
   // Event handlers

@@ -1,12 +1,14 @@
-export const getRoles = (idToken: firebase.default.auth.IdTokenResult | null | undefined): string[] => {
-  return idToken?.claims["roles"] || [];
+import { IdTokenResult } from "@angular/fire/auth";
+
+export const getRoles = (idToken: IdTokenResult | null | undefined): string[] => {
+  return idToken?.claims["roles"] as string[] || [];
 }
 
-export const isAdmin = (idToken: firebase.default.auth.IdTokenResult | null | undefined): boolean => {
+export const isAdmin = (idToken: IdTokenResult | null | undefined): boolean => {
   return isInRole(idToken, "admin");
 }
 
-export const isInRole = (idToken: firebase.default.auth.IdTokenResult | null | undefined, ...roles: string[]): boolean => {
+export const isInRole = (idToken: IdTokenResult | null | undefined, ...roles: string[]): boolean => {
   return getRoles(idToken).some((claimed) => {
     return roles.includes(claimed);
   });

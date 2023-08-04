@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
-import { AngularFireAuthGuard, redirectLoggedInTo } from "@angular/fire/compat/auth-guard"
 import { RouterModule, Routes } from "@angular/router";
+import { AuthGuard, redirectLoggedInTo } from "@angular/fire/auth-guard"
 import { AuthComponent } from "./auth.component";
 import { SignInComponent } from "./sign-in/sign-in.component";
 import { SignOutResolver } from "src/app/core/resolvers/sign-out.resolver";
@@ -20,7 +20,7 @@ const routes: Routes = [
       {
         path: "sign-in",
         component: SignInComponent,
-        canActivate: [AngularFireAuthGuard],
+        canActivate: [AuthGuard],
         title: "Sign in",
         data: {
           authGuardPipe: () => redirectLoggedInTo("/auth/profile"),

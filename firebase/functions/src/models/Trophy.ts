@@ -26,8 +26,8 @@ export interface TrophyFile extends HasExpires, HasTimestamp, HasTrophyParent, H
   /** The original name of the file. */
   name: string;
   /** The url to the file. */
-  url: string | null;
+  url?: string;
   /** The thumbnail if the file is an image. */
-  thumb: string | null;
+  thumb?: string;
 }
 

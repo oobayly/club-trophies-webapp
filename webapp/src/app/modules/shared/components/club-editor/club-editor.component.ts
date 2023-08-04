@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { Club } from "@models";
 import { getCountries } from "src/app/core/helpers/i18n";
 import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
+import { Auth } from "@angular/fire/auth";
 
 interface ClubFormData {
   country: FormControl<string>;
@@ -57,7 +57,7 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
   // ========================
 
   constructor(
-    private readonly auth: AngularFireAuth,
+    private readonly auth: Auth,
     private readonly db: DbService,
     private readonly formBuilder: FormBuilder,
   ) {
@@ -101,7 +101,7 @@ export class ClubEditorComponent implements OnChanges, OnDestroy {
 
       await this.db.updateRecord(docRef, club);
 
-      return docRef.ref.id;
+      return docRef.id;
     } else {
       return await this.db.addClub({
         ...club,

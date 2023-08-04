@@ -14,6 +14,7 @@ import { EditWinnerModalComponent } from "src/app/modules/shared/modals/edit-win
 import { getIconForColor } from "@helpers/angular";
 import { DbService } from "./db.service";
 import { FileUploadModalComponent } from "src/app/modules/shared/modals/file-upload-modal/file-upload-modal.component";
+import { getDoc } from "@angular/fire/firestore";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {
@@ -89,7 +90,7 @@ export class ModalService {
   public async showEditClub(clubId?: string): Promise<string | undefined> {
     let club: Club | undefined;
     if (clubId) {
-      club = (await this.db.getClubDoc(clubId).ref.get()).data();
+      club = (await getDoc(this.db.getClubDoc(clubId))).data();
     }
 
     return this.showModal(EditClubModalComponent, {
@@ -103,7 +104,7 @@ export class ModalService {
   public async showEditTrophy(clubId: string, trophyId?: string): Promise<string | undefined> {
     let trophy: Trophy | undefined;
     if (trophyId) {
-      trophy = (await this.db.getTrophyDoc(clubId, trophyId).ref.get()).data();
+      trophy = (await getDoc(this.db.getTrophyDoc(clubId, trophyId))).data();
     }
 
     return this.showModal(EditTrophyModalComponent, {
@@ -116,7 +117,7 @@ export class ModalService {
   }
 
   public async showEditTrophyFile(clubId: string, trophyId: string, fileId: string): Promise<string | undefined> {
-    const file = (await this.db.getFileDoc(clubId, trophyId, fileId).ref.get()).data();
+    const file = (await getDoc(this.db.getFileDoc(clubId, trophyId, fileId))).data()
 
     if (!file) {
       throw new Error("File not found.");
@@ -137,9 +138,9 @@ export class ModalService {
     let boatRef: string | undefined;
 
     if (winnerId) {
-      winner = (await this.db.getWinnerDoc(clubId, trophyId, winnerId).ref.get()).data();
+      winner = (await getDoc(this.db.getWinnerDoc(clubId, trophyId, winnerId))).data();
     } else {
-      const trophy = (await this.db.getTrophyDoc(clubId, trophyId).ref.get()).data();
+      const trophy = (await getDoc(this.db.getTrophyDoc(clubId, trophyId))).data();
 
       boatRef = trophy?.boatRef?.path;
     }

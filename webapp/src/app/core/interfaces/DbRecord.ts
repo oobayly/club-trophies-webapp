@@ -1,4 +1,4 @@
-import { Action, DocumentChangeAction, DocumentSnapshot, QueryDocumentSnapshot } from "@angular/fire/compat/firestore";
+import { DocumentSnapshot, QueryDocumentSnapshot, QuerySnapshot } from "@angular/fire/firestore";
 
 export interface DbRecord<T = unknown> {
   id: string;
@@ -24,44 +24,39 @@ function toCanEditRecord<TRecord extends { admins: string[] }>(
   });
 }
 
-function toRecord<T = unknown>(value: firebase.default.firestore.DocumentSnapshot<T> | Action<DocumentSnapshot<T>>): DbRecord<T | undefined>;
-function toRecord<T = unknown>(value: DocumentChangeAction<T>[] | QueryDocumentSnapshot<T>[] | firebase.default.firestore.QuerySnapshot<T>): DbRecord<T>[];
-function toRecord<T = unknown>(
-  value: firebase.default.firestore.DocumentSnapshot<T> | Action<DocumentSnapshot<T>> | DocumentChangeAction<T>[] | QueryDocumentSnapshot<T>[] | firebase.default.firestore.QuerySnapshot<T>,
-): DbRecord<T | undefined> | DbRecord<T>[] {
+function toRecord<T = unknown>(value: DocumentSnapshot<T>): DbRecord<T | undefined>;
+function toRecord<T = unknown>(value: QueryDocumentSnapshot<T>[] | QuerySnapshot<T>): DbRecord<T>[];
+function toRecord<T = unknown>(value: QueryDocumentSnapshot<T>[] | QuerySnapshot<T> | DocumentSnapshot<T>): DbRecord<T>[] | DbRecord<T | undefined> {
   if (Array.isArray(value)) {
+    // QueryDocumentSnapshot[]
     return value.map((item) => {
-      const doc = "payload" in item ? item.payload.doc : item;
-
       return {
-        id: doc.id,
-        ref: doc.ref.path,
-        data: doc.data(),
-      } as DbRecord<T>;
+        id: item.id,
+        data: item.data(),
+        ref: item.ref.path,
+      };
     });
   } else if ("docs" in value) {
-    return value.docs.map((doc) => {
+    // QuerySnapshot
+    return value.docs.map((item) => {
       return {
-        id: doc.id,
-        ref: doc.ref.path,
-        data: doc.data(),
-      } as DbRecord<T>;
+        id: item.id,
+        data: item.data(),
+        ref: item.ref.path,
+      };
     });
   } else if ("payload" in value) {
-    const doc = value.payload;
-
-    return {
-      id: doc.id,
-      ref: doc.ref.path,
-      data: doc.data(),
-    };
+    throw new Error("Not supported");
   } else {
+    // DocumentSnapshot
     return {
       id: value.id,
-      ref: value.ref.path,
       data: value.data(),
+      ref: value.ref.path,
     };
   }
+
+  return [];
 }
 
 export {

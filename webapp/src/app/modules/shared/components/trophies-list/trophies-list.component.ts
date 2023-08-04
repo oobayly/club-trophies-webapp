@@ -1,14 +1,15 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { Collections, Trophy } from "@models";
+import { Trophy } from "@models";
 import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, startWith, switchMap, takeUntil } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
 import { ModalService } from "src/app/core/services/modal.service";
 import { ClubBaseComponent } from "../club-base-component";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { DbService } from "src/app/core/services/db.service";
 import { identifyUsingTimestamp } from "@helpers";
+import { collectionSnapshots, query, Query, where } from "@angular/fire/firestore";
+import { Auth } from "@angular/fire/auth";
 
 interface TrophyFilter {
   name: FormControl<string>;
@@ -57,7 +58,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
   // ========================
 
   constructor(
-    auth: AngularFireAuth,
+    auth: Auth,
     db: DbService,
     private readonly formBuilder: FormBuilder,
     private readonly modal: ModalService,
@@ -117,17 +118,16 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
           return of(undefined);
         }
 
-        const ref = this.db.firestore
-          .collection(Collections.Clubs).doc(clubId)
-          .collection<Trophy>(Collections.Trophies, (ref) => {
-            if (!canEdit) {
-              return ref.where("public", "==", true);
-            }
+        const collRef = this.db.getTrophyCollection(clubId);
+        let q: Query<Trophy>;
 
-            return ref;
-          });
+        if (canEdit) {
+          q = collRef
+        } else {
+          q = query(collRef, where("public", "==", true));
+        }
 
-        return ref.snapshotChanges().pipe(
+        return collectionSnapshots(q).pipe(
           map((x) => toRecord(x).sort((a, b) => a.data.name.localeCompare(b.data.name))),
           catchError((err) => {
             console.log(err.code);

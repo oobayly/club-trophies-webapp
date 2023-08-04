@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { Auth, authState } from "@angular/fire/auth";
+import { idToken } from "src/app/core/rxjs";
 
 @Component({
   selector: "app-profile",
@@ -7,11 +8,11 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
   styleUrls: ["./profile.component.scss"],
 })
 export class ProfileComponent {
-  public readonly token$ = this.auth.idTokenResult;
+  public readonly user$ = authState(this.auth);
 
-  public readonly user$ = this.auth.user;
+  public readonly token$ = this.user$.pipe(idToken());
 
   constructor(
-    private auth: AngularFireAuth,
+    private auth: Auth,
   ) { }
 }

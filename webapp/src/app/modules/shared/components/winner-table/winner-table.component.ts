@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
+import { deleteDoc } from "@angular/fire/firestore";
 import { identifyUsingTimestamp } from "@helpers";
 import { SearchResult, Winner } from "@models";
 import { BehaviorSubject, Observable, Subject, combineLatest, map, of, shareReplay, takeUntil } from "rxjs";
@@ -145,7 +146,6 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
     if (item.id) {
       return identifyUsingTimestamp(_index, item.data, item.id);
     }
-
     return item;
   }
 
@@ -240,7 +240,7 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
     const { clubId, trophyId } = item.data.parent;
     const ref = this.db.getWinnerDoc(clubId, trophyId, item.id);
 
-    await ref.delete();
+    await deleteDoc(ref);
   }
 
   public async onItemEditClick(item: ItemWrapper): Promise<void> {
