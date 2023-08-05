@@ -6,7 +6,8 @@ import { filterNotNull } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
 import { ImageCroppedEvent, ImageCropperComponent } from "ngx-image-cropper";
 import { resizeImageFiles } from "@helpers/image-resize";
-import { docSnapshots } from "@angular/fire/firestore";
+import { CollectionReference, docSnapshots } from "@angular/fire/firestore";
+import { HasExpires, HasTimestamp, HasUploadInfo } from "@models";
 
 export type UploadMode = "logo" | "trophy-file";
 
@@ -158,9 +159,25 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
           response = of(undefined);
         } else {
           if (this.mode === "logo") {
-            response = this.getLogoFileObservable(item);
+            response = this.getFileObservable(
+              item,
+              this.db.getClubLogosCollection(this.clubId),
+              {},
+            );
           } else if (this.mode === "trophy-file") {
-            response = this.getTrophyFileObservable(item);
+            response = this.getFileObservable(
+              item,
+              this.db.getFilesCollection(this.clubId, this.trophyId!),
+              {
+                contentType: item.file.type,
+                name: "name" in item.file ? item.file.name : uuid(),
+                parent: {
+                  clubId: this.clubId,
+                  trophyId: this.trophyId!,
+                },
+              },
+            );
+
           } else {
             response = of(undefined);
           }
@@ -178,31 +195,51 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     );
   }
 
-  private getLogoFileObservable(item: QueueItem): Observable<string> {
-    const { clubId } = this;
+  private getFileObservable<T extends HasUploadInfo & HasExpires & HasTimestamp>(
+    item: QueueItem,
+    collection: CollectionReference<T>,
+    value: Omit<T, "modified" | "created">,
+  ): Observable<string> {
 
+    // Add the record first, and get a listener to that document
+    const uploadDoc$ = from(this.db.addRecord(
+      collection, {
+      ...value,
+      expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
+    })).pipe(
+      switchMap((docRef) => docSnapshots(docRef)),
+    );
 
-    const docRef$ = from(this.db.addRecord(
-      this.db.getClubLogosCollection(clubId),
-      {
-        expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
-      },
-    ));
-
-    return docRef$.pipe(
-      switchMap((docRef) => combineLatest([docSnapshots(docRef), of(docRef.id)])),
-      map(([item, logoId]) => {
-        return { info: item.data()?.uploadInfo, logoId };
-      }),
-      filter((x) => !!x.info),
+    // This does the uploading
+    const upload$ = uploadDoc$.pipe(
+      // Wait until we have some upload info
+      filter((x) => !!x.data()?.uploadInfo),
+      // And only use the first 
       first(),
-      switchMap((x) => {
-        return this.getUploadObservable(item, x.info!.url, x.info!.headers, x.logoId);
+      // From this we can upload the file
+      switchMap((info) => {
+        const { id } = info;
+        const { url, headers } = info.data()?.uploadInfo!;
+
+        return this.getUploadObservable(item, url, headers, id);
       }),
+    )
+
+    // This wait until the firebase function has processed the upload
+    return combineLatest([
+      uploadDoc$,
+      upload$,
+    ]).pipe(
+      // Wait until the upload info has been removed
+      filter(([uploadDoc]) => {
+        return uploadDoc.data()?.uploadInfo === undefined;
+      }),
+      // And simply return the ID of the uploaded file
+      map(([uploadDoc]) => uploadDoc.id),
     );
   }
 
-  private getTestObservable(item: QueueItem): Observable<string> {
+  private _getTestObservable(item: QueueItem): Observable<string> {
     const ms = 25 + (Math.random() * 100);
 
     return interval(ms).pipe(
@@ -213,39 +250,6 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       last(),
       map(() => `Result ${uuid()} `),
       finalize(() => console.log(`${item.file} is finalized`)),
-    );
-  }
-
-  private getTrophyFileObservable(item: QueueItem): Observable<string> {
-    const { clubId, trophyId } = this;
-
-    if (!trophyId) {
-      throw new Error("Cannot upload trophy file without trophyId");
-    }
-
-    const docRef$ = from(this.db.addRecord(
-      this.db.getFilesCollection(clubId, trophyId),
-      {
-        contentType: item.file.type,
-        name: "name" in item.file ? item.file.name : uuid(),
-        parent: {
-          clubId,
-          trophyId,
-        },
-        expireAfter: new Date(Date.now() + 3600000),// Expires after 1 hours
-      },
-    ));
-
-    return docRef$.pipe(
-      switchMap((docRef) => combineLatest([docSnapshots(docRef), of(docRef.id)])),
-      map(([item, fileId]) => {
-        return { info: item.data()?.uploadInfo, fileId };
-      }),
-      filter((x) => !!x.info),
-      first(),
-      switchMap((x) => {
-        return this.getUploadObservable(item, x.info!.url, x.info!.headers, x.fileId);
-      }),
     );
   }
 
