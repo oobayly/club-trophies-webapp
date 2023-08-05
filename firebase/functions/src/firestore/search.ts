@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
 import { Club, Collections, Search, SearchClubInfo, SearchResult, SearchResultList, SearchTrophyInfo, Trophy, Winner } from "../models"
+import { FieldPath } from "firebase-admin/firestore";
 
 
 const batchRequests = async (
@@ -16,7 +17,7 @@ const batchRequests = async (
     const batchIds = ids.splice(0, batchSize);
 
     if (batchIds.length) {
-      snapshots.push(collection.where(admin.firestore.FieldPath.documentId(), "in", batchIds).get());
+      snapshots.push(collection.where(FieldPath.documentId(), "in", batchIds).get());
     }
   } while (ids.length);
 
@@ -73,7 +74,7 @@ const getClubs = async (uid: string | undefined, clubIds: string[]): Promise<Sea
         list.push({
           clubId: item.id,
           name: club.name,
-          isAdmin,
+          ...(isAdmin ? { isAdmin } : undefined), // Use spread so we don't add an undefined property
           trophies: [],
         })
       }
@@ -121,7 +122,6 @@ const getSearchClubInfo = async (uid: string | undefined, winners: Winner[]): Pr
     const item = list[i];
 
     item.trophies = await getClubTrophies(item, winners);
-    delete item.isAdmin; // This is no longer needed
   }
 
   return list;
@@ -176,9 +176,11 @@ export const search = async (doc: admin.firestore.DocumentSnapshot): Promise<voi
     .reduce((accum, item) => {
       const { clubId, trophyId } = item.parent;
 
-      // Only return items that are in the club info list
       const info = clubs.find((x) => x.clubId === clubId);
-      const canView = !!info && info.trophies.some((x) => x.trophyId === trophyId);
+      const canView = !!info // Needs to have a matching club
+        && (info.isAdmin || !item.suppress) // and we need to exclude suppressed winners, but only if the user isn't the admin
+        && info.trophies.some((x) => x.trophyId === trophyId) // and there has to be a matching trophy
+        ;
 
       if (canView) {
         const result: SearchResult = {

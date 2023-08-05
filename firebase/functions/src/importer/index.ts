@@ -121,6 +121,7 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
         owner: item.fldOwner,
         year: item.fldYear,
         created: new Date(item.fldCreated),
+        suppress: false,
       };
 
       if (item.fldModified) {
@@ -137,31 +138,51 @@ const loadWinners = (batch: firestore.WriteBatch, legacyTrophyId: number, trophy
 const app = express();
 
 app.get("/modify", async (_req, res) => {
-  // Remove empty data from the winners
   const db = admin.firestore();
-  const trophies = await db.collectionGroup(Collections.Trophies).get();
+  const winners = await db.collectionGroup(Collections.Winners).get();
+  let batch: firestore.WriteBatch | undefined;
 
-  for (let i = 0; i < trophies.size; i++) {
-    const doc = trophies.docs[i];
-    const { clubId } = doc.data().parent;
-    const batch = db.batch();
+  for (let i = 0; i < winners.size; i++) {
+    if (i % 500 === 0) {
+      if (batch) {
+        batch.commit();
+      }
 
-    const winners = await db.collection(Collections.Clubs).doc(clubId).collection(Collections.Trophies).doc(doc.id).collection(Collections.Winners).get();
+      batch = db.batch();
+    }
 
-    winners.forEach((x) => {
-      const data = x.data();
-
-      Object.keys(data).forEach((k) => {
-        if (!data[k]) {
-          data[k] = admin.firestore.FieldValue.delete();
-        }
-      });
-
-      batch.update(x.ref, data);
-    });
-
-    await batch.commit();
+    batch?.update(winners.docs[i].ref, { suppress: false });
   }
+
+  if (batch) {
+    await batch?.commit();
+  }
+
+  // // Remove empty data from the winners
+  // const db = admin.firestore();
+  // const trophies = await db.collectionGroup(Collections.Trophies).get();
+
+  // for (let i = 0; i < trophies.size; i++) {
+  //   const doc = trophies.docs[i];
+  //   const { clubId } = doc.data().parent;
+  //   const batch = db.batch();
+
+  //   const winners = await db.collection(Collections.Clubs).doc(clubId).collection(Collections.Trophies).doc(doc.id).collection(Collections.Winners).get();
+
+  //   winners.forEach((x) => {
+  //     const data = x.data();
+
+  //     Object.keys(data).forEach((k) => {
+  //       if (!data[k]) {
+  //         data[k] = FieldValue.delete();
+  //       }
+  //     });
+
+  //     batch.update(x.ref, data);
+  //   });
+
+  //   await batch.commit();
+  // }
 
   res.status(200).send();
 });

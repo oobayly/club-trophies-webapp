@@ -15,6 +15,7 @@ interface WinnerFormData {
   owner: FormControl<string>;
   year: FormControl<number>;
   boatRef: FormControl<string | null>;
+  suppress: FormControl<boolean>;
 }
 
 @Component({
@@ -120,6 +121,7 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
       owner: this.formBuilder.control<string>("", { nonNullable: true }),
       year: this.formBuilder.control<number>(new Date().getFullYear(), { nonNullable: true }),
       boatRef: this.formBuilder.control<string | null>(null),
+      suppress: this.formBuilder.control<boolean>(false, { nonNullable: true }),
     }, {
       updateOn: "change",
     });
@@ -130,6 +132,7 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
     const winner = await this.db.withBoatRef({
       ...this.form.value,
       year: this.form.value.year!, // This is required
+      suppress: this.form.value.suppress!, // and this
       parent: {
         clubId: this.clubId,
         trophyId: this.trophyId,

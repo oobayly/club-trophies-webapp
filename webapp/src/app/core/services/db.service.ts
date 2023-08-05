@@ -4,7 +4,7 @@ import { CollectionReference, DocumentReference, DocumentSnapshot, Firestore, Qu
 import { Boat, BoatReference, Club, ClubLogoRequest, Collections, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
 import { Observable, map, combineLatest, switchMap, of, filter } from "rxjs";
 import { DbRecord, toRecord } from "../interfaces/DbRecord";
-import { doc } from "firebase/firestore";
+import { WithFieldValue, doc } from "firebase/firestore";
 
 type TimestampProps = "created" | "modified";
 
@@ -58,7 +58,7 @@ export class DbService {
   // Methods
   // ========================
 
-  public async addRecord<T extends HasTimestamp>(collection: CollectionReference<T>, value: Omit<T, TimestampProps>): Promise<DocumentReference<T>> {
+  public async addRecord<T extends HasTimestamp>(collection: CollectionReference<T>, value: Omit<WithFieldValue<T>, TimestampProps>): Promise<DocumentReference<T>> {
     const docRef = await addDoc(collection, {
       ...value,
       created: serverTimestamp(),
@@ -67,7 +67,7 @@ export class DbService {
     return docRef;
   }
 
-  public async updateRecord<T extends HasTimestamp>(doc: DocumentReference<T>, value: Partial<Omit<T, TimestampProps>>): Promise<string> {
+  public async updateRecord<T extends HasTimestamp>(doc: DocumentReference<T>, value: Omit<UpdateData<T>, TimestampProps>): Promise<string> {
     await updateDoc(doc, {
       ...value,
       modified: serverTimestamp(),

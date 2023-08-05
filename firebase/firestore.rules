@@ -81,7 +81,11 @@ service cloud.firestore {
         // Anyone can view public trophies, provided the club is also public
 	    	allow read: if isClubPublic(clubId) && resource != null && resource.data.public == true;
 
-        match /{document=**} {
+        match /winners/{winnerId} {
+          allow read: if isClubPublic(clubId) && isTrophyPublic(clubId, trophyId) && resource.data.suppress == false;
+        }
+
+        match /files/{fileId} {
           allow read: if isClubPublic(clubId) && isTrophyPublic(clubId, trophyId);          
         }
       }

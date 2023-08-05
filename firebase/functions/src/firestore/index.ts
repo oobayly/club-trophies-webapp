@@ -5,6 +5,7 @@ import { Boat, BoatReference, Club, ClubAdmin, ClubLogoRequest, Collections, Tro
 import { AdminPath, ClubPath, LogoPath, SearchPath, TrophyFilePath } from "./paths";
 import { IsEmulated } from "../helpers";
 import { search } from "./search";
+import { FieldValue } from "firebase-admin/firestore";
 
 const firestoreFunctions = functions.region("europe-west2").firestore;
 
@@ -143,7 +144,7 @@ export const onLogoCreate = firestoreFunctions.document(LogoPath).onCreate(async
       url: uploadUrl,
       headers,
     },
-    modified: admin.firestore.FieldValue.serverTimestamp(),
+    modified: FieldValue.serverTimestamp(),
   } as Partial<ClubLogoRequest>);
 });
 

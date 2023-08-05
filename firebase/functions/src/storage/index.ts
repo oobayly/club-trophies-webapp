@@ -8,6 +8,7 @@ import { spawn } from "child-process-promise";
 import { v4 as uuid } from "uuid";
 import { Club, Collections, TrophyFile } from "../models";
 import { getDownloadURL } from "firebase-admin/storage";
+import { FieldValue } from "firebase-admin/firestore";
 
 const storageFunctions = functions.region("europe-west2").storage;
 const ThumbSize = 300;
@@ -130,7 +131,7 @@ const updateClubLogo = async (ids: LogoFileIds, object: functions.storage.Object
   // Remove the logo request document as referenced by the x-goog-meta-id header
   batch.delete(clubRef.collection(Collections.Logos).doc(logoId));
   batch.update(clubRef, {
-    modified: admin.firestore.FieldValue.serverTimestamp(),
+    modified: FieldValue.serverTimestamp(),
     logo,
   } as Partial<Club>);
 
@@ -151,7 +152,7 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
   const fileInfo: Partial<TrophyFile> = {
     url: await getDownloadURL(file),
     contentType: object.contentType,
-    modified: admin.firestore.FieldValue.serverTimestamp(),
+    modified: FieldValue.serverTimestamp(),
   };
   const thumb = await createThumb(object);
 
@@ -161,8 +162,8 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
 
   const updateInfo = {
     ...fileInfo,
-    expireAfter: admin.firestore.FieldValue.delete(), // Ensure that thre request isn't expired
-    uploadInfo: admin.firestore.FieldValue.delete(),
+    expireAfter: FieldValue.delete(), // Ensure that thre request isn't expired
+    uploadInfo: FieldValue.delete(),
   };
 
   await Promise.all([

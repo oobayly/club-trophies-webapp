@@ -18,4 +18,6 @@ export interface Winner extends BoatReference, HasTimestamp, HasTrophyParent {
   owner?: string;
   /** The year that the trophy was awarded. */
   year: number;
+  /** A flag indicating whether the winner is suppressed from public viewing. */
+  suppress: boolean;
 }

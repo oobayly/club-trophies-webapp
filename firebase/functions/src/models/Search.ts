@@ -5,7 +5,7 @@ export interface SearchClubInfo {
   clubId: string
   name: string;
   trophies: SearchTrophyInfo[];
-  isAdmin?: boolean;
+  isAdmin?: true;
 }
 
 export interface SearchTrophyInfo {
