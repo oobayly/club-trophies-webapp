@@ -93,6 +93,8 @@
             }
 
             &[data-column]::before {
+              display: inline-block;
+              min-width: 3rem;
               content: attr(data-column) ":";
               font-weight: 700;
             }
