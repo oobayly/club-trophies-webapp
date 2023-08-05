@@ -10,6 +10,8 @@ import { ModalService } from "src/app/core/services/modal.service";
 
 type Field = keyof Pick<Winner | SearchResult, "year" | "sail" | "boatName" | "helm" | "crew" | "name" | "owner" | "club">;
 
+type ItemWrapper = { values: any[], trackBy?: any } & ({ data: Winner, id: string } | { data: SearchResult, id?: undefined });
+
 interface Column {
   field: Field;
   title: string;
@@ -22,7 +24,7 @@ interface ColumnSort {
 
 const Colunms: Column[] = [
   { field: "year", title: "Year" },
-  { field: "sail", title: "Sail No." },
+  { field: "sail", title: "Sail #" },
   { field: "boatName", title: "Class" },
   { field: "helm", title: "Helm" },
   { field: "crew", title: "Crew" },
@@ -30,14 +32,6 @@ const Colunms: Column[] = [
   { field: "owner", title: "Owner" },
   { field: "club", title: "Club" },
 ];
-
-type ItemWrapper = { values: any[] } & ({ data: Winner, id: string } | { data: SearchResult, id?: undefined });
-
-// interface ItemWrapper {
-//   data: Winner | SearchResult;
-//   values: any[];
-//   id?: string;
-// }
 
 @Component({
   selector: "app-winner-table",
@@ -143,10 +137,7 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
   }
 
   public identifyWinner(_index: number, item: ItemWrapper): string | ItemWrapper {
-    if (item.id) {
-      return identifyUsingTimestamp(_index, item.data, item.id);
-    }
-    return item;
+    return item.trackBy || item;
   }
 
   private static sortValues(items: ItemWrapper[], sort: ColumnSort): ItemWrapper[] {
@@ -193,6 +184,7 @@ export class WinnerTableComponent implements OnChanges, OnDestroy {
           data: x.data,
           id: x.id,
           values: [],
+          trackBy: identifyUsingTimestamp(0, x),
         };
       });
     } else {

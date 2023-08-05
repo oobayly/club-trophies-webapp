@@ -5,39 +5,48 @@
 
     <!-- Results table -->
     <table class="table table-striped" *ngIf="results.length">
+      <!-- This container is used to keep track of the columns -->
+      <ng-container *ngIf="{cols: visibleColumns$ | async, sortIcon: sortIcon$ | async} as context">
 
-      <!-- Column headers -->
-      <thead class="sticky-lg-top">
-        <tr class="user-select-none">
-          <th *ngFor="let col of visibleColumns$ | async" role="button" (click)="onSortHeaderClick(col.field)">
-            {{col.title}}
-            <i class="ms-2" [ngClass]="sortIcon$ | async" *ngIf="col.field === sort.field"></i>
-          </th>
-          <th class="buttons d-print-none" *ngIf="canEdit"></th>
-        </tr>
-      </thead>
+        <!-- Column headers -->
+        <thead class="sticky-lg-top">
+          <tr class="user-select-none">
+            <th *ngFor="let col of context.cols" role="button" (click)="onSortHeaderClick(col.field)">
+              {{col.title}}
+              <i class="ms-2" [ngClass]="context.sortIcon" *ngIf="col.field === sort.field"></i>
+            </th>
+            <th class="buttons d-print-none" *ngIf="canEdit"></th>
+          </tr>
+        </thead>
 
-      <!-- Results -->
-      <tbody>
-        <tr *ngFor="let item of results; trackBy: identifyWinner">
-          <td *ngFor="let value of item.values; let i = index" [attr.data-index]="i">
-            {{value}}
-            <i class="bi-lock" tooltip="Not visible in public results" *ngIf="i === 0 && item.data.suppress"></i>
-          </td>
+        <!-- Results -->
+        <tbody>
+          <tr *ngFor="let item of results; trackBy: identifyWinner">
+            <!-- This container is used as wrapper so he can easilty reference columns -->
+            <ng-container *ngFor="let value of item.values; let i = index">
+              <!-- The actual cell -->
+              <td *ngIf="context.cols?.[i] as col" [attr.data-column]="col.title">
+                {{value}}
+                <i class="bi-lock" title="Not visible in public results"
+                  *ngIf="col.field === 'year' && item.data.suppress">
+                </i>
+              </td>
+            </ng-container>
 
-          <!-- This is only if a winner is displayed (not a search result), and canEdit -->
-          <td class="buttons d-print-none" *ngIf="canEdit && item.id">
-            <div class="btn-group-responsive-md  btn-group-sm">
-              <button class="btn btn-outline-primary" (click)="onItemEditClick(item)">
-                <i class="bi-pencil-fill"></i>
-              </button>
-              <button class="btn btn-outline-danger" (click)="onItemDeleteClick(item)">
-                <i class="bi-trash3-fill"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
+            <!-- This is only if a winner is displayed (not a search result), and canEdit -->
+            <td class="buttons d-print-none" *ngIf="canEdit && item.id">
+              <div class="btn-group-responsive-md  btn-group-sm">
+                <button class="btn btn-outline-primary" (click)="onItemEditClick(item)">
+                  <i class="bi-pencil-fill"></i>
+                </button>
+                <button class="btn btn-outline-danger" (click)="onItemDeleteClick(item)">
+                  <i class="bi-trash3-fill"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </ng-container>
     </table>
   </div>
 
