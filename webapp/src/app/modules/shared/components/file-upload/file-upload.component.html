@@ -41,9 +41,9 @@
         </label>
       </div>
 
-      <div class="file-list-container mt-3" *ngIf="files?.length">
+      <div class="file-list-container mt-3" *ngIf="resizedFiles?.length">
         <ng-cotnainer [ngTemplateOutlet]="fileRow" [ngTemplateOutletContext]="{name: file.name, size: file.size}"
-          *ngFor="let file of files!">
+          *ngFor="let file of resizedFiles!">
         </ng-cotnainer>
       </div>
     </div>
@@ -53,7 +53,7 @@
 <div class="button-grid">
   <button type="button" class="btn btn-outline-danger" (click)="onCancelClick()">Cancel</button>
   <button type="submit" class="btn btn-primary" (click)="onUploadClick()"
-    [disabled]="!files?.length || (isUploading$ | async)">Upload</button>
+    [disabled]="!resizedFiles?.length || (isUploading$ | async)">Upload</button>
 </div>
 
 <ng-template #fileRow let-name="name" let-size="size" let-progress="progress" let-showProgress="showProgress">

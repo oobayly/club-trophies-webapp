@@ -37,6 +37,8 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
 
   private readonly cancel$ = new Subject<true>();
 
+  public resizedFiles?: File[];
+
   public readonly queue$ = new BehaviorSubject<QueueItem[] | undefined>(undefined);
 
   public readonly isUploading$ = this.queue$.pipe(map((x) => !!x?.length));
@@ -54,6 +56,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   @Input()
   public clubId!: string;
 
+  /** This should not be read. */
   @Input()
   public files?: File[];
 
@@ -91,12 +94,12 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     this.subscriptions.push(this.getProgressSubscription());
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if ("files" in changes && this.files?.length) {
-      this.startUpload();
+
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
+    if ("files" in changes) {
+      this.setFiles(this.files);
     }
   }
-
   ngOnDestroy(): void {
     // Unsubscribe first so the getProgressSubscription doesn't fire and try raising uploaded/cancelled evnts
     this.subscriptions.forEach((s) => s.unsubscribe());
@@ -277,12 +280,24 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     );
   }
 
-  private startUpload(): void {
-    if (!this.files?.length) {
+  public async setFiles(files: FileList | File[] | undefined): Promise<void> {
+    if (!files?.length) {
+      this.resizedFiles = undefined;
+
       return;
     }
 
-    const items = Array.from(this.files).map((file, index): QueueItem => {
+    this.resizedFiles = await resizeImageFiles(Array.from(files), { maxSize: 1000, quality: 85 });
+  }
+
+  private async startUpload(): Promise<void> {
+    const { resizedFiles } = this;
+
+    if (!resizedFiles?.length) {
+      return;
+    }
+
+    const items = resizedFiles.map((file, index): QueueItem => {
       return {
         file,
         index,
@@ -311,12 +326,12 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
 
   public onImageCropped(e: ImageCroppedEvent): void {
     if (!e.blob) {
-      this.files = undefined;
+      this.resizedFiles = undefined;
 
       return;
     }
 
-    this.files = [new File([e.blob], "logo.png", {
+    this.resizedFiles = [new File([e.blob], "logo.png", {
       type: "image/png",
     })];
   }
@@ -328,7 +343,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.files = Array.from(files);
+    this.resizedFiles = Array.from(files);
     this.logoFile = files[0];
   }
 
@@ -339,7 +354,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    this.files = await resizeImageFiles(Array.from(files), { maxSize: 1000, quality: 85 })
+    await this.setFiles(files);
   }
 
   public onUploadClick(): void {
