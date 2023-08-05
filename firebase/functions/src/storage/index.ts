@@ -7,8 +7,8 @@ import * as path from "path";
 import { spawn } from "child-process-promise";
 import { v4 as uuid } from "uuid";
 import { Club, Collections, TrophyFile } from "../models";
-import { getDownloadURL } from "firebase-admin/storage";
 import { FieldValue } from "firebase-admin/firestore";
+import { getDownloadUrlSafe } from "../helpers";
 
 const storageFunctions = functions.region("europe-west2").storage;
 const ThumbSize = 300;
@@ -68,7 +68,7 @@ const createThumb = async (object: functions.storage.ObjectMetadata): Promise<st
       public: true,
     });
 
-    return await getDownloadURL(resp[0]);
+    return await getDownloadUrlSafe(resp[0]);
   } catch (e) {
     functions.logger.debug(`${object.bucket} - ${object.name} could not be thumbnailed`);
 
@@ -118,8 +118,9 @@ const updateClubLogo = async (ids: LogoFileIds, object: functions.storage.Object
   const db = admin.firestore();
   const batch = db.batch();
   const clubRef = db.collection(Collections.Clubs).doc(clubId);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const logo = await getDownloadURL(admin.storage().bucket(object.bucket).file(object.name!));
+  const logo = await getDownloadUrlSafe(object);
+
+  // These are all the previous logos, there should really be any, but...
   const logoFiles = await admin.storage().bucket().getFiles({
     prefix: `${clubRef.path}/logos`,
   });
@@ -128,7 +129,7 @@ const updateClubLogo = async (ids: LogoFileIds, object: functions.storage.Object
     .map((x) => x.delete())
     ;
 
-  // Remove the logo request document as referenced by the x-goog-meta-id header
+  // Remove the logo request document
   batch.delete(clubRef.collection(Collections.Logos).doc(logoId));
   batch.update(clubRef, {
     modified: FieldValue.serverTimestamp(),
@@ -147,15 +148,18 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
     .collection(Collections.Trophies).doc(ids.trophyId)
     .collection(Collections.Files).doc(ids.fileId)
     ;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const file = admin.storage().bucket(object.bucket).file(object.name!);
+
+  // The file info that will be updated
   const fileInfo: Partial<TrophyFile> = {
-    url: await getDownloadURL(file),
+    url: await getDownloadUrlSafe(object),
     contentType: object.contentType,
     modified: FieldValue.serverTimestamp(),
   };
+
+  // Attempt to create the thumbnail
   const thumb = await createThumb(object);
 
+  // But only add if it was successfully created
   if (thumb) {
     fileInfo.thumb = thumb;
   }
@@ -166,10 +170,7 @@ const updateTrophyFile = async (ids: TrophyFileIds, object: functions.storage.Ob
     uploadInfo: FieldValue.delete(),
   };
 
-  await Promise.all([
-    file.makePublic(),
-    ref.update(updateInfo),
-  ]);
+  await ref.update(updateInfo);
 }
 
 // export const onStorageItemDelete = storageFunctions.bucket().object().onDelete(async (object) => {

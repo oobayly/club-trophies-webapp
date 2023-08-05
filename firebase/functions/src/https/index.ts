@@ -2,8 +2,8 @@ import * as cors from "cors";
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as admin from "firebase-admin";
-import { getDownloadURL } from "firebase-admin/storage";
 import * as functions from "firebase-functions";
+import { getDownloadUrlSafe } from "../helpers";
 
 const app = express();
 const httpsFunctions = functions.region("europe-west2").https;
@@ -29,7 +29,7 @@ app.put("/v1/emulated/clubs/:clubId/logos/:logoId.png", async (req, res) => {
   });
 
   return res.status(200).send({
-    file: getDownloadURL(file),
+    file: getDownloadUrlSafe(file),
   });
 });
 
@@ -44,7 +44,7 @@ app.put("/v1/emulated/clubs/:clubId/trophies/:trophyId/files/:fileName", async (
   });
 
   return res.status(200).send({
-    file: getDownloadURL(file),
+    file: getDownloadUrlSafe(file),
   });
 });
 
