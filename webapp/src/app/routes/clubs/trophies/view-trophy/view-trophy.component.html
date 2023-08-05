@@ -2,7 +2,10 @@
   <nav class="mb-3 d-print-none" aria-label="breadcrumb" *ngIf="club?.name as clubName">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a routerLink="../../">{{clubName}}</a>
+        <a routerLink="../../">
+          <img [appClubLogo]="logo" class="me-1" *ngIf="club?.logo as logo">
+          {{clubName}}
+        </a>
       </li>
       <li class="breadcrumb-item">Trophies</li>
       <li class="breadcrumb-item active" aria-current="page">
