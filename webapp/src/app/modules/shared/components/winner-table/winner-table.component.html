@@ -20,8 +20,9 @@
       <!-- Results -->
       <tbody>
         <tr *ngFor="let item of results; trackBy: identifyWinner">
-          <td *ngFor="let value of item.values">
+          <td *ngFor="let value of item.values; let i = index" [attr.data-index]="i">
             {{value}}
+            <i class="bi-lock" tooltip="Not visible in public results" *ngIf="i === 0 && item.data.suppress"></i>
           </td>
 
           <!-- This is only if a winner is displayed (not a search result), and canEdit -->

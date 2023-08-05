@@ -14,6 +14,7 @@
       color: var(--bs-table-color);
       border-color: var(--bs-table-border-color);
     }
+
     @media screen and (min-width: 992px) {
       // background-color: var(--bs-body-bg);
       top: 55px; // This is the height of the navbar (minus 1px to prevent content appearing above the thead)
@@ -24,9 +25,14 @@
     white-space: nowrap;
   }
 
+  td {
+    vertical-align: middle;
+  }
+
   @media screen {
     td {
       white-space: nowrap;
+
       &:last-child {
         width: 100%;
       }
@@ -39,9 +45,10 @@
     font-size: 75%;
 
     // This does what table-bordered, but only for printing
-    > :not(caption) > * {
+    > :not(caption)>* {
       border-width: 1px 0;
-      > * {
+
+      >* {
         border-width: 0 1px;
       }
     }
