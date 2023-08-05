@@ -1,10 +1,10 @@
 <ng-container *ngIf="sort$ | async as sort">
 
-  <!-- Wrapper used for responsiveness -->
-  <div class="table-responsive-lg" *ngIf="results$ | async as results"><!-- -->
+  <!-- Wrapper used for responsiveness, it's large -->
+  <div class="table-wrapper table-responsive-lg" *ngIf="results$ | async as results"><!-- -->
 
     <!-- Results table -->
-    <table class="table table-striped" *ngIf="results.length">
+    <table class="table table-striped" [ngClass]="{'has-buttons': canEdit}" *ngIf="results.length">
       <!-- This container is used to keep track of the columns -->
       <ng-container *ngIf="{cols: visibleColumns$ | async, sortIcon: sortIcon$ | async} as context">
 
@@ -15,7 +15,7 @@
               {{col.title}}
               <i class="ms-2" [ngClass]="context.sortIcon" *ngIf="col.field === sort.field"></i>
             </th>
-            <th class="buttons d-print-none" *ngIf="canEdit"></th>
+            <th class="buttons d-print-none"></th>
           </tr>
         </thead>
 
@@ -25,7 +25,7 @@
             <!-- This container is used as wrapper so he can easilty reference columns -->
             <ng-container *ngFor="let value of item.values; let i = index">
               <!-- The actual cell -->
-              <td *ngIf="context.cols?.[i] as col" [attr.data-column]="col.title">
+              <td *ngIf="context.cols?.[i] as col" [ngClass]="{'empty': !value}" [attr.data-column]="col.title">
                 {{value}}
                 <i class="bi-lock" title="Not visible in public results"
                   *ngIf="col.field === 'year' && item.data.suppress">
@@ -34,8 +34,8 @@
             </ng-container>
 
             <!-- This is only if a winner is displayed (not a search result), and canEdit -->
-            <td class="buttons d-print-none" *ngIf="canEdit && item.id">
-              <div class="btn-group-responsive-md  btn-group-sm">
+            <td class="buttons d-print-none">
+              <div class="btn-group-responsive-md  btn-group-sm" *ngIf="item.id">
                 <button class="btn btn-outline-primary" (click)="onItemEditClick(item)">
                   <i class="bi-pencil-fill"></i>
                 </button>

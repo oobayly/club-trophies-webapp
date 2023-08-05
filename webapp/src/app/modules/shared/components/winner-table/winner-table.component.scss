@@ -27,6 +27,10 @@
 
   td {
     vertical-align: middle;
+
+    &.buttons {
+      display: none; // Hidden by default
+    }
   }
 
   @media screen {
@@ -38,6 +42,87 @@
       }
     }
   }
+
+  &.has-buttons {
+    td.buttons {
+      display: table-cell;
+    }
+  }
+}
+
+@media screen and (max-width: 767.98px) {
+  .table-wrapper {
+    display: contents;
+
+    .table {
+      display: block;
+      --buttons-col-width: 48px;
+      --row-padding: 0.5rem;
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: block;
+
+        tr {
+          position: relative;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          padding: var(--row-padding);
+
+          &:nth-of-type(odd) {
+            background-color: var(--bs-table-striped-bg); // Just set the background colour here
+          }
+
+          td {
+            display: block;
+            border: 0;
+            flex: 0 0 calc(100% - var(--buttons-col-width)); // Leave space for the buttons
+            box-shadow: none; // Bootstrap sets the background colour using box-shadow for a reason I can't fathom
+
+            &.empty {
+              display: none;
+            }
+
+            &[data-column="Year"],
+            &[data-column="Sail #"] {
+              flex-basis: 50%;
+            }
+
+            &[data-column]::before {
+              content: attr(data-column) ":";
+              font-weight: 700;
+            }
+
+            &.buttons {
+              position: absolute;
+              top: var(--row-padding);
+              right: var(--row-padding);
+              bottom: var(--row-padding);
+              display: flex;
+              align-items: center;
+              width: var(--buttons-col-width);
+            }
+          }
+        }
+      }
+
+      &.has-buttons {
+        tbody {
+          td {
+            flex-basis: calc(100% - var(--buttons-col-width));
+            &[data-column="Year"],
+            &[data-column="Sail #"] {
+              flex-basis: calc((100% - var(--buttons-col-width)) / 2) !important;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 @media print {
@@ -45,10 +130,10 @@
     font-size: 75%;
 
     // This does what table-bordered, but only for printing
-    > :not(caption)>* {
+    > :not(caption) > * {
       border-width: 1px 0;
 
-      >* {
+      > * {
         border-width: 0 1px;
       }
     }
