@@ -5,6 +5,10 @@
       *ngFor="let item of clubs; trackBy: identifyClub">
 
       <div class="d-flex justify-content-between align-items-center" (click)="onItemClick($event, item)">
+        <div class="logo-container me-3">
+          <img [appClubLogo]="item.data.logo" class="logo" alt="Club Logo">
+        </div>
+
         <!-- Name -->
         <div class="me-auto pe-2 flex-fill">
           <div class="fw-bold">{{item.data.name}}</div>

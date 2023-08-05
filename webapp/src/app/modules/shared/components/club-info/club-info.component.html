@@ -1,12 +1,7 @@
 <div class="club-info d-flex flex-row justify-content-center align-items-center" *ngIf="club$ | async as club">
   <!-- Logo -->
   <div class="logo-container">
-    <img [src]="club.logo" *ngIf="club.logo; else genericLogo" class="" alt="Club Logo">
-
-    <!-- Fallback logo-->
-    <ng-template #genericLogo>
-      <img src="/assets/generic-burgee.svg" class="generic-logo" alt="Club Logo">
-    </ng-template>
+    <img [appClubLogo]="club.logo" class="" alt="Club Logo">
   </div>
 
   <!-- -->
