@@ -128,7 +128,6 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
   }
 
   public async saveWinner(): Promise<string> {
-    const isNew = !this.winnerId;
     const winner = await this.db.withBoatRef({
       ...this.form.value,
       year: this.form.value.year!, // This is required
@@ -141,18 +140,18 @@ export class WinnerEditorComponent implements OnChanges, OnDestroy {
 
     removeEmptyStrings(winner, ["club", "crew", "helm", "name", "notes", "owner", "sail"]);
 
-    if (isNew) {
+    if (this.winnerId) {
+      return await this.db.updateRecord(
+        this.db.getWinnerDoc(this.clubId, this.trophyId, this.winnerId)
+        , winner,
+      );
+    } else {
       const docRef = await this.db.addRecord(
         this.db.getWinnersCollection(this.clubId, this.trophyId),
         winner,
       );
 
       return docRef.id;
-    } else {
-      return await this.db.updateRecord(
-        this.db.getWinnerDoc(this.clubId, this.trophyId, this.winnerId)
-        , winner,
-      );
     }
   }
 

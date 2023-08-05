@@ -112,7 +112,6 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
   }
 
   public async saveTrophy(): Promise<string> {
-    const isNew = !this.trophyId;
     const trophy = await this.db.withBoatRef({
       ...this.form.value,
       name: this.form.value.name!, // Name is a required property
@@ -124,18 +123,18 @@ export class TrophyEditorComponent implements OnChanges, OnDestroy {
 
     removeEmptyStrings(trophy, ["conditions", "details", "donated", "donor", "page"]);
 
-    if (isNew) {
+    if (this.trophyId) {
+      return await this.db.updateRecord(
+        this.db.getTrophyDoc(this.clubId, this.trophyId),
+        trophy,
+      );
+    } else {
       const docRef = await this.db.addRecord(
         this.db.getTrophyCollection(this.clubId),
         trophy,
       );
 
       return docRef.id;
-    } else {
-      return await this.db.updateRecord(
-        this.db.getTrophyDoc(this.clubId, this.trophyId),
-        trophy,
-      );
     }
   }
 

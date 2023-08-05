@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Auth } from "@angular/fire/auth";
-import { CollectionReference, DocumentReference, DocumentSnapshot, Firestore, Query, UpdateData, addDoc, collection, collectionGroup, collectionSnapshots, docSnapshots, getDoc, serverTimestamp, setDoc, updateDoc } from "@angular/fire/firestore";
+import { CollectionReference, DocumentReference, DocumentSnapshot, Firestore, Query, UpdateData, addDoc, collection, collectionGroup, collectionSnapshots, docSnapshots, getDoc, serverTimestamp, updateDoc } from "@angular/fire/firestore";
 import { Boat, BoatReference, Club, ClubLogoRequest, Collections, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
 import { Observable, map, combineLatest, switchMap, of, filter } from "rxjs";
 import { DbRecord, toRecord } from "../interfaces/DbRecord";
@@ -157,7 +157,7 @@ export class DbService {
     return typedCollection(this.firestore, getTrophiesPath(clubId));
   }
 
-  public getTrophyDoc(clubId: string, trophyId?: string): DocumentReference<Trophy> {
+  public getTrophyDoc(clubId: string, trophyId: string): DocumentReference<Trophy> {
     return doc(this.getTrophyCollection(clubId), trophyId);
   };
 
@@ -169,7 +169,7 @@ export class DbService {
     return typedCollection(this.firestore, getTrophyFilesPath(clubId, trophyId));
   }
 
-  public getFileDoc(clubId: string, trophyId: string, fileId?: string): DocumentReference<TrophyFile> {
+  public getFileDoc(clubId: string, trophyId: string, fileId: string): DocumentReference<TrophyFile> {
     return doc(this.getFilesCollection(clubId, trophyId), fileId);
   };
 
@@ -181,7 +181,7 @@ export class DbService {
     return typedCollection(this.firestore, getWinnersPath(clubId, trophyId));
   }
 
-  public getWinnerDoc(clubId: string, trophyId: string, winnerId?: string): DocumentReference<Winner> {
+  public getWinnerDoc(clubId: string, trophyId: string, winnerId: string): DocumentReference<Winner> {
     return doc(this.getWinnersCollection(clubId, trophyId), winnerId);
   };
 
@@ -189,20 +189,19 @@ export class DbService {
   // Searching
   // ========================
 
-  public getSearchDocument(searchId?: string): DocumentReference<Search> {
-    const coll = typedCollection<Search>(this.firestore, Collections.Searches);
-
-    return doc(coll, searchId);
+  public getSearchDocument(searchId: string): DocumentReference<Search> {
+    return doc(typedCollection<Search>(this.firestore, Collections.Searches), searchId);
   }
 
   public async createSearch(value: Omit<Search, "uid">): Promise<string> {
     const uid = this.auth.currentUser?.uid;
-    const docRef = this.getSearchDocument();
 
-    await setDoc(docRef, {
-      ...value,
-      ...uid ? { uid } : undefined,
-    });
+    const docRef = await addDoc(
+      typedCollection<Search>(this.firestore, Collections.Searches),
+      {
+        ...value,
+        ...uid ? { uid } : undefined,
+      });
 
     return docRef.id;
   }
