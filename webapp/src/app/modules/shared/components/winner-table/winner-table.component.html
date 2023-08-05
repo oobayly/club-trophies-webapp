@@ -4,7 +4,7 @@
   <div class="table-wrapper table-responsive-lg" *ngIf="results$ | async as results"><!-- -->
 
     <!-- Results table -->
-    <table class="table table-striped" [ngClass]="{'has-buttons': canEdit}" *ngIf="results.length">
+    <table class="table table-striped" [ngClass]="{'read-only': !canEdit}" *ngIf="results.length">
       <!-- This container is used to keep track of the columns -->
       <ng-container *ngIf="{cols: visibleColumns$ | async, sortIcon: sortIcon$ | async} as context">
 

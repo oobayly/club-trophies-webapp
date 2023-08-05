@@ -27,10 +27,6 @@
 
   td {
     vertical-align: middle;
-
-    &.buttons {
-      display: none; // Hidden by default
-    }
   }
 
   @media screen {
@@ -43,9 +39,12 @@
     }
   }
 
-  &.has-buttons {
-    td.buttons {
-      display: table-cell;
+  &.read-only {
+    td,
+    th {
+      &.buttons {
+        display: none;
+      }
     }
   }
 }
@@ -89,13 +88,14 @@
 
             &[data-column="Year"],
             &[data-column="Sail #"] {
-              flex-basis: 50%;
+              flex-basis: calc((100% - var(--buttons-col-width)) / 2);
             }
 
             &[data-column]::before {
               display: inline-block;
               min-width: 3rem;
               content: attr(data-column) ":";
+              color: var(--bs-gray-600);
               font-weight: 700;
             }
 
@@ -112,13 +112,16 @@
         }
       }
 
-      &.has-buttons {
+      &.read-only {
         tbody {
           td {
-            flex-basis: calc(100% - var(--buttons-col-width));
+            flex-basis: 100% !important;
             &[data-column="Year"],
             &[data-column="Sail #"] {
-              flex-basis: calc((100% - var(--buttons-col-width)) / 2) !important;
+              flex-basis: 50% !important;
+            }
+            &.buttons {
+              display: none !important;
             }
           }
         }
