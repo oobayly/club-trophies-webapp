@@ -95,12 +95,12 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
           winners = winners.filter((x) => x.data.boatName === boatName);
         }
         // TODO: Implement this
-        // if (sail) {
-        //   winners = filterByNormalisedText(winners, sail, "id");
-        // }
-        // if (text) {
-        //   winners = filterByNormalisedText(winners, text, "id");
-        // }
+        if (sail) {
+          winners = filterByNormalisedText(winners, sail, ["sail"], (x) => x.data);
+        }
+        if (text) {
+          winners = filterByNormalisedText(winners, text, ["club", "crew", "helm", "name", "owner"], (x) => x.data);
+        }
 
         return winners;
       }),

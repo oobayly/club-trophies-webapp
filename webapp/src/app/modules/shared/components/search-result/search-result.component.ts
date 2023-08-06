@@ -120,10 +120,10 @@ export class SearchResultComponent implements OnChanges, OnDestroy {
           results = results.filter((x) => x.boatName === boatName);
         }
         if (sail) {
-          results = filterByNormalisedText(results, sail, "sail");
+          results = filterByNormalisedText(results, sail, ["sail"]);
         }
         if (text) {
-          results = filterByNormalisedText(results, text, "club", "crew", "helm", "name", "owner");
+          results = filterByNormalisedText(results, text, ["club", "crew", "helm", "name", "owner"]);
         }
 
         // Take a deep copy of the clubs so we can modify the trophies

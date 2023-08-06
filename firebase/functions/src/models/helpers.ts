@@ -1,15 +1,32 @@
 import { BoatReference } from "./Boat";
 import { GenericKeyOf, NullableStringKeyOf } from "./types";
 
-export const filterByNormalisedText = <T>(items: T[], text: string, ...fields: GenericKeyOf<T, string | undefined>[]): T[] => {
+/** Filters the list of items based on any of the specified fields containing text. */
+function filterByNormalisedText<T>(items: T[], text: string, fields: GenericKeyOf<T, string | undefined>[]): T[];
+/** Filters the list of items based on any of the specified fields provided in getItem containing text. */
+function filterByNormalisedText<T, K>(items: T[], text: string, fields: GenericKeyOf<K, string | undefined>[], getItem: (item: T) => K): T[];
+function filterByNormalisedText<T, K>(
+  items: T[],
+  text: string,
+  fields: string[],
+  getItem?: (item: T) => K,
+): T[] {
+  // This is a bit messy, but it means we don't have to re-normalised the search text every time
+  // If no getItem is provided than the fields have to be in `T`
+  // If getItem is provided, then the fields searched are in `K`
   text = text.toLocaleUpperCase();
 
   return items.filter((item) => {
+    // We need to cast as any as the compiler has no idea of the type at this stage
+    // The overloads mean we can't pass the wrong types in.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const withFields: any = getItem ? getItem(item) : item;
+
     return fields.some((field) => {
-      const val = (item[field] as unknown as string | undefined)?.toLocaleUpperCase();
+      const val = (withFields[field] as string | undefined)?.toLocaleUpperCase();
 
       return val?.includes(text);
-    })
+    });
   });
 }
 
@@ -60,3 +77,7 @@ export const removeMatching = <T, TProperty>(
 
   return item;
 };
+
+export {
+  filterByNormalisedText,
+}
