@@ -37,6 +37,7 @@ import { FileUploadModalComponent } from "./modals/file-upload-modal/file-upload
 import { FileUploadComponent } from "./components/file-upload/file-upload.component";
 import { ImageCropperModule } from "ngx-image-cropper";
 import { ClubLogoDirective } from "./directives/club-logo.directive";
+import { WinnerFilterComponent } from "./components/winner-filter/winner-filter.component";
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { ClubLogoDirective } from "./directives/club-logo.directive";
     FileUploadModalComponent,
     FileUploadComponent,
     ClubLogoDirective,
+    WinnerFilterComponent,
   ],
   imports: [
     CommonModule,
@@ -92,6 +94,7 @@ import { ClubLogoDirective } from "./directives/club-logo.directive";
     TrophiesListComponent,
     WinnerEditorComponent,
     SearchResultComponent,
+    WinnerFilterComponent,
     LoaderComponent,
     ClubLogoDirective,
     NgBtnDirective,

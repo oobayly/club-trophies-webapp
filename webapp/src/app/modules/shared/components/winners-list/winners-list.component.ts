@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
-import { Collections, Winner } from "@models";
+import { Collections, Winner, filterByNormalisedText, getBoatNames } from "@models";
 import { BehaviorSubject, Observable, combineLatest, filter, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { TrophyBaseComponent } from "../trophy-base-component";
 import { DbService } from "src/app/core/services/db.service";
 import { Query, collection, collectionSnapshots, query, where } from "@angular/fire/firestore";
 import { Auth } from "@angular/fire/auth";
+import { WinnerFilter } from "../winner-filter/winner-filter.component";
 
 @Component({
   selector: "app-winners-list",
@@ -16,6 +17,12 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // ========================
   // Properties
   // ========================
+
+  private readonly allWinners$: Observable<DbRecord<Winner>[]>;
+
+  public readonly boatNames$: Observable<string[]>;
+
+  public readonly filter$ = new BehaviorSubject<WinnerFilter>({});
 
   public readonly winners$: Observable<DbRecord<Winner>[]>;
 
@@ -45,7 +52,9 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   ) {
     super(auth, db);
 
-    this.winners$ = this.getWinnersObservable();
+    this.allWinners$ = this.getWinnersObservable();
+    this.boatNames$ = this.getBoatNames();
+    this.winners$ = this.getFilteredWinnersObservable();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -57,6 +66,46 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
   // ========================
   // Methods
   // ========================
+
+  private getBoatNames(): Observable<string[]> {
+    return this.allWinners$.pipe(
+      map((winners) => getBoatNames(winners.map((x) => x.data))),
+    )
+  }
+
+  private getFilteredWinnersObservable(): Observable<DbRecord<Winner>[]> {
+    const normalizedFilter$ = this.filter$.pipe(
+      map((x): WinnerFilter => {
+        return {
+          boatName: x.boatName,
+          sail: x.sail?.toLocaleUpperCase(),
+          text: x.text?.toLocaleUpperCase(),
+        }
+      }),
+    );
+
+    return combineLatest([
+      this.allWinners$,
+      normalizedFilter$,
+    ]).pipe(
+      map(([winners, filter]) => {
+        const { boatName, sail, text } = filter;
+
+        if (boatName) {
+          winners = winners.filter((x) => x.data.boatName === boatName);
+        }
+        // TODO: Implement this
+        // if (sail) {
+        //   winners = filterByNormalisedText(winners, sail, "id");
+        // }
+        // if (text) {
+        //   winners = filterByNormalisedText(winners, text, "id");
+        // }
+
+        return winners;
+      }),
+    );
+  }
 
   private getWinnersObservable(): Observable<DbRecord<Winner>[]> {
     return combineLatest([
@@ -79,6 +128,7 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
       shareReplay(1),
     );
   }
+
   // ========================
   // Event handlers
   // ========================

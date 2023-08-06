@@ -1,5 +1,10 @@
 <ng-container *ngIf="results$ | async as results; else loadingOrError">
-  <div class="result-container" *ngIf="hasResults$ | async; else emptySet">
+  <div class="mb-3 d-print-none">
+    <app-winner-filter [boatNames]="boatNames$ | async" (filterChange)="filter$.next($event)">
+    </app-winner-filter>
+  </div>
+
+  <div class="result-container" *ngIf="results.length; else emptySet">
     <!-- Each club -->
     <div class="club mb-3" *ngFor="let club of results">
       <hr>

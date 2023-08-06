@@ -1,3 +1,8 @@
+<div class="mb-3 d-print-none">
+  <app-winner-filter [boatNames]="boatNames$ | async" (filterChange)="filter$.next($event)">
+  </app-winner-filter>
+</div>
+
 <div class="winners-container">
   <ng-container *ngIf="winners$ | async as winners; else loadingOrError">
     <!-- Results table -->

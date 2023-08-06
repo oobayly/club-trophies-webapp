@@ -1,8 +1,9 @@
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
-import { SearchClubInfo, SearchResult, SearchTrophyInfo, SearchWithResults } from "@models";
-import { Observable, Subject, distinctUntilChanged, switchMap, catchError, of, takeUntil, shareReplay, BehaviorSubject, map } from "rxjs";
+import { SearchClubInfo, SearchResult, SearchTrophyInfo, SearchWithResults, filterByNormalisedText, getBoatNames } from "@models";
+import { Observable, Subject, distinctUntilChanged, switchMap, catchError, of, takeUntil, shareReplay, BehaviorSubject, map, combineLatest, filter } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
+import { WinnerFilter } from "../winner-filter/winner-filter.component";
 
 interface SearchClubInfoWithResults extends SearchClubInfo {
   trophies: SearchTrophyInfoWithResults[];
@@ -24,11 +25,13 @@ export class SearchResultComponent implements OnChanges, OnDestroy {
 
   public hasError = false;
 
+  public readonly boatNames$: Observable<string[]>;
+
+  public readonly filter$ = new BehaviorSubject<WinnerFilter>({});
+
   public readonly searchId$ = new BehaviorSubject<string | undefined>(undefined);
 
   private readonly search$: Observable<SearchWithResults | undefined>;
-
-  public readonly hasResults$: Observable<boolean>;
 
   public readonly results$: Observable<SearchClubInfoWithResults[]>;
 
@@ -49,8 +52,8 @@ export class SearchResultComponent implements OnChanges, OnDestroy {
     private readonly db: DbService,
   ) {
     this.search$ = this.getSearchObservable();
+    this.boatNames$ = this.getBoatNames();
     this.results$ = this.getExpandedResults();
-    this.hasResults$ = this.search$.pipe(map((x) => !!x?.results.length));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -66,6 +69,13 @@ export class SearchResultComponent implements OnChanges, OnDestroy {
   // ========================
   // Methods
   // ========================
+
+  private getBoatNames(): Observable<string[]> {
+    return this.search$.pipe(
+      filterNotNull(),
+      map((search) => getBoatNames(search.results)),
+    )
+  }
 
   private getSearchObservable(): Observable<SearchWithResults | undefined> {
     return this.searchId$.pipe(
@@ -85,20 +95,54 @@ export class SearchResultComponent implements OnChanges, OnDestroy {
   }
 
   private getExpandedResults(): Observable<SearchClubInfoWithResults[]> {
-    return this.search$.pipe(
-      filterNotNull(),
-      map((search) => {
-        // Take a deep copy of the clubs so we can modify the trophied
-        const clubs = search.clubs?.map((club) => {
-          const trophies = club.trophies.map((item) => {
-            return SearchResultComponent.getResultsForTrophy(club.clubId, item, search.results);
-          });
+    const normalizedFilter$ = this.filter$.pipe(
+      map((x): WinnerFilter => {
+        return {
+          boatName: x.boatName,
+          sail: x.sail?.toLocaleUpperCase(),
+          text: x.text?.toLocaleUpperCase(),
+        }
+      }),
+    );
 
-          return {
-            ...club,
-            trophies,
-          }
-        });
+    return combineLatest([
+      this.search$,
+      normalizedFilter$,
+    ]).pipe(
+      filter(([search]) => !!search),
+      map(([search, filter]) => {
+        search = search!; // Already filtered
+
+        let { results } = search;
+        const { boatName, sail, text } = filter;
+
+        if (boatName) {
+          results = results.filter((x) => x.boatName === boatName);
+        }
+        if (sail) {
+          results = filterByNormalisedText(results, sail, "sail");
+        }
+        if (text) {
+          results = filterByNormalisedText(results, text, "club", "crew", "helm", "name", "owner");
+        }
+
+        // Take a deep copy of the clubs so we can modify the trophies
+        const clubs = search.clubs
+          ?.map((club) => {
+            const trophies = club.trophies
+              .map((item) => {
+                return SearchResultComponent.getResultsForTrophy(club.clubId, item, results);
+              })
+              .filter((x) => x.results.length)
+              ;
+
+            return {
+              ...club,
+              trophies,
+            };
+          })
+          .filter((x) => x.trophies.length) // Exclude any club or trophies with no results after filtering
+          ;
 
         return clubs;
       }),

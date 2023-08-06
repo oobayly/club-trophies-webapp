@@ -148,7 +148,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
     ]).pipe(
       map(([filter, trophies]) => {
         const boatName = filter?.boatName || "all";
-        const name = filter?.name?.trim()?.toUpperCase();
+        const name = filter?.name?.trim()?.toLocaleUpperCase();
 
         if (!trophies) {
           trophies = [];
@@ -166,7 +166,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
 
         if (name) {
           trophies = trophies.filter((x) => {
-            return x.data.name.toUpperCase().includes(name);
+            return x.data.name.toLocaleUpperCase().includes(name);
           });
         }
 
@@ -218,5 +218,6 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
       name: "",
       boatName: "all",
     });
+    this.filter.markAsPristine();
   }
 }
