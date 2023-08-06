@@ -12,12 +12,14 @@
         <!-- Name -->
         <div class="me-auto pe-2 flex-fill">
           <div class="fw-bold">{{item.data.name}}</div>
-          <div class="text-muted">
-            <span class="pe-2" *ngIf="item.data.country | flag as flag">
-              <span class="fi {{flag}}"></span>
+          <div class="club-info d-flex text-muted">
+            <span>
+              <span class="" *ngIf="item.data.country | flag as flag">
+                <span class="fi {{flag}}"></span>
+              </span>
+              {{item.data.country}}
             </span>
-            {{item.data.country}},
-            {{item.data.shortName}}
+            <span>{{item.data.shortName}}</span>
           </div>
         </div>
 

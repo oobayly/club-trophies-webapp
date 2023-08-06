@@ -12,3 +12,16 @@
     transform: translateX(33.33333%) scale(2);
   }
 }
+
+.club-info {
+  > * {
+    &:not(:first-child) {
+      margin-left: 0.25rem;
+
+      &::before {
+        content: "\2022"; // bullet
+        padding-right: 0.25rem;
+      }
+    }
+  }
+}

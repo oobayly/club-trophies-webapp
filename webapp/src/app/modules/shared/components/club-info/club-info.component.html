@@ -11,10 +11,10 @@
       <small class="d-flex justify-content-between">
         <span>{{club.shortName}}</span>
         <span>
-          {{club.country}}
-          <span class="ps-2" *ngIf="club.country | flag as flag">
+          <span class="" *ngIf="club.country | flag as flag">
             <span class="fi {{flag}}"></span>
           </span>
+          {{club.country}}
         </span>
       </small>
     </div>
