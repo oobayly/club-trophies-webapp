@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { Auth, authState, signInWithEmailAndPassword, signOut } from "@angular/fire/auth";
 import { combineLatest, filter, first, map, mergeMap, Observable, of, shareReplay, startWith, Subscription, switchMap, tap } from "rxjs";
 import { idToken, isAdmin } from "./core/rxjs/auth";
@@ -10,6 +10,7 @@ import { Club } from "@models";
 import { filterNotNull } from "./core/rxjs";
 import { SwUpdate, VersionReadyEvent } from "@angular/service-worker";
 import { collectionSnapshots, query, where } from "@angular/fire/firestore";
+import { NgbOffcanvas } from "@ng-bootstrap/ng-bootstrap";
 
 interface Ids {
   clubId: string | undefined;
@@ -50,6 +51,9 @@ export class AppComponent implements OnInit {
 
   public readonly canEdit$ = this.getCanEditObservable();
 
+  @ViewChild("navOffCanvas")
+  private navOffCanvas?: ElementRef<HTMLElement>;
+
   // ========================
   // Lifecycle
   // ========================
@@ -58,6 +62,7 @@ export class AppComponent implements OnInit {
     private readonly auth: Auth,
     private readonly db: DbService,
     private readonly modal: ModalService,
+    public readonly offcanvasService: NgbOffcanvas,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly swUpdate: SwUpdate,
@@ -106,7 +111,10 @@ export class AppComponent implements OnInit {
   private getIdsObservable(): Observable<Ids | undefined> {
     return this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
-      tap(() => this.isNavBarCollapsed = true),
+      tap(() => {
+        this.isNavBarCollapsed = true;
+        this.offcanvasService.dismiss();
+      }),
       map(() => this.route.snapshot),
       startWith(this.route.snapshot),
       map((snapshot) => {
@@ -224,6 +232,28 @@ export class AppComponent implements OnInit {
     } else {
       await signOut(this.auth);
     }
+  }
+
+  public async onSearchClick(): Promise<void> {
+    await this.modal.showAlert({
+      title: "Search winners",
+      icon: "info",
+      message: "Searching is not yet supported.",
+      buttons: "ok",
+    });
+  }
+
+  public async onShowOffCanvasClick(): Promise<void> {
+    if (!this.navOffCanvas) {
+      return;
+    }
+
+    this.offcanvasService.open(this.navOffCanvas, {
+      position: "end",
+    }).result
+      .then(() => { })
+      .catch(() => { }) // Dismiss throws so it needs to be caught
+      ;
   }
 
   public async onUpdateLogoClick(clubId: string | undefined): Promise<void> {

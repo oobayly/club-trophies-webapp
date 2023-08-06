@@ -13,7 +13,7 @@
           <a routerLink="/clubs/public" class="dropdown-item" routerLinkActive="active">
             Public clubs
           </a>
-          <a routerLink="/clubs/mine" class="dropdown-item" routerLinkActive="active">
+          <a routerLink="/clubs/mine" class="dropdown-item" routerLinkActive="active" *ngIf="user$ | async">
             My clubs
           </a>
           <a routerLink="/clubs/all" class="dropdown-item" routerLinkActive="active" *ngIf="isAdmin$ | async">
@@ -96,14 +96,36 @@
     </ul>
   </div>
 
-  <button class="navbar-toggler" type="button" [attr.aria-expanded]="!isNavBarCollapsed" aria-label="Toggle navigation"
-    (click)="isNavBarCollapsed = !isNavBarCollapsed">
+  <button class="navbar-toggler" type="button" aria-label="Toggle navigation" (click)="onShowOffCanvasClick()">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="collapse navbar-collapse" [ngbCollapse]="isNavBarCollapsed">
+  <div class="offcanvas">
+    <ng-container *ngTemplateOutlet="navOffCanvas"></ng-container>
+  </div>
+</nav>
+
+<div class="page-content p-4">
+  <router-outlet></router-outlet>
+</div>
+
+<ng-template #navOffCanvas let-offcanvas>
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Menu</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.close()"></button>
+  </div>
+
+  <div class="offcanvas-body">
     <!-- Links -->
     <ul class="navbar-nav me-auto">
+      <!-- Search -->
+      <li class="nav-item">
+        <a role="button" class="nav-link" (click)="onSearchClick()">
+          <i class="bi-search me-2"></i>
+          Search
+        </a>
+      </li>
+
       <!-- Admin -->
       <li class="nav-item" *ngIf="isAdmin$ | async">
         <a routerLink="/admin/users" class="nav-link">Users</a>
@@ -115,8 +137,8 @@
       <ng-container *ngIf="user$ | async; else signIn">
         <!-- TODO: Implment profile -->
         <!-- <li class="nav-item">
-          <a routerLink="/auth/profile" class="nav-link">Profile</a>
-        </li> -->
+        <a routerLink="/auth/profile" class="nav-link">Profile</a>
+      </li> -->
         <li class="nav-item">
           <a routerLink="/auth/sign-out" class="nav-link">Sign out</a>
         </li>
@@ -129,8 +151,4 @@
       </ng-template>
     </ul>
   </div>
-</nav>
-
-<div class="page-content p-4">
-  <router-outlet></router-outlet>
-</div>
+</ng-template>
