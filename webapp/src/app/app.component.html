@@ -1,18 +1,13 @@
-<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light px-2 d-print-none">
+<nav class="navbar navbar-expand-sm sticky-top navbar-light bg-light px-2 d-print-none">
   <a class="navbar-brand" routerLink="/">Club Trophies</a>
 
-  <button class="navbar-toggler" type="button" [attr.aria-expanded]="!isNavBarCollapsed" aria-label="Toggle navigation"
-    (click)="isNavBarCollapsed = !isNavBarCollapsed">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" [ngbCollapse]="isNavBarCollapsed">
-    <!-- Links -->
-    <ul class="navbar-nav me-auto">
+  <div class="no-collapse me-auto">
+    <ul class="navbar-nav">
       <!-- Clubs -->
       <li class="nav-item dropdown" ngbDropdown>
         <a class="nav-link dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
-          Clubs
+          <i class="bi-building-fill me-2"></i>
+          <span class="d-none d-sm-inline">Clubs</span>
         </a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <a routerLink="/clubs/public" class="dropdown-item" routerLinkActive="active">
@@ -45,7 +40,8 @@
         <li class="nav-item dropdown" ngbDropdown *ngIf="ids$ | async as ids">
           <a class="nav-link dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false"
             ngbDropdownToggle>
-            Edit
+            <i class="bi-pencil-fill me-2"></i>
+            <span class="d-none d-sm-inline">Edit</span>
           </a>
 
           <div class="dropdown-menu" ngbDropdownMenu>
@@ -82,13 +78,13 @@
             </ng-container>
           </div>
         </li>
-
       </ng-container>
 
       <!-- Development user dropdown -->
       <li class="nav-item dropdown" ngbDropdown *ngIf="emails">
         <a class="nav-link dropdown-toggle" role="button" aria-haspopup="true" ngbDropdownToggle>
-          Users
+          <i class="bi-people-fill me-2"></i>
+          <span class="d-none d-sm-inline">Users</span>
         </a>
         <div class="dropdown-menu" ngbDropdownMenu>
           <a class="dropdown-item" role="button" *ngFor="let item of emails" (click)="onEmailClick(item[0])"
@@ -97,7 +93,17 @@
           </a>
         </div>
       </li>
+    </ul>
+  </div>
 
+  <button class="navbar-toggler" type="button" [attr.aria-expanded]="!isNavBarCollapsed" aria-label="Toggle navigation"
+    (click)="isNavBarCollapsed = !isNavBarCollapsed">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" [ngbCollapse]="isNavBarCollapsed">
+    <!-- Links -->
+    <ul class="navbar-nav me-auto">
       <!-- Admin -->
       <li class="nav-item" *ngIf="isAdmin$ | async">
         <a routerLink="/admin/users" class="nav-link">Users</a>

@@ -1,7 +1,21 @@
 .navbar {
-  // Nomrally this is 1020, so below position sticky, but in this case we have fixed sticky
+  // Normally this is 1020, so below position sticky, but in this case we have fixed sticky
   // elements so they don't go above the navbar. This ensures dropmenus appear above the sticky
   z-index: 1030;
+
+  .no-collapse {
+    .navbar-nav {
+      flex-direction: row;
+
+      .nav-link {
+        padding-left: var(--bs-navbar-nav-link-padding-x);
+        padding-right: var(--bs-navbar-nav-link-padding-x);
+      }
+      .dropdown-menu {
+        position: absolute;
+      }
+    }
+  }
 }
 
 @media print {
