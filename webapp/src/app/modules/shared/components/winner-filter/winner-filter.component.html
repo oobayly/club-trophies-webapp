@@ -1,16 +1,16 @@
 <form class="input-group mb-3" [formGroup]="form">
   <span class="input-group-text d-none d-lg-inline">Filter</span>
 
-  <input type="text" class="form-control" formControlName="sail" placeholder="Sail #" *ngIf="showSail">
+  <input type="text" class="sail-input form-control" formControlName="sail" placeholder="Sail #" *ngIf="showSail">
 
-  <input type="text" class="form-control" formControlName="text" placeholder="Name, etc" *ngIf="showText">
+  <input type="text" class="text-input form-control" formControlName="text" placeholder="Name, etc" *ngIf="showText">
 
-  <select class="form-select" formControlName="boatName" *ngIf="showBoatName && boatNames?.length">
+  <select class="boat-select form-select" formControlName="boatName" *ngIf="showBoatName && boatNames?.length">
     <option value="">All boats</option>
     <option [ngValue]="item" *ngFor="let item of boatNames">{{item}}</option>
   </select>
 
-  <button type="button" class="btn btn-dark" (click)="onResetFilterClick()">
+  <button type="button" class="btn btn-primary" (click)="onResetFilterClick()">
     <span class="d-none d-lg-inline">Clear</span>
     <i class="bi-x-circle d-lg-none"></i>
   </button>

@@ -8,7 +8,7 @@
     <option [ngValue]="item" *ngFor="let item of boats$ | async">{{item}}</option>
   </select>
 
-  <button type="button" class="btn btn-dark" (click)="onResetFilterClick()">
+  <button type="button" class="btn btn-primary" (click)="onResetFilterClick()">
     <span class="d-none d-lg-inline">Clear</span>
     <i class="bi-x-circle d-lg-none"></i>
   </button>
