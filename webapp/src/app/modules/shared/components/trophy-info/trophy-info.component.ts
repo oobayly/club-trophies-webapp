@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
-import { Observable, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
-import { Club, Trophy } from "@models";
-import { filterNotNull } from "src/app/core/rxjs";
-import { TrophyBaseComponent } from "../trophy-base-component";
-import { DbService } from "src/app/core/services/db.service";
-import { docSnapshots } from "@angular/fire/firestore";
 import { Auth } from "@angular/fire/auth";
+import { docSnapshots } from "@angular/fire/firestore";
+import { Club, Trophy } from "@models";
+import { Observable, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
+import { filterNotNull } from "src/app/core/rxjs";
+import { DbService } from "src/app/core/services/db.service";
+import { TrophyBaseComponent } from "../trophy-base-component";
 
 export type TabType = "winners" | "info" | "photos";
 

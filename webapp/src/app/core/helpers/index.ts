@@ -1,5 +1,5 @@
-import { v4 } from "uuid";
 import { HasTimestamp, TimestampLike } from "@models";
+import { v4 } from "uuid";
 import { DbRecord } from "../interfaces/DbRecord";
 
 export const truthy = (value: any): boolean => {
@@ -45,4 +45,5 @@ export const uuid = (): string => v4();
 
 export {
   identifyUsingTimestamp,
-}
+};
+

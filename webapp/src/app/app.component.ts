@@ -1,16 +1,16 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { Auth, authState, signInWithEmailAndPassword, signOut } from "@angular/fire/auth";
-import { combineLatest, filter, first, map, mergeMap, Observable, of, shareReplay, startWith, Subscription, switchMap, tap } from "rxjs";
-import { idToken, isAdmin } from "./core/rxjs/auth";
-import { environment } from "src/environments/environment";
-import { ModalService } from "./core/services/modal.service";
-import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router } from "@angular/router";
-import { DbService } from "./core/services/db.service";
-import { Club } from "@models";
-import { filterNotNull } from "./core/rxjs";
-import { SwUpdate, VersionReadyEvent } from "@angular/service-worker";
 import { collectionSnapshots, query, where } from "@angular/fire/firestore";
+import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router } from "@angular/router";
+import { SwUpdate, VersionReadyEvent } from "@angular/service-worker";
+import { Club } from "@models";
 import { NgbOffcanvas } from "@ng-bootstrap/ng-bootstrap";
+import { Observable, Subscription, combineLatest, filter, first, map, mergeMap, of, shareReplay, startWith, switchMap, tap } from "rxjs";
+import { environment } from "src/environments/environment";
+import { filterNotNull } from "./core/rxjs";
+import { idToken, isAdmin } from "./core/rxjs/auth";
+import { DbService } from "./core/services/db.service";
+import { ModalService } from "./core/services/modal.service";
 
 interface Ids {
   clubId: string | undefined;

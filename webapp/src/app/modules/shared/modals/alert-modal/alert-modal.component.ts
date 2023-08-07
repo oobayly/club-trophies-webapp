@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { BaseModalComponent } from "../base-modal.component";
-import { NgButton } from "../../directives/ng-btn.directive";
 import { NgColor } from "@helpers/angular";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgButton } from "../../directives/ng-btn.directive";
+import { BaseModalComponent } from "../base-modal.component";
 
 export interface AlertButton<T = string | boolean | number> extends NgButton {
   text: string;

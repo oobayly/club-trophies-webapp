@@ -1,6 +1,6 @@
+import * as bodyParser from "body-parser";
 import * as cors from "cors";
 import * as express from "express";
-import * as bodyParser from "body-parser";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import { getDownloadUrlSafe } from "../helpers";
@@ -53,3 +53,4 @@ const api = httpsFunctions.onRequest(app);
 export {
   api,
 };
+

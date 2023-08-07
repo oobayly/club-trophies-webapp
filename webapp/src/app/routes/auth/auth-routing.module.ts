@@ -1,9 +1,9 @@
 import { NgModule } from "@angular/core";
+import { AuthGuard, redirectLoggedInTo } from "@angular/fire/auth-guard";
 import { RouterModule, Routes } from "@angular/router";
-import { AuthGuard, redirectLoggedInTo } from "@angular/fire/auth-guard"
+import { SignOutResolver } from "src/app/core/resolvers/sign-out.resolver";
 import { AuthComponent } from "./auth.component";
 import { SignInComponent } from "./sign-in/sign-in.component";
-import { SignOutResolver } from "src/app/core/resolvers/sign-out.resolver";
 
 const routes: Routes = [
   {

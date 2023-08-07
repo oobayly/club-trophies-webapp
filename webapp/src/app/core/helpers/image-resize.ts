@@ -42,4 +42,4 @@ async function resizeImageFiles(items: File[] | Blob[] | File | Blob, options?: 
 
 export {
   resizeImageFiles,
-}
+};

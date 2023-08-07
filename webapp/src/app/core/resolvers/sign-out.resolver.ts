@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Auth } from "@angular/fire/auth";
 import {
-  Router, Resolve,
-  RouterStateSnapshot,
   ActivatedRouteSnapshot,
+  Resolve,
+  Router,
+  RouterStateSnapshot,
 } from "@angular/router";
 import { Observable, map, mergeMap, of } from "rxjs";
 

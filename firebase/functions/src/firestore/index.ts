@@ -1,11 +1,11 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
+import * as functions from "firebase-functions";
 import * as path from "path";
+import { IsEmulated } from "../helpers";
 import { Boat, BoatReference, Club, ClubAdmin, ClubLogoRequest, Collections, TrophyFile, UploadInfo } from "../models";
 import { AdminPath, ClubPath, LogoPath, SearchPath, TrophyFilePath } from "./paths";
-import { IsEmulated } from "../helpers";
 import { search } from "./search";
-import { FieldValue } from "firebase-admin/firestore";
 
 const firestoreFunctions = functions.region("europe-west2").firestore;
 

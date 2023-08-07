@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import {
+  ActivatedRouteSnapshot,
   Resolve,
   RouterStateSnapshot,
-  ActivatedRouteSnapshot,
 } from "@angular/router";
 import { Club, Collections } from "@models";
-import { catchError, map, Observable, of } from "rxjs";
+import { Observable, catchError, map, of } from "rxjs";
 import { DbService } from "../services/db.service";
 
 @Injectable({

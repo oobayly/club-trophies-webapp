@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { Subscription } from "rxjs";
-import { Club } from "@models";
-import { getCountries } from "src/app/core/helpers/i18n";
-import { uuid } from "src/app/core/helpers";
-import { DbService } from "src/app/core/services/db.service";
 import { Auth } from "@angular/fire/auth";
+import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { Club } from "@models";
+import { Subscription } from "rxjs";
+import { uuid } from "src/app/core/helpers";
+import { getCountries } from "src/app/core/helpers/i18n";
+import { DbService } from "src/app/core/services/db.service";
 
 interface ClubFormData {
   country: FormControl<string>;

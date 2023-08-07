@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from "@angular/core";
 import { HttpClient, HttpEvent, HttpEventType } from "@angular/common/http";
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from "@angular/core";
+import { CollectionReference, docSnapshots } from "@angular/fire/firestore";
 import { uuid } from "@helpers";
+import { resizeImageFiles } from "@helpers/image-resize";
+import { HasExpires, HasTimestamp, HasUploadInfo } from "@models";
+import { ImageCroppedEvent, ImageCropperComponent } from "ngx-image-cropper";
 import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, filter, finalize, first, from, interval, last, map, mergeMap, of, startWith, switchMap, take, tap } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
-import { ImageCroppedEvent, ImageCropperComponent } from "ngx-image-cropper";
-import { resizeImageFiles } from "@helpers/image-resize";
-import { CollectionReference, docSnapshots } from "@angular/fire/firestore";
-import { HasExpires, HasTimestamp, HasUploadInfo } from "@models";
 
 export type UploadMode = "logo" | "trophy-file";
 

@@ -1,10 +1,10 @@
 import { Component, Input } from "@angular/core";
-import { ClubBaseComponent } from "./club-base-component";
-import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, map } from "rxjs";
-import { Trophy } from "@models";
-import { DbService } from "src/app/core/services/db.service";
-import { DocumentReference } from "@angular/fire/firestore";
 import { Auth } from "@angular/fire/auth";
+import { DocumentReference } from "@angular/fire/firestore";
+import { Trophy } from "@models";
+import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, map } from "rxjs";
+import { DbService } from "src/app/core/services/db.service";
+import { ClubBaseComponent } from "./club-base-component";
 
 @Component({
   template: "",

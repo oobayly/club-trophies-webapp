@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
+import { TrophyFile } from "@models";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { BaseModalComponent } from "../base-modal.component";
-import { TrophyFile } from "@models";
 
 @Component({
   selector: "app-edit-file-modal",

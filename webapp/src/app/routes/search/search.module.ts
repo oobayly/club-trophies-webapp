@@ -1,9 +1,9 @@
-import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
 
-import { SearchRoutingModule } from "./search-routing.module";
-import { ResultsComponent } from "./results/results.component";
 import { SharedModule } from "../../modules/shared/shared.module";
+import { ResultsComponent } from "./results/results.component";
+import { SearchRoutingModule } from "./search-routing.module";
 
 
 @NgModule({

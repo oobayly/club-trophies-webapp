@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/core";
 import { SearchClubInfo, SearchResult, SearchTrophyInfo, SearchWithResults, filterByNormalisedText, getBoatNames } from "@models";
-import { Observable, Subject, distinctUntilChanged, switchMap, catchError, of, takeUntil, shareReplay, BehaviorSubject, map, combineLatest, filter } from "rxjs";
+import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distinctUntilChanged, filter, map, of, shareReplay, switchMap, takeUntil } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
 import { DbService } from "src/app/core/services/db.service";
 import { WinnerFilter } from "../winner-filter/winner-filter.component";

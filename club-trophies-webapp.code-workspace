@@ -24,9 +24,10 @@
     "typescript.preferences.quoteStyle": "double",
     "eslint.run": "onType",
     "[typescript]": {
-      "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-      }
+      "editor.codeActionsOnSave": [
+        "source.organizeImports",
+        "source.fixAll.eslint"
+      ]
     },
   }
 }

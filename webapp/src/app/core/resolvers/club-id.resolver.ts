@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
-import {
-  Router, Resolve,
-  RouterStateSnapshot,
-  ActivatedRouteSnapshot,
-} from "@angular/router";
-import { DbService, typedCollection } from "../services/db.service";
-import { Collections, Domain } from "@models";
 import { getDocs, query, where } from "@angular/fire/firestore";
+import {
+  ActivatedRouteSnapshot,
+  Resolve,
+  Router,
+  RouterStateSnapshot,
+} from "@angular/router";
+import { Collections, Domain } from "@models";
+import { DbService, typedCollection } from "../services/db.service";
 
 @Injectable({
   providedIn: "root",

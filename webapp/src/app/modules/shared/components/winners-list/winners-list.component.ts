@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { Auth } from "@angular/fire/auth";
+import { Query, collection, collectionSnapshots, query, where } from "@angular/fire/firestore";
 import { Collections, Winner, filterByNormalisedText, getBoatNames } from "@models";
 import { BehaviorSubject, Observable, combineLatest, filter, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
-import { TrophyBaseComponent } from "../trophy-base-component";
 import { DbService } from "src/app/core/services/db.service";
-import { Query, collection, collectionSnapshots, query, where } from "@angular/fire/firestore";
-import { Auth } from "@angular/fire/auth";
+import { TrophyBaseComponent } from "../trophy-base-component";
 import { WinnerFilter } from "../winner-filter/winner-filter.component";
 
 @Component({

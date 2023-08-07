@@ -2,9 +2,9 @@ import { Injectable } from "@angular/core";
 import { Auth } from "@angular/fire/auth";
 import { CollectionReference, DocumentReference, DocumentSnapshot, Firestore, Query, UpdateData, addDoc, collection, collectionGroup, collectionSnapshots, docSnapshots, getDoc, serverTimestamp, updateDoc } from "@angular/fire/firestore";
 import { Boat, BoatReference, Club, ClubLogoRequest, Collections, HasTimestamp, Search, SearchResult, SearchResultList, SearchWithResults, Trophy, TrophyFile, Winner } from "@models";
-import { Observable, map, combineLatest, switchMap, of, filter } from "rxjs";
-import { DbRecord, toRecord } from "../interfaces/DbRecord";
 import { WithFieldValue, doc } from "firebase/firestore";
+import { Observable, combineLatest, filter, map, of, switchMap } from "rxjs";
+import { DbRecord, toRecord } from "../interfaces/DbRecord";
 
 type TimestampProps = "created" | "modified";
 

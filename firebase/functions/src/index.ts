@@ -1,9 +1,9 @@
 import * as admin from "firebase-admin";
-import { onBoatNameChange, onLogoCreate, onClubAdminWrite, onTrophyFileWrite, onSearchCreate, onClubBoatNameChange, onClubWrite } from "./firestore";
-import { api } from "./https";
-import { onStorageItemFinalize } from "./storage";
+import { onBoatNameChange, onClubAdminWrite, onClubBoatNameChange, onClubWrite, onLogoCreate, onSearchCreate, onTrophyFileWrite } from "./firestore";
 import { IsEmulated } from "./helpers";
+import { api } from "./https";
 import { importer } from "./importer";
+import { onStorageItemFinalize } from "./storage";
 
 admin.initializeApp({
   storageBucket: "club-trophies.appspot.com",

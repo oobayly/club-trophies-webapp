@@ -62,4 +62,5 @@ function toRecord<T = unknown>(value: QueryDocumentSnapshot<T>[] | QuerySnapshot
 export {
   toCanEditRecord,
   toRecord,
-}
+};
+

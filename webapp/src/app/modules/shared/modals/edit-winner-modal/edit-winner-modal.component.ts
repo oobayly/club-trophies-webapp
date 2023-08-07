@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
+import { Winner } from "@models";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { BaseModalComponent } from "../base-modal.component";
-import { Winner } from "@models";
 
 @Component({
   selector: "app-edit-winner-modal",

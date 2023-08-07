@@ -1,18 +1,18 @@
+import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
-import { initializeApp, provideFirebaseApp } from "@angular/fire/app"
+import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
 import { connectFirestoreEmulator, getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { connectStorageEmulator, getStorage, provideStorage } from "@angular/fire/storage";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BrowserModule } from "@angular/platform-browser";
+import { ServiceWorkerModule } from "@angular/service-worker";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { environment } from "src/environments/environment";
 import { firebaseConfig } from "src/environments/firebase";
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { HomeComponent } from "./routes/home/home.component";
-import { ServiceWorkerModule } from "@angular/service-worker";
-import { HttpClientModule } from "@angular/common/http";
 
 @NgModule({
   declarations: [

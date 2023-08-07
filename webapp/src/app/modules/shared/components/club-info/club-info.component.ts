@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Output } from "@angular/core";
-import { Observable, tap } from "rxjs";
+import { Auth } from "@angular/fire/auth";
 import { Club } from "@models";
+import { Observable, tap } from "rxjs";
+import { DbService } from "src/app/core/services/db.service";
 import { ModalService } from "src/app/core/services/modal.service";
 import { ClubBaseComponent } from "../club-base-component";
-import { DbService } from "src/app/core/services/db.service";
-import { Auth } from "@angular/fire/auth";
 
 @Component({
   selector: "app-club-info",

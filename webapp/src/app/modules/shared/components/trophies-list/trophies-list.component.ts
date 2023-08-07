@@ -1,15 +1,15 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import { Auth } from "@angular/fire/auth";
+import { Query, collectionSnapshots, query, where } from "@angular/fire/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { identifyUsingTimestamp } from "@helpers";
 import { Trophy } from "@models";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, startWith, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, Observable, catchError, combineLatest, distinctUntilChanged, map, of, shareReplay, startWith, switchMap, takeUntil } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
+import { DbService } from "src/app/core/services/db.service";
 import { ModalService } from "src/app/core/services/modal.service";
 import { ClubBaseComponent } from "../club-base-component";
-import { DbService } from "src/app/core/services/db.service";
-import { identifyUsingTimestamp } from "@helpers";
-import { collectionSnapshots, query, Query, where } from "@angular/fire/firestore";
-import { Auth } from "@angular/fire/auth";
 
 interface TrophyFilter {
   name: FormControl<string>;

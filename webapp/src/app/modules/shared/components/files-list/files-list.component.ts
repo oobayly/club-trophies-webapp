@@ -1,14 +1,14 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from "@angular/core";
-import { TrophyBaseComponent } from "../trophy-base-component";
-import { BehaviorSubject, Observable, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
-import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
-import { Collections, TrophyFile } from "@models";
-import { filterNotNull } from "src/app/core/rxjs";
-import { ModalService } from "src/app/core/services/modal.service";
-import { compareTimestamps, uuid } from "src/app/core/helpers";
-import { DbService } from "src/app/core/services/db.service";
 import { Auth } from "@angular/fire/auth";
 import { collection, collectionSnapshots, deleteDoc } from "@angular/fire/firestore";
+import { Collections, TrophyFile } from "@models";
+import { BehaviorSubject, Observable, firstValueFrom, map, shareReplay, switchMap, takeUntil, tap } from "rxjs";
+import { compareTimestamps, uuid } from "src/app/core/helpers";
+import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
+import { filterNotNull } from "src/app/core/rxjs";
+import { DbService } from "src/app/core/services/db.service";
+import { ModalService } from "src/app/core/services/modal.service";
+import { TrophyBaseComponent } from "../trophy-base-component";
 
 @Component({
   selector: "app-files-list",

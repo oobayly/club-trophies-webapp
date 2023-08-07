@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
-import { isInRole } from "../helpers/auth";
 import { Auth, authState, getIdTokenResult } from "@angular/fire/auth";
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from "@angular/router";
 import { firstValueFrom } from "rxjs";
+import { isInRole } from "../helpers/auth";
 
 export interface AuthGuardData {
   requiredRoles: string[];

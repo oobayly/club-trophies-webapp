@@ -1,6 +1,6 @@
-import { distinctUntilChanged, map, mergeMap, of, OperatorFunction } from "rxjs";
-import { getRoles, isInRole, isAdmin } from "../helpers/auth";
 import { getIdTokenResult, IdTokenResult, User } from "@angular/fire/auth";
+import { distinctUntilChanged, map, mergeMap, of, OperatorFunction } from "rxjs";
+import { getRoles, isAdmin, isInRole } from "../helpers/auth";
 
 type OptionalIdTokenResult = IdTokenResult | null | undefined;
 type OptionalUser = User | null | undefined;
@@ -57,4 +57,4 @@ export {
   idTokenFn as idToken,
   isAdminFn as isAdmin,
   isInRoleFn as isInRole,
-}
+};

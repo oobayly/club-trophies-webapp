@@ -1,7 +1,7 @@
-import * as admin from "firebase-admin";
-import { storage } from "firebase-functions";
-import { getDownloadURL } from "firebase-admin/storage";
 import { File } from "@google-cloud/storage";
+import * as admin from "firebase-admin";
+import { getDownloadURL } from "firebase-admin/storage";
+import { storage } from "firebase-functions";
 export const IsEmulated = process.env["FUNCTIONS_EMULATOR"];
 
 /** A wrapper that handles getting the download url on the emulator as well as in production. */

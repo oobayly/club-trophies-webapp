@@ -1,14 +1,14 @@
-import * as functions from "firebase-functions";
+import { spawn } from "child-process-promise";
 import * as admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
+import * as functions from "firebase-functions";
 import * as fs from "fs/promises";
 import { mkdirp } from "mkdirp";
 import * as os from "os";
 import * as path from "path";
-import { spawn } from "child-process-promise";
 import { v4 as uuid } from "uuid";
-import { Club, Collections, TrophyFile } from "../models";
-import { FieldValue } from "firebase-admin/firestore";
 import { getDownloadUrlSafe } from "../helpers";
+import { Club, Collections, TrophyFile } from "../models";
 
 const storageFunctions = functions.region("europe-west2").storage;
 const ThumbSize = 300;

@@ -1,8 +1,8 @@
 import { Component, HostBinding, ViewChild } from "@angular/core";
 import { TrophyFile } from "@models";
-import { BaseModalComponent } from "../base-modal.component";
 import { NgbActiveModal, NgbCarousel } from "@ng-bootstrap/ng-bootstrap";
 import { DbRecord } from "src/app/core/interfaces/DbRecord";
+import { BaseModalComponent } from "../base-modal.component";
 
 @Component({
   selector: "app-lightbox-modal",

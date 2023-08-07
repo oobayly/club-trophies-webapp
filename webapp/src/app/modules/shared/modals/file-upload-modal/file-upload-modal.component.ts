@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
-import { BaseModalComponent } from "../base-modal.component";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { UploadMode } from "../../components/file-upload/file-upload.component";
+import { BaseModalComponent } from "../base-modal.component";
 
 @Component({
   selector: "app-file-upload-modal",

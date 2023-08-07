@@ -1,20 +1,20 @@
 import { Injectable, Type } from "@angular/core";
-import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
-import { BaseModalComponent } from "src/app/modules/shared/modals/base-modal.component";
-import { Club, Trophy, TrophyFile, Winner } from "@models";
-import { EditClubModalComponent } from "src/app/modules/shared/modals/edit-club-modal/edit-club-modal.component";
+import { getDoc } from "@angular/fire/firestore";
 import { NavigationEnd, Router } from "@angular/router";
+import { getIconForColor } from "@helpers/angular";
+import { Club, Trophy, TrophyFile, Winner } from "@models";
+import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
 import { filter } from "rxjs";
+import { AlertButton, AlertModalComponent } from "src/app/modules/shared/modals/alert-modal/alert-modal.component";
+import { BaseModalComponent } from "src/app/modules/shared/modals/base-modal.component";
+import { EditClubModalComponent } from "src/app/modules/shared/modals/edit-club-modal/edit-club-modal.component";
+import { EditFileModalComponent } from "src/app/modules/shared/modals/edit-file-modal/edit-file-modal.component";
 import { EditTrophyModalComponent } from "src/app/modules/shared/modals/edit-trophy-modal/edit-trophy-modal.component";
+import { EditWinnerModalComponent } from "src/app/modules/shared/modals/edit-winner-modal/edit-winner-modal.component";
+import { FileUploadModalComponent } from "src/app/modules/shared/modals/file-upload-modal/file-upload-modal.component";
 import { LightboxModalComponent } from "src/app/modules/shared/modals/lightbox-modal/lightbox-modal.component";
 import { DbRecord } from "../interfaces/DbRecord";
-import { AlertButton, AlertModalComponent } from "src/app/modules/shared/modals/alert-modal/alert-modal.component";
-import { EditFileModalComponent } from "src/app/modules/shared/modals/edit-file-modal/edit-file-modal.component";
-import { EditWinnerModalComponent } from "src/app/modules/shared/modals/edit-winner-modal/edit-winner-modal.component";
-import { getIconForColor } from "@helpers/angular";
 import { DbService } from "./db.service";
-import { FileUploadModalComponent } from "src/app/modules/shared/modals/file-upload-modal/file-upload-modal.component";
-import { getDoc } from "@angular/fire/firestore";
 
 /** The default modal options. */
 const DEFAULT_MODAL_OPTIONS: NgbModalOptions = {

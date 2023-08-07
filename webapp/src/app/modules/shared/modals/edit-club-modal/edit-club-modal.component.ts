@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
-import { BaseModalComponent } from "../base-modal.component";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { Club } from "@models";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { BaseModalComponent } from "../base-modal.component";
 
 @Component({
   selector: "app-edit-club-modal",

@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
+import { Title } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { Club, Trophy } from "@models";
-import { Title } from "@angular/platform-browser";
-import { AppTitle } from "src/app/app-routing.module";
 import { map } from "rxjs";
+import { AppTitle } from "src/app/app-routing.module";
 import { TabType } from "src/app/modules/shared/components/trophy-info/trophy-info.component";
 
 @Component({

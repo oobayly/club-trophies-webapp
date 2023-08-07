@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
-import { getIconForColor, NgColor } from "@helpers/angular";
+import { NgColor, getIconForColor } from "@helpers/angular";
 import { BehaviorSubject } from "rxjs";
 
 @Component({

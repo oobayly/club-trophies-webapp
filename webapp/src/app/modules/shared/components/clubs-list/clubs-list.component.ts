@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
-import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, map, Observable, of, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
-import { CanEditDbRecord, DbRecord, toCanEditRecord, toRecord } from "src/app/core/interfaces/DbRecord";
-import { Club } from "@models";
-import { distinctUid, idToken, isAdmin } from "src/app/core/rxjs/auth";
-import { ModalService } from "src/app/core/services/modal.service";
-import { DbService } from "src/app/core/services/db.service";
-import { identifyUsingTimestamp } from "@helpers";
 import { Auth, authState } from "@angular/fire/auth";
 import { Query, collectionSnapshots, query, where } from "@angular/fire/firestore";
+import { identifyUsingTimestamp } from "@helpers";
+import { Club } from "@models";
+import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distinctUntilChanged, map, of, shareReplay, switchMap, takeUntil } from "rxjs";
+import { CanEditDbRecord, DbRecord, toCanEditRecord, toRecord } from "src/app/core/interfaces/DbRecord";
+import { distinctUid, idToken, isAdmin } from "src/app/core/rxjs/auth";
+import { DbService } from "src/app/core/services/db.service";
+import { ModalService } from "src/app/core/services/modal.service";
 
 export type ViewMode = "all" | "mine" | "public";
 

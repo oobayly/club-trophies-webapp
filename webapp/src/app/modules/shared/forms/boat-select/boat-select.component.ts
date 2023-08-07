@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from "@angular/
 import { AbstractControl, ControlValueAccessor, FormBuilder, NG_VALIDATORS, NG_VALUE_ACCESSOR, ValidationErrors, Validator } from "@angular/forms";
 import { uuid } from "@helpers";
 import { Boat } from "@models";
-import { Observable, BehaviorSubject, Subject, Subscription, switchMap, combineLatest, distinctUntilChanged, of, map } from "rxjs";
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, distinctUntilChanged, map, of, switchMap } from "rxjs";
 import { DbRecord } from "src/app/core/interfaces/DbRecord";
 import { DbService } from "src/app/core/services/db.service";
 

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { Trophy, removeEmptyStrings } from "@models";
 import { BehaviorSubject, Subject, Subscription } from "rxjs";
-import { Trophy, removeEmptyStrings } from "@models"
 import { uuid } from "src/app/core/helpers";
 import { DbService } from "src/app/core/services/db.service";
 

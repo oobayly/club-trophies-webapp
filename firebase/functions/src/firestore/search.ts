@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
-import { Club, Collections, Search, SearchClubInfo, SearchResult, SearchResultList, SearchTrophyInfo, Trophy, Winner } from "../models"
 import { FieldPath } from "firebase-admin/firestore";
+import { Club, Collections, Search, SearchClubInfo, SearchResult, SearchResultList, SearchTrophyInfo, Trophy, Winner } from "../models";
 
 
 const batchRequests = async (

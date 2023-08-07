@@ -80,4 +80,4 @@ export const removeMatching = <T, TProperty>(
 
 export {
   filterByNormalisedText,
-}
+};
