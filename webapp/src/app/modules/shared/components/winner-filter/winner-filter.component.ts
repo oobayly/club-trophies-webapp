@@ -4,7 +4,7 @@ import { Subscription, debounceTime } from "rxjs";
 
 export interface WinnerFilter {
   sail?: string;
-  text?: string;
+  text?: "" | "none" | string;
   boatName?: string;
 }
 
@@ -65,7 +65,11 @@ export class WinnerFilterComponent implements OnChanges, OnDestroy {
   constructor(
     private readonly formBuilder: FormBuilder,
   ) {
-    this.subscriptions.push(this.form.valueChanges.pipe(debounceTime(100)).subscribe((filter) => {
+    const valueChanges = this.form.valueChanges.pipe(
+      debounceTime(100),
+    );
+
+    this.subscriptions.push(valueChanges.subscribe((filter) => {
       this.filterChange.next(filter);
     }));
   }

@@ -6,7 +6,8 @@
   <input type="text" class="text-input form-control" formControlName="text" placeholder="Name, etc" *ngIf="showText">
 
   <select class="boat-select form-select" formControlName="boatName" *ngIf="showBoatName && boatNames?.length">
-    <option value="">All boats</option>
+    <option value="">All classes</option>
+    <option value="none">No classes</option>
     <option [ngValue]="item" *ngFor="let item of boatNames">{{item}}</option>
   </select>
 

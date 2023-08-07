@@ -3,7 +3,7 @@ import { Auth } from "@angular/fire/auth";
 import { Query, collectionSnapshots, query, where } from "@angular/fire/firestore";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { identifyUsingTimestamp } from "@helpers";
-import { Trophy } from "@models";
+import { Trophy, filterByNormalisedText, getBoatNames } from "@models";
 import { BehaviorSubject, Observable, catchError, combineLatest, distinctUntilChanged, map, of, shareReplay, startWith, switchMap, takeUntil } from "rxjs";
 import { DbRecord, toRecord } from "src/app/core/interfaces/DbRecord";
 import { filterNotNull } from "src/app/core/rxjs";
@@ -83,7 +83,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
   private buildFilterForm(): FormGroup<TrophyFilter> {
     return this.formBuilder.group<TrophyFilter>({
       name: this.formBuilder.control<string>("", { nonNullable: true }),
-      boatName: this.formBuilder.control<string>("all", { nonNullable: true }),
+      boatName: this.formBuilder.control<string>("", { nonNullable: true }),
     }, {
       updateOn: "change",
     });
@@ -92,18 +92,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
   private getBoatsObservable(): Observable<string[]> {
     return this.allTrophies$.pipe(
       map((trophies) => {
-        return (trophies || [])
-          .reduce((accum, item) => {
-            const { boatName } = item.data;
-
-            if (boatName && !accum.includes(boatName)) {
-              accum.push(boatName);
-            }
-
-            return accum;
-          }, [] as string[])
-          .sort()
-          ;
+        return trophies ? getBoatNames(trophies?.map((x) => x.data)) : [];
       }),
     );
   }
@@ -147,27 +136,20 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
       this.allTrophies$,
     ]).pipe(
       map(([filter, trophies]) => {
-        const boatName = filter?.boatName || "all";
-        const name = filter?.name?.trim()?.toLocaleUpperCase();
+        const boatName = filter?.boatName;
+        const name = filter?.name;
 
         if (!trophies) {
           trophies = [];
         }
 
-        if (boatName === "all") {
-          // Do nothing
-        } else if (boatName === "none") {
-          // Without boat
-          trophies = trophies.filter((x) => !x.data.boatRef);
-        } else {
-          // Match boat
+        if (boatName === "none") {
+          trophies = trophies.filter((x) => x.data.boatName === undefined);
+        } else if (boatName) {
           trophies = trophies.filter((x) => x.data.boatName === boatName);
         }
-
         if (name) {
-          trophies = trophies.filter((x) => {
-            return x.data.name.toLocaleUpperCase().includes(name);
-          });
+          trophies = filterByNormalisedText(trophies, name, ["name"], (x) => x.data);
         }
 
         return trophies;
@@ -216,7 +198,7 @@ export class TrophiesListComponent extends ClubBaseComponent implements OnChange
   public onResetFilterClick(): void {
     this.filter.setValue({
       name: "",
-      boatName: "all",
+      boatName: "",
     });
     this.filter.markAsPristine();
   }

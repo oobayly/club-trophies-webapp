@@ -116,7 +116,9 @@ export class SearchResultComponent implements OnChanges, OnDestroy {
         let { results } = search;
         const { boatName, sail, text } = filter;
 
-        if (boatName) {
+        if (boatName === "none") {
+          results = results.filter((x) => x.boatName === undefined);
+        } else if (boatName) {
           results = results.filter((x) => x.boatName === boatName);
         }
         if (sail) {

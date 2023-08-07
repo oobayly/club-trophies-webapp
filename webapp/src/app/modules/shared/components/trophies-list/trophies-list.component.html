@@ -3,8 +3,8 @@
   <input type="text" class="form-control" formControlName="name" placeholder="Filter trophy by name">
 
   <select class="form-select" formControlName="boatName">
-    <option value="all">All boats</option>
-    <option value="none">Pavilion</option>
+    <option value="">All classes</option>
+    <option value="none">No class</option>
     <option [ngValue]="item" *ngFor="let item of boats$ | async">{{item}}</option>
   </select>
 

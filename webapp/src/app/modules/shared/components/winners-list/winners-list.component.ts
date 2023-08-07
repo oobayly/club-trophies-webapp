@@ -91,10 +91,11 @@ export class WinnersListComponent extends TrophyBaseComponent implements OnChang
       map(([winners, filter]) => {
         const { boatName, sail, text } = filter;
 
-        if (boatName) {
+        if (boatName === "none") {
+          winners = winners.filter((x) => x.data.boatName === undefined);
+        } else if (boatName) {
           winners = winners.filter((x) => x.data.boatName === boatName);
         }
-        // TODO: Implement this
         if (sail) {
           winners = filterByNormalisedText(winners, sail, ["sail"], (x) => x.data);
         }
