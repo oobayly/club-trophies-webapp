@@ -1,5 +1,72 @@
-<div class="container">
-  <!-- <h4 class="mb-3 text-center">Sign in using your em</h4> -->
+<div class="mw-sm mx-auto" *ngIf="stage$ | async as stage">
 
-  <firebase-ui></firebase-ui>
+  <!-- <h4 class="mb-3 text-center">Sign in using your em</h4> -->
+  <div class="card">
+    <div class="card-body">
+      <!-- Email -->
+      <form novalidate (ngSubmit)="onEmailSubmit()" *ngIf="stage === 'initial'; else nextStage">
+        <div class="">
+          <h4>Sign in with email</h4>
+          <div class="text-muted">
+            <small>If you don't already have an account, one will be created for you.</small>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <label for="{{formId}}-email" class="form-label">Your email address</label>
+          <input type="email" class="form-control" id="{{formId}}-email" placeholder="" [formControl]="email" required>
+
+          <div class="invalid-feedback">Please provide a valid email address</div>
+        </div>
+
+        <div class="d-flex mt-3">
+          <button type="submit" class="btn btn-outline-primary ms-auto">Next</button>
+        </div>
+      </form>
+
+      <!-- Sign up/in-->
+      <ng-template #nextStage>
+        <!-- Header -->
+        <div class="mb-3">
+          <h4 *ngIf="stage === 'sign-in'; else signUpHeader">Sign in</h4>
+
+          <ng-template #signUpHeader>
+            <h4>Create a new account.</h4>
+          </ng-template>
+          <h6>{{email.value}}</h6>
+        </div>
+
+        <form novalidate [formGroup]="form" (ngSubmit)="onSignInSubmit()">
+          <!-- Name -->
+          <div class="mt-3" *ngIf="stage === 'sign-up'">
+            <label for="{{formId}}-displayName" class="form-label">Your name</label>
+            <input type="text" class="form-control" id="{{formId}}-displayName" placeholder=""
+              formControlName="displayName" required>
+
+            <div class="invalid-feedback">Please provide your name</div>
+          </div>
+
+          <!-- Password -->
+          <div class="password-group mt-3" [ngClass]="{'show-password': showPassword}" *ngIf="stage !== 'initial'">
+            <label for="{{formId}}-password" class="form-label">Your password</label>
+            <input [type]="showPassword ? 'text': 'password'" id="{{formId}}-password" class="form-control"
+              placeholder="" formControlName="password" required>
+
+            <div class="invalid-feedback">Please provide your password</div>
+          </div>
+
+          <div class="invalid-feedback d-block mt-3" *ngIf="authError">{{authError}}</div>
+
+          <div class="d-flex mt-3">
+            <button type="button" class="btn btn-outline-danger ms-auto me-3" (click)="stage$.next('initial')">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-outline-primary">Next</button>
+          </div>
+        </form>
+      </ng-template>
+
+    </div>
+  </div>
+
 </div>

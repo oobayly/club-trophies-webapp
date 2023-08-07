@@ -30,8 +30,6 @@
     "bootstrap-icons": "^1.10.5",
     "exif-rotate-js": "^1.4.0",
     "firebase": "^9.8.3",
-    "firebaseui": "^6.0.1",
-    "firebaseui-angular": "^6.1.2",
     "flag-icons": "^6.9.2",
     "i18n-iso-countries": "^7.6.0",
     "ngx-image-cropper": "^7.0.2",

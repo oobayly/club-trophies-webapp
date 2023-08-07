@@ -2,10 +2,10 @@
   <h5 class="text-center">
     Uploading {{queue.length | i18nPlural:filesPlural}}...
   </h5>
-  <ng-cotnainer [ngTemplateOutlet]="fileRow"
+  <ng-container [ngTemplateOutlet]="fileRow"
     [ngTemplateOutletContext]="{name: item.file.name, size: item.file.size, progress: item.progress, showProgress: true}"
     *ngFor="let item of queue">
-  </ng-cotnainer>
+  </ng-container>
 </div>
 
 <ng-template #showUpload>
@@ -42,9 +42,9 @@
       </div>
 
       <div class="file-list-container mt-3" *ngIf="resizedFiles?.length">
-        <ng-cotnainer [ngTemplateOutlet]="fileRow" [ngTemplateOutletContext]="{name: file.name, size: file.size}"
+        <ng-container [ngTemplateOutlet]="fileRow" [ngTemplateOutletContext]="{name: file.name, size: file.size}"
           *ngFor="let file of resizedFiles!">
-        </ng-cotnainer>
+        </ng-container>
       </div>
     </div>
   </ng-container>
