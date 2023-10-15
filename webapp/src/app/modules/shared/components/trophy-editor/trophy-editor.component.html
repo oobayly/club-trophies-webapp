@@ -1,67 +1,73 @@
-<form class="" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
-  <!-- Trophy name -->
-  <div class="mb-3">
-    <label class="form-label" for="{{formId}}-name">Trophy name</label>
-    <input type="text" class="form-control" id="{{formId}}-name" placeholder="eg: Centenary Cup" formControlName="name"
-      required maxlength="128">
-    <div class="invalid-feedback">Please provide a valid trophy name.</div>
-  </div>
-
-  <div class="row">
-    <!-- Donor -->
-    <div class="col-8 mb-3">
-      <label class="form-label" for="{{formId}}-donor">Donated by</label>
-      <input type="text" class="form-control" id="{{formId}}-donor" placeholder="eg: Col Quinlan"
-        formControlName="donor" maxlength="128">
+<form class="row" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
+  <div class="col-12 col-md-6">
+    <!-- Trophy name -->
+    <div class="mb-3">
+      <label class="form-label" for="{{formId}}-name">Trophy name</label>
+      <input type="text" class="form-control" id="{{formId}}-name" placeholder="eg: Centenary Cup"
+        formControlName="name" required maxlength="128">
+      <div class="invalid-feedback">Please provide a valid trophy name.</div>
     </div>
 
-    <!-- Year of donation -->
-    <div class="col-4 mb-3">
-      <label class="form-label" for="{{formId}}-donated">Year donated</label>
-      <input type="text" class="form-control" id="{{formId}}-donated" placeholder="eg: 1982" formControlName="donated"
-        maxlength="16">
-    </div>
-  </div>
+    <div class="row">
+      <!-- Donor -->
+      <div class="col-8 mb-3">
+        <label class="form-label" for="{{formId}}-donor">Donated by</label>
+        <input type="text" class="form-control" id="{{formId}}-donor" placeholder="eg: Col Quinlan"
+          formControlName="donor" maxlength="128">
+      </div>
 
-  <!-- Details -->
-  <div class="mb-3">
-    <label class="form-label" for="{{formId}}-details">Details</label>
-    <textarea type="text" class="form-control" id="{{formId}}-details"
-      placeholder="eg: A description of the trophy and history" formControlName="details">
+      <!-- Year of donation -->
+      <div class="col-4 mb-3">
+        <label class="form-label" for="{{formId}}-donated">Year donated</label>
+        <input type="text" class="form-control" id="{{formId}}-donated" placeholder="eg: 1982" formControlName="donated"
+          maxlength="16">
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="mb-3">
+      <label class="form-label" for="{{formId}}-details">Details</label>
+      <textarea type="text" class="form-control" id="{{formId}}-details"
+        placeholder="eg: A description of the trophy and history" formControlName="details">
     </textarea>
+    </div>
   </div>
 
-  <!-- Conditions -->
-  <div class="mb-3">
-    <label class="form-label" for="{{formId}}-conditions">Conditions</label>
-    <textarea type="text" class="form-control" id="{{formId}}-conditions"
-      placeholder="eg: A description of when the trophy should be awarded" formControlName="conditions">
+  <div class="col-12 col-md-6">
+    <!-- Conditions -->
+    <div class="mb-3">
+      <label class="form-label" for="{{formId}}-conditions">Conditions</label>
+      <textarea type="text" class="form-control" id="{{formId}}-conditions"
+        placeholder="eg: A description of when the trophy should be awarded" formControlName="conditions">
     </textarea>
-  </div>
-
-  <div class="row">
-    <!-- Boat -->
-    <div class="col-8 nb-3">
-      <app-boat-select [clubId]="clubId" formControlName="boatRef">
-      </app-boat-select>
     </div>
 
-    <!-- Archive page -->
-    <div class="col-4 mb-3">
-      <label class="form-label" for="{{formId}}-page">Archive page</label>
-      <input type="text" class="form-control" id="{{formId}}-page" placeholder="eg. Page #" formControlName="page"
-        maxlength="10">
+    <div class="row">
+      <!-- Boat -->
+      <div class="col-8 nb-3">
+        <app-boat-select [clubId]="clubId" formControlName="boatRef">
+        </app-boat-select>
+      </div>
+
+      <!-- Archive page -->
+      <div class="col-4 mb-3">
+        <label class="form-label" for="{{formId}}-page">Archive page</label>
+        <input type="text" class="form-control" id="{{formId}}-page" placeholder="eg. Page #" formControlName="page"
+          maxlength="10">
+      </div>
     </div>
   </div>
 
-  <!-- Public -->
-  <div class="col mb-3 form-check form-switch">
-    <input class="form-check-input" type="checkbox" id="{{formId}}-public" formControlName="public">
-    <label class="form-check-label" for="{{formId}}-public">Make this trophy viewable for everyone.</label>
-  </div>
+  <div class="col-12">
+    <!-- Public -->
+    <div class="col mb-3 form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="{{formId}}-public" formControlName="public">
+      <label class="form-check-label" for="{{formId}}-public">Make this trophy viewable for everyone.</label>
+    </div>
 
-  <div class="button-grid">
-    <button type="button" class="btn btn-outline-danger mx-2" (click)="onCancelClick()">Cancel</button>
-    <button type="submit" class="btn btn-primary mx-2">Save</button>
+    <div class="button-grid">
+      <button type="button" class="btn btn-outline-danger mx-2" (click)="onCancelClick()">Cancel</button>
+      <button type="submit" class="btn btn-primary mx-2">Save</button>
+    </div>
   </div>
 </form>

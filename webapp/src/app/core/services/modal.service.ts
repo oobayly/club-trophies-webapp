@@ -108,6 +108,10 @@ export class ModalService {
     }
 
     return this.showModal(EditTrophyModalComponent, {
+      options: {
+        centered: true,
+        size: "xl",
+      },
       configure: (component) => {
         component.clubId = clubId;
         component.trophy = trophy;
@@ -146,6 +150,10 @@ export class ModalService {
     }
 
     return this.showModal(EditWinnerModalComponent, {
+      options: {
+        centered: true,
+        size: "xl",
+      },
       configure: (component) => {
         component.boatRef = boatRef;
         component.clubId = clubId;

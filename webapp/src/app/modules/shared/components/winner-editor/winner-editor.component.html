@@ -1,75 +1,84 @@
-<form class="" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
-  <div class="row">
-    <!-- Year -->
-    <div class="col-4 mb-3">
-      <label class="form-label" for="{{formId}}-year">Year</label>
-      <input type="number" class="form-control" id="{{formId}}-year" placeholder="eg: 2023" formControlName="year"
-        min="1700">
+<form class="row" [formGroup]="form" novalidate (ngSubmit)="onSaveClick()">
+  <div class="col-12 col-md-6">
+    <div class="row">
+      <!-- Year -->
+      <div class="col-4 mb-3">
+        <label class="form-label" for="{{formId}}-year">Year</label>
+        <input type="number" class="form-control" id="{{formId}}-year" placeholder="eg: 2023" formControlName="year"
+          min="1700">
+      </div>
+
+      <!-- Sail -->
+      <div class="col-8 mb-3">
+        <label class="form-label" for="{{formId}}-sail">Sail #</label>
+        <input type="text" class="form-control" id="{{formId}}-sail" placeholder="eg: IRL 327" formControlName="sail"
+          maxlength="10">
+      </div>
     </div>
 
-    <!-- Sail -->
-    <div class="col-8 mb-3">
-      <label class="form-label" for="{{formId}}-sail">Sail #</label>
-      <input type="text" class="form-control" id="{{formId}}-sail" placeholder="eg: IRL 327" formControlName="sail"
-        maxlength="10">
-    </div>
-  </div>
-
-  <!-- Helm -->
-  <div class="mb-3">
-    <label class="form-label" for="{{formId}}-helm">Helm</label>
-    <input type="text" class="form-control" id="{{formId}}-helm" placeholder="" formControlName="helm" maxlength="128">
-  </div>
-
-  <!-- Crew -->
-  <div class="mb-3">
-    <label class="form-label" for="{{formId}}-crew">Crew</label>
-    <input type="text" class="form-control" id="{{formId}}-crew" placeholder="" formControlName="crew" maxlength="128">
-  </div>
-
-  <!-- Owner -->
-  <div class="mb-3">
-    <label class="form-label" for="{{formId}}-owner">Owner</label>
-    <input type="text" class="form-control" id="{{formId}}-owner" placeholder="" formControlName="owner"
-      maxlength="128">
-  </div>
-
-  <div class="row">
-    <!-- Boat name -->
-    <div class="col-6 mb-3">
-      <label class="form-label" for="{{formId}}-name">Boat name</label>
-      <input type="text" class="form-control" id="{{formId}}-year" placeholder="" formControlName="name"
+    <!-- Helm -->
+    <div class="mb-3">
+      <label class="form-label" for="{{formId}}-helm">Helm</label>
+      <input type="text" class="form-control" id="{{formId}}-helm" placeholder="" formControlName="helm"
         maxlength="128">
     </div>
 
-    <!-- Boat -->
-    <div class="col-6 mb-3">
-      <app-boat-select [clubId]="clubId" formControlName="boatRef">
-      </app-boat-select>
+    <!-- Crew -->
+    <div class="mb-3">
+      <label class="form-label" for="{{formId}}-crew">Crew</label>
+      <input type="text" class="form-control" id="{{formId}}-crew" placeholder="" formControlName="crew"
+        maxlength="128">
+    </div>
+
+    <!-- Owner -->
+    <div class="mb-3">
+      <label class="form-label" for="{{formId}}-owner">Owner</label>
+      <input type="text" class="form-control" id="{{formId}}-owner" placeholder="" formControlName="owner"
+        maxlength="128">
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <!-- Boat name -->
+    <div class="row">
+      <!-- Boat name -->
+      <div class="col-6 mb-3">
+        <label class="form-label" for="{{formId}}-name">Boat name</label>
+        <input type="text" class="form-control" id="{{formId}}-year" placeholder="" formControlName="name"
+          maxlength="128">
+      </div>
+
+      <!-- Boat -->
+      <div class="col-6 mb-3">
+        <app-boat-select [clubId]="clubId" formControlName="boatRef">
+        </app-boat-select>
+      </div>
+    </div>
+
+    <!-- Club -->
+    <div class="mb-3">
+      <label class="form-label" for="{{formId}}-club">Home club</label>
+      <input type="text" class="form-control" id="{{formId}}-club" placeholder="" formControlName="club"
+        maxlength="128">
+    </div>
+
+    <!-- Notes -->
+    <div class="mb-3">
+      <label class="form-label" for="{{formId}}-notes">Notes</label>
+      <input type="text" class="form-control" id="{{formId}}-notes" placeholder="" formControlName="notes"
+        maxlength="128">
+    </div>
+
+    <!-- Suppress from public viewing -->
+    <div class="col mb-3 form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="{{formId}}-suppress" formControlName="suppress">
+      <label class="form-check-label" for="{{formId}}-suppress">Suppress this winner from public search results.</label>
     </div>
   </div>
 
-  <!-- Club -->
-  <div class="mb-3">
-    <label class="form-label" for="{{formId}}-club">Home club</label>
-    <input type="text" class="form-control" id="{{formId}}-club" placeholder="" formControlName="club" maxlength="128">
-  </div>
-
-  <!-- Notes -->
-  <div class="mb-3">
-    <label class="form-label" for="{{formId}}-notes">Notes</label>
-    <input type="text" class="form-control" id="{{formId}}-notes" placeholder="" formControlName="notes"
-      maxlength="128">
-  </div>
-
-  <!-- Suppress from public viewing -->
-  <div class="col mb-3 form-check form-switch">
-    <input class="form-check-input" type="checkbox" id="{{formId}}-suppress" formControlName="suppress">
-    <label class="form-check-label" for="{{formId}}-suppress">Suppress this winner from public search results.</label>
-  </div>
-
-  <div class="button-grid">
-    <button type="button" class="btn btn-outline-danger mx-2" (click)="onCancelClick()">Cancel</button>
-    <button type="submit" class="btn btn-primary mx-2">Save</button>
+  <div class="col-12">
+    <div class="button-grid">
+      <button type="button" class="btn btn-outline-danger mx-2" (click)="onCancelClick()">Cancel</button>
+      <button type="submit" class="btn btn-primary mx-2">Save</button>
+    </div>
   </div>
 </form>
