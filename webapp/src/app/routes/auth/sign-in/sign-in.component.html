@@ -2,9 +2,9 @@
 
   <!-- <h4 class="mb-3 text-center">Sign in using your em</h4> -->
   <div class="card">
-    <div class="card-body">
+    <div class="card-body" [ngSwitch]="stage">
       <!-- Email -->
-      <form novalidate (ngSubmit)="onEmailSubmit()" *ngIf="stage === 'initial'; else nextStage">
+      <form novalidate (ngSubmit)="onEmailSubmit()" *ngSwitchCase="'initial'">
         <div class="">
           <h4>Sign in with email</h4>
           <div class="text-muted">
@@ -24,8 +24,16 @@
         </div>
       </form>
 
+      <ng-container *ngSwitchCase="'reset-sent'">
+        <h4 class="mb-3">Password reset sent</h4>
+        <app-alert>
+          An email containing a link for resetting your password has been sent to {{email.value}}.<br>
+          Please check your inbox.
+        </app-alert>
+      </ng-container>
+
       <!-- Sign up/in-->
-      <ng-template #nextStage>
+      <ng-container *ngSwitchDefault>
         <!-- Header -->
         <div class="mb-3">
           <h4 *ngIf="stage === 'sign-in'; else signUpHeader">Sign in</h4>
@@ -57,14 +65,19 @@
 
           <div class="invalid-feedback d-block mt-3" *ngIf="authError">{{authError}}</div>
 
-          <div class="d-flex mt-3">
-            <button type="button" class="btn btn-outline-danger ms-auto me-3" (click)="stage$.next('initial')">
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-outline-primary">Next</button>
+          <div class="d-flex justify-content-between mt-3">
+            <div>
+              <a href="" (click)="onResetPasswordClick($event)">Forgot password? Send reset link.</a>
+            </div>
+            <div>
+              <button type="button" class="btn btn-outline-danger ms-auto me-3" (click)="stage$.next('initial')">
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-outline-primary">Next</button>
+            </div>
           </div>
         </form>
-      </ng-template>
+      </ng-container>
 
     </div>
   </div>

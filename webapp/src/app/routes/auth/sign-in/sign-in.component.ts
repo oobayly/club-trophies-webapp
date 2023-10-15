@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { Auth, EmailAuthProvider, User, UserCredential, authState, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, updateProfile } from "@angular/fire/auth";
+import { Auth, EmailAuthProvider, User, UserCredential, authState, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, sendPasswordResetEmail, updateProfile } from "@angular/fire/auth";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { uuid } from "@helpers";
@@ -8,7 +8,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { BehaviorSubject, Subscription, first, mergeMap } from "rxjs";
 import { filterNotNull } from "src/app/core/rxjs";
 
-type SignInStage = "initial" | "sign-up" | "sign-in";
+type SignInStage = "initial" | "sign-up" | "sign-in" | "reset-sent";
 
 interface SignInForm {
   displayName: FormControl<string>;
@@ -43,6 +43,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
   ) {
+    this.email.patchValue(route.snapshot.queryParamMap.get("email") ?? "");
     this.subscriptions.push(this.getStageSubscription());
   }
 
@@ -101,7 +102,7 @@ export class SignInComponent implements OnInit, OnDestroy {
         }
       }
 
-      this.authError = error || "An unepexted error occurred. Please try again";
+      this.authError = error || "An unexpected error occurred. Please try again";
 
       return;
     }
@@ -129,6 +130,22 @@ export class SignInComponent implements OnInit, OnDestroy {
     } else if (methods.includes(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
       this.stage$.next("sign-in");
     }
+  }
+
+  public async onResetPasswordClick(e: Event): Promise<void> {
+    e.preventDefault();
+
+    const email = this.email.value;
+
+    if (!email) {
+      return;
+    }
+
+    await sendPasswordResetEmail(this.auth, email, {
+      url: "https://club-trophies.web.app/auth/sign-in?email=" + encodeURIComponent(email),
+    });
+
+    this.stage$.next("reset-sent");
   }
 
   public async onSignInSubmit(): Promise<void> {
